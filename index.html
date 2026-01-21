@@ -10,7 +10,7 @@
         /* フォントと基本設定 */
         body {
             font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            background-color: #f8fafc; /* slate-50 */
+            background-color: #f1f5f9; /* slate-100 */
             color: #334155; /* slate-700 */
         }
 
@@ -50,33 +50,65 @@
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
 
-        /* プレースホルダーの色調整 */
+        /* プレースホルダー */
         input::placeholder {
-            color: #cbd5e1; /* slate-300: 薄いグレー */
+            color: #94a3b8;
+        }
+
+        /* 未入力（推奨）状態の背景色クラス */
+        .bg-required {
+            background-color: #fef9c3; /* yellow-100: 薄い黄色で注意喚起 */
+            border-color: #fde047; /* yellow-300 */
+        }
+        /* 入力完了（クリア）状態の背景色クラス */
+        .bg-cleared {
+            background-color: #ffffff;
+            border-color: #e2e8f0;
+        }
+
+        /* タブのスタイル */
+        .tab-btn.active {
+            background-color: #ffffff;
+            color: #10b981; /* emerald-500 */
+            border-bottom: 3px solid #10b981;
+            font-weight: bold;
+        }
+        .tab-btn {
+            color: #64748b; /* slate-500 */
+            border-bottom: 3px solid transparent;
         }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body class="min-h-screen flex flex-col">
 
-    <div class="max-w-6xl mx-auto">
-        
-        <header class="mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-slate-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 md:px-8 pt-4 pb-0">
+            <h1 class="text-xl md:text-2xl font-bold text-slate-800 flex items-center mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-emerald-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 資産運用シミュレーター
             </h1>
-            <p class="text-slate-500 mt-2">「増やす」も「使う」も、これひとつでシミュレーション。</p>
-        </header>
+            
+            <div class="flex space-x-6">
+                <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="tab-btn active pb-3 px-2 transition-colors">
+                    シミュレーター
+                </button>
+                <button onclick="switchTab('guide')" id="tab-btn-guide" class="tab-btn pb-3 px-2 transition-colors">
+                    使い方ガイド
+                </button>
+            </div>
+        </div>
+    </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+    <div class="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
+
+        <div id="tab-content-simulator" class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start fade-in">
             
             <div class="lg:col-span-5 space-y-4">
                 
                 <section class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
-                    <h2 class="text-lg font-bold text-slate-700 mb-3">運用商品を選ぶ</h2>
-                    
+                    <h2 class="text-lg font-bold text-slate-700 mb-3">1. 運用商品を選ぶ</h2>
                     <div class="grid grid-cols-2 gap-2 mb-3">
                         <button onclick="selectProduct('sp500')" id="btn-sp500" class="p-3 rounded-xl border transition-all duration-200 text-center relative font-bold">
                             S&P500 (米国株)
@@ -85,7 +117,6 @@
                             全世界株式
                         </button>
                     </div>
-
                     <div class="bg-slate-50 rounded-xl p-3 border border-slate-200">
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-xs font-bold text-slate-500">過去11年の平均利回り</span>
@@ -104,75 +135,66 @@
                 </section>
 
                 <section class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 space-y-5">
-                    <h2 class="text-lg font-bold text-slate-700">金額と条件</h2>
+                    <h2 class="text-lg font-bold text-slate-700">2. 金額を入れる</h2>
 
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="text-sm font-bold text-slate-600">想定利回り (年率)</label>
-                            <button onclick="resetToAverage()" class="text-xs text-emerald-500 font-bold hover:text-emerald-600 transition">
-                                平均値に戻す
-                            </button>
-                        </div>
-                        <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 transition-colors">
-                            <input type="number" id="annualRate" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="13.25" step="0.01" oninput="calculate()" onfocus="this.select()">
-                            <span class="text-slate-400 font-bold ml-2">%</span>
-                        </div>
+                    <div class="hidden">
+                        <input type="number" id="annualRate" value="13.25">
                     </div>
 
                     <div>
-                        <label class="text-sm font-bold text-slate-600 mb-1 block">初期投資額 (元手)</label>
-                        <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 transition-colors">
-                            <input type="number" id="initialAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" placeholder="例: 0" oninput="calculate()" onfocus="this.select()">
-                            <span class="text-slate-400 font-bold ml-2">万円</span>
+                        <label class="text-sm font-bold text-slate-600 mb-1 block">
+                            初期投資額 (元手) <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded ml-2">入力推奨</span>
+                        </label>
+                        <div id="initialAmountGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 transition-colors bg-required">
+                            <input type="number" id="initialAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right placeholder-slate-400" placeholder="0" oninput="checkInput('initialAmount'); calculate();" onfocus="this.select()">
+                            <span class="text-slate-500 font-bold ml-2">万円</span>
                         </div>
                     </div>
 
                     <div>
                         <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
-                            <span>毎月の積立額</span>
+                            <span>毎月の積立額 <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded ml-2">入力推奨</span></span>
                             <span class="text-emerald-500" id="monthlyAmountLabel">なし</span>
                         </label>
-                        <input type="range" id="monthlyAmountSlider" min="0" max="30" value="0" step="1" oninput="syncInputs('monthlyAmountSlider', 'monthlyAmount')">
-                        <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1 transition-colors">
-                            <input type="number" id="monthlyAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" placeholder="例: 3" oninput="syncInputs('monthlyAmount', 'monthlyAmountSlider')" onfocus="this.select()">
-                            <span class="text-slate-400 font-bold ml-2">万円</span>
+                        <input type="range" id="monthlyAmountSlider" min="0" max="30" value="3" step="1" oninput="syncInputs('monthlyAmountSlider', 'monthlyAmount')">
+                        <div id="monthlyAmountGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 mt-1 transition-colors bg-required">
+                            <input type="number" id="monthlyAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right placeholder-slate-400" placeholder="例: 3" value="3" oninput="checkInput('monthlyAmount'); syncInputs('monthlyAmount', 'monthlyAmountSlider');" onfocus="this.select()">
+                            <span class="text-slate-500 font-bold ml-2">万円</span>
                         </div>
                     </div>
 
                     <div>
                         <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
-                            <span>運用期間</span>
+                            <span>運用期間 <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded ml-2">入力推奨</span></span>
                         </label>
                         <input type="range" id="yearsSlider" min="1" max="50" value="20" oninput="syncInputs('yearsSlider', 'years')">
-                        <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1 transition-colors">
-                            <input type="number" id="years" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="20" oninput="syncInputs('years', 'yearsSlider')" onfocus="this.select()">
-                            <span class="text-slate-400 font-bold ml-2">年</span>
+                        <div id="yearsGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 mt-1 transition-colors bg-required">
+                            <input type="number" id="years" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right placeholder-slate-400" value="20" oninput="checkInput('years'); syncInputs('years', 'yearsSlider');" onfocus="this.select()">
+                            <span class="text-slate-500 font-bold ml-2">年</span>
                         </div>
                     </div>
                 </section>
 
-                <section class="bg-orange-50 rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-orange-100">
-                    <h2 class="text-lg font-bold text-orange-800 mb-1">取り崩し設定</h2>
-                    <p class="text-xs text-orange-700 mb-3">「使いながら運用」したい場合のみ設定してください。</p>
+                <section class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-700 mb-1">3. 取り崩し設定 <span class="text-xs font-normal text-slate-400 ml-2">(任意)</span></h2>
+                    <p class="text-xs text-slate-500 mb-3">貯めた資産を「使いながら運用」したい時だけ設定します。</p>
                     
                     <div>
-                        <label class="text-sm font-bold text-orange-800 mb-1 flex justify-between">
+                        <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
                             <span>毎年1月1日の取り崩し率</span>
-                            <span class="text-orange-600 font-bold" id="withdrawalLabel">なし</span>
+                            <span class="text-emerald-600 font-bold" id="withdrawalLabel">なし</span>
                         </label>
-                        <input type="range" id="withdrawalRateSlider" min="0" max="15" value="0" step="0.1" oninput="syncInputs('withdrawalRateSlider', 'withdrawalRate')" class="accent-orange-500">
+                        <input type="range" id="withdrawalRateSlider" min="0" max="15" value="0" step="0.1" oninput="syncInputs('withdrawalRateSlider', 'withdrawalRate')">
                         
-                        <div class="flex items-center bg-white border-2 border-orange-200 rounded-xl px-3 py-2 mt-1 focus-within:border-orange-400 transition-colors">
+                        <div class="flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1 focus-within:border-emerald-500 transition-colors">
                             <input type="number" id="withdrawalRate" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="0" step="0.1" oninput="syncInputs('withdrawalRate', 'withdrawalRateSlider')" onfocus="this.select()">
-                            <span class="text-slate-400 font-bold ml-2">%</span>
+                            <span class="text-slate-500 font-bold ml-2">%</span>
                         </div>
                     </div>
                 </section>
-
             </div>
 
             <div class="lg:col-span-7 space-y-4">
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-5 text-white shadow-md md:col-span-2">
                         <p class="text-emerald-50 text-sm font-bold mb-1">最終資産残高</p>
@@ -188,12 +210,10 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="bg-white rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col justify-center">
                         <p class="text-slate-500 text-xs font-bold mb-1">累計投資額 (元本)</p>
                         <p class="text-xl font-bold text-slate-700" id="displayTotalInvestment">0円</p>
                     </div>
-                    
                     <div class="bg-white rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col justify-center">
                         <p class="text-slate-500 text-xs font-bold mb-1">適用中の商品</p>
                         <p class="text-xl font-bold text-emerald-600" id="displayProductName">S&P500</p>
@@ -234,30 +254,104 @@
                                         <th class="px-4 py-2 text-right font-semibold rounded-r-lg">資産残高</th>
                                     </tr>
                                 </thead>
-                                <tbody id="resultTableBody" class="divide-y divide-slate-200 bg-white">
-                                    </tbody>
+                                <tbody id="resultTableBody" class="divide-y divide-slate-200 bg-white"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div id="tab-content-guide" class="hidden max-w-3xl mx-auto fade-in pb-10">
+            <div class="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-slate-100 space-y-10">
+                
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">🔰 使い方ガイド</h2>
+                    <p class="text-slate-500">3ステップで将来のお金をシミュレーション！</p>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-emerald-100 text-emerald-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-4">1</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">商品を選ぶ</h3>
+                            <p class="text-slate-600 leading-relaxed">
+                                まずは投資先を選びます。
+                                <br><span class="font-bold text-slate-800">🇺🇸 S&P500</span> はアメリカの強い企業500社に、
+                                <br><span class="font-bold text-slate-800">🌍 全世界株式</span> は世界中の企業に分散して投資します。
+                                <br>どちらも過去の実績（平均利回り）が自動でセットされます。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-emerald-100 text-emerald-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-4">2</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">金額を入れる（重要！）</h3>
+                            <p class="text-slate-600 leading-relaxed mb-3">
+                                <span class="bg-yellow-100 px-1 rounded">黄色い枠</span> のところを入力します。
+                            </p>
+                            <ul class="list-disc list-inside text-slate-600 space-y-1 ml-2">
+                                <li><span class="font-bold">初期投資額</span>：いま手元にあって、最初に投資するお金（0円でもOK）。</li>
+                                <li><span class="font-bold">毎月の積立額</span>：毎月のお給料やバイト代からコツコツ足すお金。</li>
+                                <li><span class="font-bold">運用期間</span>：何年続けるか。長いほどお金は増えやすくなります（複利効果）。</li>
+                            </ul>
+                            <p class="text-xs text-slate-400 mt-2">※入力すると枠の色が白（クリア）に戻ります。</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0 bg-emerald-100 text-emerald-600 w-12 h-12 rounded-full flex items-center justify-center font-bold text-xl mr-4">3</div>
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-800 mb-2">グラフを見る</h3>
+                            <p class="text-slate-600 leading-relaxed">
+                                右側のグラフが将来の予想図です。
+                                <br><span class="text-emerald-500 font-bold">緑の線</span>が右肩上がりなら資産が増えています。
+                                <br>「もし毎月3万円を20年続けたら...？」など、色々な数字を入れて試してみましょう！
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-6 rounded-2xl">
+                    <h4 class="font-bold text-slate-700 mb-3 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        知っておくと便利なこと
+                    </h4>
+                    <dl class="space-y-3 text-sm">
+                        <div>
+                            <dt class="font-bold text-slate-800">取り崩し設定って？</dt>
+                            <dd class="text-slate-600">「老後に年金代わりに少しずつ使いたい」ときに使います。例えば「4%」にすると、増えた資産の中から毎年4%ずつ現金として受け取れます。</dd>
+                        </div>
+                        <div>
+                            <dt class="font-bold text-slate-800">複利（ふくり）って？</dt>
+                            <dd class="text-slate-600">増えた利益がさらに利益を生むこと。「雪だるま式」にお金が増える仕組みです。時間が長いほど効果大！</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="text-center pt-4">
+                    <button onclick="switchTab('simulator')" class="bg-emerald-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-emerald-600 transition transform hover:scale-105">
+                        シミュレーターに戻る
+                    </button>
+                </div>
 
             </div>
         </div>
-    </div>
+        </div>
 
     <script>
-        // --- 設定データ (楽天証券のeMAXIS Slimシリーズページへのリンクに変更) ---
+        // --- 設定データ ---
         const PRODUCTS = {
             sp500: { 
                 name: 'S&P500 (米国株)', 
                 rate: 13.25, 
-                // eMAXIS Slim 米国株式(S&P500)
                 url: 'https://www.rakuten-sec.co.jp/web/fund/detail/?ID=JP90C000GKC6' 
             },
             all:   { 
                 name: '全世界株式 (オルカン)', 
                 rate: 9.99,  
-                // eMAXIS Slim 全世界株式(オール・カントリー)
                 url: 'https://www.rakuten-sec.co.jp/web/fund/detail/?ID=JP90C000H1T1' 
             }
         };
@@ -265,27 +359,71 @@
         let currentProduct = 'sp500';
         let myChart = null;
 
-        // 初期化
+        // --- 初期化 ---
         window.onload = function() {
             selectProduct('sp500');
-            syncInputs('monthlyAmountSlider', 'monthlyAmount');
-            syncInputs('withdrawalRateSlider', 'withdrawalRate');
-            syncInputs('yearsSlider', 'years');
+            // 初期状態の色チェックを実行
+            checkInput('initialAmount');
+            checkInput('monthlyAmount');
+            checkInput('years');
+            
+            // 計算実行
+            calculate();
         };
 
+        // --- タブ切り替え ---
+        function switchTab(tabName) {
+            // ボタンのスタイル切り替え
+            document.getElementById('tab-btn-simulator').classList.remove('active');
+            document.getElementById('tab-btn-guide').classList.remove('active');
+            document.getElementById('tab-btn-' + tabName).classList.add('active');
+
+            // コンテンツの表示切り替え
+            document.getElementById('tab-content-simulator').classList.add('hidden');
+            document.getElementById('tab-content-guide').classList.add('hidden');
+            document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+            
+            // ページトップへスクロール（スマホ対策）
+            window.scrollTo(0, 0);
+        }
+
+        // --- 入力チェック（色変え） ---
+        function checkInput(id) {
+            const input = document.getElementById(id);
+            const group = document.getElementById(id + 'Group');
+            
+            // 値が空、または0以下なら「必須（黄色）」、それ以外なら「クリア（白）」
+            // ※プレースホルダー表示状態も「空」とみなす
+            if (input.value === '' || parseFloat(input.value) <= 0) {
+                // 初期値が設定されている場合(積立3万など)はクリア扱いにするか、
+                // ユーザーにあえて入力を促すために黄色にするか。
+                // ここでは「0」または「空」の時だけ黄色にする。
+                // 積立額の初期値は3なので、最初から白になる。
+                if(input.value == 0 || input.value == '') {
+                     group.classList.add('bg-required');
+                     group.classList.remove('bg-cleared');
+                } else {
+                     group.classList.remove('bg-required');
+                     group.classList.add('bg-cleared');
+                }
+            } else {
+                group.classList.remove('bg-required');
+                group.classList.add('bg-cleared');
+            }
+        }
+
         // --- UI操作 ---
-        
-        // 商品選択
         function selectProduct(key) {
             currentProduct = key;
             const p = PRODUCTS[key];
             
-            // ボタンのスタイル切り替え
             ['sp500', 'all'].forEach(k => {
                 const btn = document.getElementById('btn-' + k);
                 if(k === key) {
                     btn.className = "p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 shadow-sm font-bold relative";
-                    btn.innerHTML += '<span class="absolute top-1 right-1 text-emerald-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg></span>';
+                    if(!btn.innerHTML.includes('svg')) {
+                         btn.innerHTML += '<span class="absolute top-1 right-1 text-emerald-500"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg></span>';
+                    }
                 } else {
                     btn.className = "p-3 rounded-xl border border-slate-200 bg-white text-slate-500 hover:border-emerald-300 hover:bg-slate-50 transition-all font-medium";
                     const svg = btn.querySelector('span');
@@ -293,38 +431,32 @@
                 }
             });
 
-            // データ反映
             document.getElementById('display-average-rate').innerText = p.rate.toFixed(2);
             document.getElementById('source-link').href = p.url;
             document.getElementById('displayProductName').innerText = p.name;
-            
-            resetToAverage();
-        }
-
-        // 平均値リセット
-        function resetToAverage() {
-            document.getElementById('annualRate').value = PRODUCTS[currentProduct].rate;
+            document.getElementById('annualRate').value = p.rate;
             calculate();
         }
 
-        // 入力同期
         function syncInputs(fromId, toId) {
             const val = document.getElementById(fromId).value;
             document.getElementById(toId).value = val;
+            
+            // 色チェックも連動
+            if(toId === 'monthlyAmount' || toId === 'years') {
+                checkInput(toId);
+            }
 
-            // ラベルの更新
             if(toId === 'monthlyAmount') {
                 document.getElementById('monthlyAmountLabel').innerText = (val == 0) ? 'なし' : val + '万円';
             }
             if(toId === 'withdrawalRate') {
                 document.getElementById('withdrawalLabel').innerText = (val == 0) ? 'なし' : val + '%';
             }
-            // 年数はラベルではなく入力欄がメインになったため、特別なラベル更新は不要ですが、一応整合性を保つ
             
             calculate();
         }
 
-        // テーブル開閉
         function toggleTable() {
             const content = document.getElementById('tableContent');
             const arrow = document.getElementById('tableArrow');
@@ -338,22 +470,17 @@
         }
 
         // --- 計算ロジック ---
-
         function formatMoney(n) {
             if(n < 0) return '-' + formatMoney(-n);
             if(n < 10000) return Math.round(n).toLocaleString() + '円';
             const man = Math.floor(n / 10000);
             const oku = Math.floor(man / 10000);
             const restMan = man % 10000;
-            
-            if(oku > 0) {
-                return `${oku}億${restMan > 0 ? restMan.toLocaleString() + '万' : ''}円`;
-            }
+            if(oku > 0) return `${oku}億${restMan > 0 ? restMan.toLocaleString() + '万' : ''}円`;
             return `${man.toLocaleString()}万円`;
         }
 
         function calculate() {
-            // 入力取得 (単位: 円)
             const initial = (parseFloat(document.getElementById('initialAmount').value) || 0) * 10000;
             const monthly = (parseFloat(document.getElementById('monthlyAmount').value) || 0) * 10000;
             const years = parseInt(document.getElementById('years').value) || 20;
@@ -361,7 +488,6 @@
             const withdrawRate = parseFloat(document.getElementById('withdrawalRate').value) || 0;
 
             const rateMonthly = rateYearly / 100 / 12;
-            
             let current = initial;
             let totalInvest = initial;
             let totalWithdraw = 0;
@@ -370,9 +496,7 @@
             const dataAsset = [Math.round(current)];
             const tableRows = [];
 
-            // シミュレーション
             for(let y=1; y<=years; y++) {
-                // 1. 年初取り崩し
                 let w = 0;
                 if(withdrawRate > 0) {
                     w = current * (withdrawRate / 100);
@@ -380,15 +504,12 @@
                     if(current < 0) current = 0;
                     totalWithdraw += w;
                 }
-
-                // 2. 12ヶ月運用 & 積立
                 let investYearly = 0;
                 for(let m=0; m<12; m++) {
                     current = (current + monthly) * (1 + rateMonthly);
                     totalInvest += monthly;
                     investYearly += monthly;
                 }
-
                 labels.push(y + '年');
                 dataAsset.push(Math.round(current));
                 
@@ -399,7 +520,6 @@
                 });
             }
 
-            // 表示更新
             document.getElementById('displayFinalAsset').innerText = formatMoney(current);
             document.getElementById('displayTotalInvestment').innerText = formatMoney(totalInvest);
             document.getElementById('displayTotalWithdrawn').innerText = formatMoney(totalWithdraw);
@@ -409,10 +529,8 @@
             profitEl.innerText = (profit>=0 ? '+' : '') + formatMoney(profit);
             profitEl.className = profit >= 0 ? "text-lg font-bold text-green-200" : "text-lg font-bold text-red-200";
 
-            // テーブル更新
             const tbody = document.getElementById('resultTableBody');
             const col2Header = document.getElementById('col2Header');
-            
             if(withdrawRate > 0) {
                 col2Header.innerText = "受取額 (年間)";
                 col2Header.className = "px-4 py-2 text-right font-semibold text-orange-600";
@@ -437,15 +555,11 @@
             drawChart(labels, dataAsset);
         }
 
-        // グラフ描画
         function drawChart(labels, data) {
             const ctx = document.getElementById('simulationChart').getContext('2d');
-            
             if(myChart) myChart.destroy();
-
-            // グラデーション
             const grad = ctx.createLinearGradient(0, 0, 0, 400);
-            grad.addColorStop(0, 'rgba(16, 185, 129, 0.4)'); // emerald-500
+            grad.addColorStop(0, 'rgba(16, 185, 129, 0.4)');
             grad.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
 
             myChart = new Chart(ctx, {
@@ -455,7 +569,7 @@
                     datasets: [{
                         label: '資産推移',
                         data: data,
-                        borderColor: '#10b981', // emerald-500
+                        borderColor: '#10b981',
                         backgroundColor: grad,
                         borderWidth: 2.5,
                         pointRadius: 0,
@@ -472,7 +586,7 @@
                         tooltip: {
                             mode: 'index',
                             intersect: false,
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)', // slate-900
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
                             titleFont: { size: 13 },
                             bodyFont: { size: 13 },
                             padding: 10,
@@ -487,17 +601,13 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: {
-                                maxTicksLimit: 6,
-                                color: '#94a3b8', // slate-400
-                                font: { size: 11 }
-                            }
+                            ticks: { maxTicksLimit: 6, color: '#94a3b8', font: { size: 11 } }
                         },
                         y: {
-                            grid: { color: '#f1f5f9', borderDash: [4, 4] }, // slate-100
+                            grid: { color: '#f1f5f9', borderDash: [4, 4] },
                             border: { display: false },
                             ticks: {
-                                color: '#94a3b8', // slate-400
+                                color: '#94a3b8',
                                 font: { size: 11 },
                                 callback: function(val) {
                                     if(val === 0) return '0';
@@ -507,11 +617,7 @@
                             }
                         }
                     },
-                    interaction: {
-                        mode: 'nearest',
-                        axis: 'x',
-                        intersect: false
-                    }
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
         }
