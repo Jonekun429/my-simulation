@@ -49,6 +49,11 @@
             border-color: #10b981; /* emerald-500 */
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
         }
+
+        /* プレースホルダーの色調整 */
+        input::placeholder {
+            color: #cbd5e1; /* slate-300: 薄いグレー */
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 min-h-screen">
@@ -117,7 +122,7 @@
                     <div>
                         <label class="text-sm font-bold text-slate-600 mb-1 block">初期投資額 (元手)</label>
                         <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 transition-colors">
-                            <input type="number" id="initialAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="0" oninput="calculate()" onfocus="this.select()">
+                            <input type="number" id="initialAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" placeholder="例: 0" oninput="calculate()" onfocus="this.select()">
                             <span class="text-slate-400 font-bold ml-2">万円</span>
                         </div>
                     </div>
@@ -127,9 +132,9 @@
                             <span>毎月の積立額</span>
                             <span class="text-emerald-500" id="monthlyAmountLabel">なし</span>
                         </label>
-                        <input type="range" id="monthlyAmountSlider" min="0" max="30" value="3" step="1" oninput="syncInputs('monthlyAmountSlider', 'monthlyAmount')">
+                        <input type="range" id="monthlyAmountSlider" min="0" max="30" value="0" step="1" oninput="syncInputs('monthlyAmountSlider', 'monthlyAmount')">
                         <div class="input-group flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1 transition-colors">
-                            <input type="number" id="monthlyAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="3" oninput="syncInputs('monthlyAmount', 'monthlyAmountSlider')" onfocus="this.select()">
+                            <input type="number" id="monthlyAmount" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" placeholder="例: 3" oninput="syncInputs('monthlyAmount', 'monthlyAmountSlider')" onfocus="this.select()">
                             <span class="text-slate-400 font-bold ml-2">万円</span>
                         </div>
                     </div>
