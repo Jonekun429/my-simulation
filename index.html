@@ -67,8 +67,11 @@
         
         /* 診断ページ用装飾 */
         .marker-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { r: 5; opacity: 1; } 50% { r: 8; opacity: 0.6; } 100% { r: 5; opacity: 1; } }
+        @keyframes pulse { 0% { r: 5; opacity: 1; } 50% { r: 7; opacity: 0.7; } 100% { r: 5; opacity: 1; } }
         
+        /* インジケーターのアニメーション */
+        .indicator-group { transition: transform 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
         .advice-card {
             background: linear-gradient(135deg, #fffbeb 0%, #fff 100%);
             border: 2px solid #fcd34d;
@@ -243,35 +246,49 @@
                             <svg viewBox="0 0 400 320" class="w-full max-w-sm h-auto drop-shadow-sm">
                                 <path id="tier-super" d="M200 20 L240 70 H160 Z" fill="#f87171" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="60" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="bold">超富裕層(5億~)</text>
+                                
                                 <path id="tier-rich" d="M160 72 L240 72 L275 125 H125 Z" fill="#fb923c" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="110" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="bold">富裕層(1億~)</text>
+                                
                                 <path id="tier-semi" d="M125 127 L275 127 L315 185 H85 Z" fill="#fbbf24" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="170" text-anchor="middle" font-size="10" fill="#b45309" font-weight="bold">準富裕層(5000万~)</text>
+                                
                                 <path id="tier-upper" d="M85 187 L315 187 L355 250 H45 Z" fill="#4ade80" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="230" text-anchor="middle" font-size="10" fill="#15803d" font-weight="bold">アッパーマス(3000万~)</text>
+                                
                                 <path id="tier-mass" d="M45 252 L355 252 L400 310 H0 Z" fill="#2dd4bf" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="290" text-anchor="middle" font-size="10" fill="#0f766e" font-weight="bold">マス層(~3000万)</text>
-                                <circle id="marker-now" cx="0" cy="0" r="6" fill="#334155" stroke="white" stroke-width="2" class="marker-pulse" style="display:none;" />
-                                <circle id="marker-future" cx="0" cy="0" r="8" fill="#15803d" stroke="white" stroke-width="2" class="marker-pulse" style="display:none;" />
+                                
+                                <g id="group-now" class="indicator-group">
+                                    <text x="75" y="5" text-anchor="end" font-size="12" font-weight="bold" fill="#64748b">Start</text>
+                                    <path d="M80 0 L120 0" stroke="#64748b" stroke-width="2" marker-end="url(#arrowhead-gray)" />
+                                    <polygon points="120,0 115,-3 115,3" fill="#64748b" />
+                                    <circle cx="125" cy="0" r="3" fill="#64748b" />
+                                </g>
+
+                                <g id="group-future" class="indicator-group">
+                                    <text x="325" y="5" text-anchor="start" font-size="14" font-weight="bold" fill="#15803d">Goal</text>
+                                    <path d="M320 0 L280 0" stroke="#15803d" stroke-width="4" />
+                                    <polygon points="280,0 288,-5 288,5" fill="#15803d" />
+                                    <circle cx="275" cy="0" r="5" fill="#15803d" class="marker-pulse" />
+                                </g>
                             </svg>
                         </div>
 
                         <div class="space-y-6">
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                                    <p class="text-xs font-bold text-slate-500">スタート時</p>
-                                    <p id="current-tier-name" class="text-base font-bold text-slate-700">--</p>
-                                </div>
-                                <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-100">
-                                    <p class="text-xs font-bold text-emerald-600">運用終了時</p>
-                                    <p id="future-tier-name" class="text-lg font-bold text-emerald-700">--</p>
-                                </div>
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <span class="text-sm text-slate-500 font-bold">Start (現在)</span>
+                                <span id="current-tier-name" class="text-lg font-bold text-slate-700">--</span>
+                            </div>
+                            <div class="flex justify-between items-center border-b border-emerald-100 pb-2">
+                                <span class="text-sm text-emerald-600 font-bold">Goal (将来)</span>
+                                <span id="future-tier-name" class="text-2xl font-bold text-emerald-700">--</span>
                             </div>
 
                             <div>
                                 <div class="flex justify-between text-sm mb-1">
-                                    <span class="text-slate-500 font-bold">次のランクまで</span>
-                                    <span class="text-emerald-600 font-bold" id="next-tier-gap">あと --万円</span>
+                                    <span class="text-slate-500 font-bold text-xs">NEXT RANKまで</span>
+                                    <span class="text-emerald-600 font-bold text-xs" id="next-tier-gap">あと --万円</span>
                                 </div>
                                 <div class="w-full bg-slate-200 rounded-full h-3">
                                     <div id="next-tier-progress" class="bg-emerald-500 h-3 rounded-full transition-all duration-1000" style="width: 0%"></div>
@@ -330,18 +347,16 @@
         
         // 資産階層データ (下限値: 万円)
         const TIERS = [
-            { id: 'tier-super', name: '超富裕層', min: 50000, color: '#f87171' }, 
-            { id: 'tier-rich', name: '富裕層', min: 10000, color: '#fb923c' },  
-            { id: 'tier-semi', name: '準富裕層', min: 5000, color: '#fbbf24' },  
-            { id: 'tier-upper', name: 'アッパーマス層', min: 3000, color: '#4ade80' }, 
-            { id: 'tier-mass', name: 'マス層', min: 0, color: '#2dd4bf' }
+            { id: 'tier-super', name: '超富裕層', min: 50000 }, 
+            { id: 'tier-rich', name: '富裕層', min: 10000 },  
+            { id: 'tier-semi', name: '準富裕層', min: 5000 },  
+            { id: 'tier-upper', name: 'アッパーマス層', min: 3000 }, 
+            { id: 'tier-mass', name: 'マス層', min: 0 }
         ];
         
         let currentSingleProduct = 'sp500';
         let singleChart = null;
         let dualChart = null;
-        // 診断用に計算結果を保持するオブジェクト
-        // inputs: 計算に使った入力値 (診断ロジックで使用)
         let lastResult = { initial: 0, final: 0, inputs: { rate: 0, monthly: 0, years: 0, initial: 0 } }; 
 
         window.onload = () => {
@@ -436,7 +451,6 @@
                 data.push(Math.round(current));
             }
 
-            // 診断用にデータを保存 (1銘柄モード)
             lastResult = { 
                 initial: initial, 
                 final: current, 
@@ -481,20 +495,16 @@
             const totalCurrent = spCurrent + allCurrent;
             const totalInvest = (spInit + allInit) + ((spMonth + allMonth) * 12 * years);
 
-            // 診断用にデータを保存 (2銘柄モード: 加重平均利回りを簡易計算)
-            // 診断ロジックを簡略化するため、最終結果から逆算した「実質平均利回り」等は使わず、
-            // ユーザーが直前に触ったタブの結果として「合計額」だけを利用する形にします。
-            // アドバイス機能のために「平均的な月額積立」と「代表利回り（資産比重で按分）」を計算。
             const totalMonthly = spMonth + allMonth;
             const weightedRate = totalMonthly > 0 
                 ? ((spRate * 12 * 100 * spMonth) + (allRate * 12 * 100 * allMonth)) / totalMonthly 
-                : (parseFloat(document.getElementById('dual-sp500-rate').value)); // 積立なしならS&P利回りを仮採用
+                : (parseFloat(document.getElementById('dual-sp500-rate').value)); 
 
             lastResult = { 
                 initial: (spInit + allInit), 
                 final: totalCurrent,
                 inputs: { 
-                    rate: weightedRate, // 加重平均年利
+                    rate: weightedRate, 
                     monthly: totalMonthly, 
                     years: years, 
                     initial: (spInit + allInit) 
@@ -520,7 +530,7 @@
                     responsive: true, 
                     maintainAspectRatio: false, 
                     plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false } },
-                    scales: { x: { display: false }, y: { display: false } }, // シンプル化のため軸非表示
+                    scales: { x: { display: false }, y: { display: false } }, 
                     interaction: { mode: 'nearest', axis: 'x', intersect: false }
                 }
             });
@@ -532,41 +542,34 @@
             const finalMan = lastResult.final / 10000;
             const initMan = lastResult.initial / 10000;
 
-            // 1. 現在・未来のランク判定
             const currentTierIndex = TIERS.findIndex(t => initMan >= t.min);
-            const currentTier = currentTierIndex !== -1 ? TIERS[currentTierIndex] : TIERS[4]; // 見つからなければマス層
+            const currentTier = currentTierIndex !== -1 ? TIERS[currentTierIndex] : TIERS[4];
             
             const futureTierIndex = TIERS.findIndex(t => finalMan >= t.min);
             const futureTier = futureTierIndex !== -1 ? TIERS[futureTierIndex] : TIERS[4];
 
-            // UI更新: テキスト
             document.getElementById('current-tier-name').innerText = currentTier.name + ` (${formatMoney(lastResult.initial)})`;
             document.getElementById('future-tier-name').innerText = futureTier.name + ` (${formatMoney(lastResult.final)})`;
 
-            // UI更新: ピラミッドマーカー
+            // 矢印位置の更新 (SVG Groupの移動)
             const yMap = { 'tier-super': 45, 'tier-rich': 95, 'tier-semi': 155, 'tier-upper': 215, 'tier-mass': 280 };
-            const mN = document.getElementById('marker-now');
-            const mF = document.getElementById('marker-future');
-            mN.setAttribute('cy', yMap[currentTier.id]); mN.style.display = 'block';
-            mF.setAttribute('cy', yMap[futureTier.id]); mF.style.display = 'block';
-
-            // 2. 次のランクへのギャップ計算
-            // 現在のランクより一つ上のランクを取得 (すでに最高ランクなら最高ランク維持)
-            let targetTier = TIERS[4]; // デフォルト マス
-            if (futureTierIndex > 0) {
-                targetTier = TIERS[futureTierIndex - 1]; // 一つ上
-            } else {
-                targetTier = TIERS[0]; // すでに超富裕層
-            }
             
-            // すでに到達している場合の処理
+            const gNow = document.getElementById('group-now');
+            const gFuture = document.getElementById('group-future');
+            
+            // translateでY座標だけ動かす
+            gNow.setAttribute('transform', `translate(0, ${yMap[currentTier.id]})`);
+            gFuture.setAttribute('transform', `translate(0, ${yMap[futureTier.id]})`);
+
+            // 次のランクへの計算
+            let targetTier = TIERS[4]; 
+            if (futureTierIndex > 0) targetTier = TIERS[futureTierIndex - 1]; 
+            else targetTier = TIERS[0]; 
+            
             if(finalMan >= targetTier.min && futureTierIndex === 0) {
-                // 最高ランク到達済み
                 document.getElementById('next-tier-gap').innerText = "最高ランク到達！";
                 document.getElementById('next-tier-progress').style.width = "100%";
                 document.getElementById('next-tier-target').innerText = "Goal!";
-                
-                // アドバイスエリアの表示変更
                 document.getElementById('advice-years').innerText = "0";
                 document.getElementById('advice-next-tier-1').innerText = "維持・継承";
                 document.getElementById('advice-monthly-add').innerText = "0";
@@ -574,7 +577,6 @@
             }
 
             const gap = (targetTier.min * 10000) - lastResult.final;
-            // 進捗率: (現在の資産 / 目標資産) * 100
             let progress = (lastResult.final / (targetTier.min * 10000)) * 100;
             if(progress > 100) progress = 100;
 
@@ -582,16 +584,14 @@
             document.getElementById('next-tier-progress').style.width = `${progress}%`;
             document.getElementById('next-tier-target').innerText = `目標: ${targetTier.name} (${targetTier.min}万円)`;
 
-            // 3. アドバイス生成 (シミュレーション逆算)
-            const r = lastResult.inputs.rate / 100 / 12; // 月利
+            // アドバイス計算
+            const r = lastResult.inputs.rate / 100 / 12; 
             const monthly = lastResult.inputs.monthly;
             const currentAsset = lastResult.initial;
             const targetAmount = targetTier.min * 10000;
 
-            // アドバイスA: 「あと何年で届く？」 (積立額固定・期間変動)
             let yearsToGoal = 0;
             let tempAsset = currentAsset;
-            // 最大100年までシミュレート
             for(let i=1; i<=1200; i++) {
                 tempAsset = (tempAsset + monthly) * (1 + r);
                 if(tempAsset >= targetAmount) {
@@ -602,23 +602,17 @@
             document.getElementById('advice-years').innerText = yearsToGoal > 0 ? yearsToGoal : "∞";
             document.getElementById('advice-next-tier-1').innerText = targetTier.name;
 
-            // アドバイスB: 「月いくら足せば届く？」 (期間固定・積立額変動)
-            // 目標額FV = Initial*(1+r)^n + PMT * ((1+r)^n - 1)/r
-            // PMT = (FV - Initial*(1+r)^n) * r / ((1+r)^n - 1)
-            const n = lastResult.inputs.years * 12; // 月数
+            const n = lastResult.inputs.years * 12; 
             const compoundFactor = Math.pow(1 + r, n);
             const initialGrown = currentAsset * compoundFactor;
             
             let requiredMonthly = 0;
             if (targetAmount > initialGrown) {
-                // 積立が必要
                 const numerator = (targetAmount - initialGrown) * r;
                 const denominator = compoundFactor - 1;
                 requiredMonthly = numerator / denominator;
             }
-            
             const additionalMonthly = Math.max(0, requiredMonthly - monthly);
-            // 万円単位で切り上げ
             const addMan = Math.ceil(additionalMonthly / 10000);
             
             document.getElementById('advice-monthly-add').innerText = addMan;
