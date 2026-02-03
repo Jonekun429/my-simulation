@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>資産運用シミュレーター | 資産クラス診断付</title>
+    <link rel="icon" id="dynamic-favicon">
+    <link rel="apple-touch-icon" id="dynamic-apple-icon">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2315803d%22/><path d=%22M20 70 L40 50 L60 60 L80 30%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22 fill=%22none%22/><circle cx=%2280%22 cy=%2230%22 r=%226%22 fill=%22%23fcd34d%22/></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2315803d%22/><path d=%22M20 70 L40 50 L60 60 L80 30%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22 fill=%22none%22/><circle cx=%2280%22 cy=%2230%22 r=%226%22 fill=%22%23fcd34d%22/></svg>">
     <style>
         /* 基本設定 */
         body {
@@ -325,6 +325,49 @@
     </div>
 
     <script>
+        // --- アイコン自動生成 (iOS/Android対応) ---
+        function setAppIcon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // 背景 (フォレストグリーン)
+            ctx.fillStyle = '#15803d'; 
+            ctx.fillRect(0, 0, 512, 512);
+
+            // グラフの線 (白)
+            ctx.beginPath();
+            ctx.moveTo(100, 350);
+            ctx.lineTo(200, 250);
+            ctx.lineTo(300, 300);
+            ctx.lineTo(412, 150);
+            ctx.lineWidth = 40;
+            ctx.strokeStyle = 'white';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.stroke();
+
+            // コイン (黄色)
+            ctx.beginPath();
+            ctx.arc(412, 150, 35, 0, Math.PI * 2);
+            ctx.fillStyle = '#fcd34d'; 
+            ctx.fill();
+
+            const url = canvas.toDataURL('image/png');
+
+            // アイコンタグに設定
+            const links = [
+                { id: 'dynamic-favicon', rel: 'icon' },
+                { id: 'dynamic-apple-icon', rel: 'apple-touch-icon' }
+            ];
+
+            links.forEach(item => {
+                const link = document.getElementById(item.id);
+                if (link) link.href = url;
+            });
+        }
+
         // --- 設定データ ---
         const PRODUCTS = {
             sp500: { name: 'S&P500 (米国株)', rate: 13.25 },
@@ -346,6 +389,7 @@
         let lastResult = { initial: 0, final: 0, inputs: { rate: 0, monthly: 0, years: 0, initial: 0 } }; 
 
         window.onload = () => {
+            setAppIcon(); // アイコン生成
             selectProductSingle('sp500');
             calculateSingle();
             
