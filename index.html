@@ -243,16 +243,12 @@
                             <svg viewBox="0 0 400 320" class="w-full max-w-sm h-auto drop-shadow-sm">
                                 <path id="tier-super" d="M200 20 L240 70 H160 Z" fill="#f87171" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="60" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="bold">超富裕層(5億~)</text>
-                                
                                 <path id="tier-rich" d="M160 72 L240 72 L275 125 H125 Z" fill="#fb923c" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="110" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="bold">富裕層(1億~)</text>
-                                
                                 <path id="tier-semi" d="M125 127 L275 127 L315 185 H85 Z" fill="#fbbf24" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="170" text-anchor="middle" font-size="10" fill="#b45309" font-weight="bold">準富裕層(5000万~)</text>
-                                
                                 <path id="tier-upper" d="M85 187 L315 187 L355 250 H45 Z" fill="#4ade80" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="230" text-anchor="middle" font-size="10" fill="#15803d" font-weight="bold">アッパーマス(3000万~)</text>
-                                
                                 <path id="tier-mass" d="M45 252 L355 252 L400 310 H0 Z" fill="#2dd4bf" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="290" text-anchor="middle" font-size="10" fill="#0f766e" font-weight="bold">マス層(~3000万)</text>
                                 
@@ -300,20 +296,10 @@
                         次のステージへ行くには？
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="bg-white bg-opacity-80 p-4 rounded-xl border border-yellow-200">
-                            <p class="text-xs font-bold text-slate-500 mb-1">今の積立額のままなら...</p>
-                            <p class="text-sm text-slate-700">
-                                あと <span id="advice-years" class="text-xl font-bold text-emerald-600">--</span> 年で<br>
-                                <span id="advice-next-tier-1" class="font-bold">--</span> に到達できます！
-                            </p>
-                        </div>
-                        <div class="bg-white bg-opacity-80 p-4 rounded-xl border border-yellow-200">
-                            <p class="text-xs font-bold text-slate-500 mb-1">設定した期間で届くには...</p>
-                            <p class="text-sm text-slate-700">
-                                毎月の積立を<br>
-                                <span class="text-xl font-bold text-emerald-600">+<span id="advice-monthly-add">--</span>万円</span> 増やせば到達！
-                            </p>
-                        </div>
+                        <div class="bg-white bg-opacity-80 p-4 rounded-xl border border-yellow-200" id="advice-box-time">
+                            </div>
+                        <div class="bg-white bg-opacity-80 p-4 rounded-xl border border-yellow-200" id="advice-box-money">
+                            </div>
                     </div>
                     <p class="text-xs text-slate-500 mt-4 text-center">※現在の利回り設定に基づいた単純シミュレーションです。</p>
                 </div>
@@ -544,28 +530,23 @@
             document.getElementById('current-tier-name').innerText = currentTier.name + ` (${formatMoney(lastResult.initial)})`;
             document.getElementById('future-tier-name').innerText = futureTier.name + ` (${formatMoney(lastResult.final)})`;
 
-            // 矢印位置の更新 (SVG Groupの移動)
+            // 矢印位置更新
             const yMap = { 'tier-super': 45, 'tier-rich': 95, 'tier-semi': 155, 'tier-upper': 215, 'tier-mass': 280 };
-            
-            const gNow = document.getElementById('group-now');
-            const gFuture = document.getElementById('group-future');
-            
-            // translateでY座標だけ動かす
-            gNow.setAttribute('transform', `translate(0, ${yMap[currentTier.id]})`);
-            gFuture.setAttribute('transform', `translate(0, ${yMap[futureTier.id]})`);
+            document.getElementById('group-now').setAttribute('transform', `translate(0, ${yMap[currentTier.id]})`);
+            document.getElementById('group-future').setAttribute('transform', `translate(0, ${yMap[futureTier.id]})`);
 
-            // 次のランクへの計算
+            // 次のランク
             let targetTier = TIERS[4]; 
             if (futureTierIndex > 0) targetTier = TIERS[futureTierIndex - 1]; 
             else targetTier = TIERS[0]; 
             
+            // 既に到達時
             if(finalMan >= targetTier.min && futureTierIndex === 0) {
                 document.getElementById('next-tier-gap').innerText = "最高ランク到達！";
                 document.getElementById('next-tier-progress').style.width = "100%";
                 document.getElementById('next-tier-target').innerText = "Goal!";
-                document.getElementById('advice-years').innerText = "0";
-                document.getElementById('advice-next-tier-1').innerText = "維持・継承";
-                document.getElementById('advice-monthly-add').innerText = "0";
+                document.getElementById('advice-box-time').innerHTML = `<p class="text-sm font-bold text-emerald-600">最高ランク到達済みです！</p>`;
+                document.getElementById('advice-box-money').innerHTML = `<p class="text-sm font-bold text-emerald-600">維持・継承していきましょう！</p>`;
                 return;
             }
 
@@ -583,6 +564,7 @@
             const currentAsset = lastResult.initial;
             const targetAmount = targetTier.min * 10000;
 
+            // Box 1: 時間で解決
             let yearsToGoal = 0;
             let tempAsset = currentAsset;
             for(let i=1; i<=1200; i++) {
@@ -592,9 +574,16 @@
                     break;
                 }
             }
-            document.getElementById('advice-years').innerText = yearsToGoal > 0 ? yearsToGoal : "∞";
-            document.getElementById('advice-next-tier-1').innerText = targetTier.name;
+            const timeHtml = `
+                <p class="text-xs font-bold text-slate-500 mb-1">今の積立額のままだと...</p>
+                <p class="text-sm text-slate-700">
+                    現在から <span class="text-xl font-bold text-emerald-600">${yearsToGoal > 0 ? yearsToGoal : "∞"}年後</span> に<br>
+                    <span class="font-bold">「${targetTier.name}」</span>になれるよ！
+                </p>
+            `;
+            document.getElementById('advice-box-time').innerHTML = timeHtml;
 
+            // Box 2: お金で解決 (指定された文言)
             const n = lastResult.inputs.years * 12; 
             const compoundFactor = Math.pow(1 + r, n);
             const initialGrown = currentAsset * compoundFactor;
@@ -608,7 +597,15 @@
             const additionalMonthly = Math.max(0, requiredMonthly - monthly);
             const addMan = Math.ceil(additionalMonthly / 10000);
             
-            document.getElementById('advice-monthly-add').innerText = addMan;
+            const moneyHtml = `
+                <p class="text-xs font-bold text-slate-500 mb-1">設定した期間で届くには...</p>
+                <p class="text-sm text-slate-700">
+                    あと <span class="text-xl font-bold text-emerald-600">${addMan}万円</span> 多く積み立てると、<br>
+                    現在から ${lastResult.inputs.years}年後 には<br>
+                    <span class="font-bold">「${targetTier.name}」</span>になれるよ！
+                </p>
+            `;
+            document.getElementById('advice-box-money').innerHTML = moneyHtml;
         }
     </script>
 </body>
