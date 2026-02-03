@@ -6,6 +6,9 @@
     <title>資産運用シミュレーター | 資産クラス診断付</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2315803d%22/><path d=%22M20 70 L40 50 L60 60 L80 30%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22 fill=%22none%22/><circle cx=%2280%22 cy=%2230%22 r=%226%22 fill=%22%23fcd34d%22/></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%2315803d%22/><path d=%22M20 70 L40 50 L60 60 L80 30%22 stroke=%22white%22 stroke-width=%228%22 stroke-linecap=%22round%22 fill=%22none%22/><circle cx=%2280%22 cy=%2230%22 r=%226%22 fill=%22%23fcd34d%22/></svg>">
     <style>
         /* 基本設定 */
         body {
@@ -243,12 +246,16 @@
                             <svg viewBox="0 0 400 320" class="w-full max-w-sm h-auto drop-shadow-sm">
                                 <path id="tier-super" d="M200 20 L240 70 H160 Z" fill="#f87171" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="60" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="bold">超富裕層(5億~)</text>
+                                
                                 <path id="tier-rich" d="M160 72 L240 72 L275 125 H125 Z" fill="#fb923c" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="110" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="bold">富裕層(1億~)</text>
+                                
                                 <path id="tier-semi" d="M125 127 L275 127 L315 185 H85 Z" fill="#fbbf24" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="170" text-anchor="middle" font-size="10" fill="#b45309" font-weight="bold">準富裕層(5000万~)</text>
+                                
                                 <path id="tier-upper" d="M85 187 L315 187 L355 250 H45 Z" fill="#4ade80" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="230" text-anchor="middle" font-size="10" fill="#15803d" font-weight="bold">アッパーマス(3000万~)</text>
+                                
                                 <path id="tier-mass" d="M45 252 L355 252 L400 310 H0 Z" fill="#2dd4bf" opacity="0.3" stroke="#fff" stroke-width="2" />
                                 <text x="200" y="290" text-anchor="middle" font-size="10" fill="#0f766e" font-weight="bold">マス層(~3000万)</text>
                                 
