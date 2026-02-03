@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* 基本設定 */
         body {
             font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
             background-color: #f1f5f9;
@@ -15,7 +16,7 @@
         .text-custom-green { color: #15803d; }
         .bg-custom-green { background-color: #15803d; }
 
-        /* タブUIの核心部：添付画像のスタイルを再現 */
+        /* タブUI設定 */
         .tab-container {
             display: flex;
             overflow-x: auto;
@@ -25,19 +26,20 @@
         }
         .tab-btn {
             flex: 1;
-            min-width: 140px;
-            padding: 12px 10px;
+            min-width: 120px;
+            padding: 12px 4px;
             font-weight: bold;
             font-size: 0.85rem;
             text-align: center;
             border: 2px solid #e2e8f0;
-            border-bottom: none; /* 下をあけてメインコンテンツと繋げる */
+            border-bottom: none;
             border-radius: 8px 8px 0 0;
             background-color: #f8fafc;
             color: #64748b;
             transition: all 0.2s;
             position: relative;
             bottom: -2px; /* 下線に重ねる */
+            white-space: nowrap;
         }
         .tab-btn.active {
             background-color: #ffffff;
@@ -48,18 +50,31 @@
             box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
-        /* スライダーと入力フォームの基本設定 */
+        /* 入力フォーム設定 */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #10b981; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: -8px; }
+        
+        /* 2銘柄モード用のスライダー色 */
         .dual-range::-webkit-slider-thumb { border: 2px solid #15803d; }
+        
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #e2e8f0; border-radius: 2px; }
+        
+        .input-group:focus-within { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
+        .input-group-dual:focus-within { border-color: #15803d; box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1); }
+
         .bg-required { background-color: #fef9c3; border-color: #fde047; }
         .bg-cleared { background-color: #ffffff; border-color: #e2e8f0; }
+        
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-        .pyramid-label { font-size: 10px; font-weight: bold; }
+        
+        /* 診断用アニメーション */
         .marker-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { r: 4; opacity: 1; } 50% { r: 7; opacity: 0.5; } 100% { r: 4; opacity: 1; } }
+        @keyframes pulse { 0% { r: 5; opacity: 1; } 50% { r: 8; opacity: 0.6; } 100% { r: 5; opacity: 1; } }
+        
+        /* スクロールバー隠し */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -90,8 +105,12 @@
                     <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                         <h2 class="text-lg font-bold text-slate-700 mb-3">1. 運用商品を選ぶ</h2>
                         <div class="grid grid-cols-2 gap-2">
-                            <button onclick="selectProductSingle('sp500')" id="btn-single-sp500" class="p-3 rounded-xl border-2 font-bold relative transition-all">S&P500 (米国株)</button>
-                            <button onclick="selectProductSingle('all')" id="btn-single-all" class="p-3 rounded-xl border font-medium transition-all">全世界株式</button>
+                            <button onclick="selectProductSingle('sp500')" id="btn-single-sp500" class="p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold transition-all relative">
+                                S&P500 (米国株)
+                            </button>
+                            <button onclick="selectProductSingle('all')" id="btn-single-all" class="p-3 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium transition-all relative">
+                                全世界株式
+                            </button>
                         </div>
                     </section>
 
@@ -99,25 +118,31 @@
                         <h2 class="text-lg font-bold text-slate-700">2. 金額を入れる</h2>
                         <div>
                             <label class="text-sm font-bold text-slate-600 mb-1 block">初期投資額 (元手)</label>
-                            <div id="single-initialGroup" class="flex items-center border-2 rounded-xl px-3 py-2 bg-required">
-                                <input type="number" id="single-initial" class="bg-transparent w-full text-xl font-bold text-right outline-none" placeholder="0" oninput="checkInput('single-initial', 'single-initialGroup'); calculateSingle();">
-                                <span class="font-bold ml-2">万円</span>
+                            <div id="single-initialGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 bg-required transition-colors">
+                                <input type="number" id="single-initial" class="bg-transparent w-full text-xl font-bold text-right outline-none text-slate-700" placeholder="0" oninput="checkInput('single-initial', 'single-initialGroup'); calculateSingle();">
+                                <span class="font-bold ml-2 text-slate-500">万円</span>
                             </div>
                         </div>
                         <div>
-                            <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between"><span>毎月の積立額</span><span class="text-emerald-500" id="single-monthlyLabel">3万</span></label>
-                            <input type="range" id="single-monthlySlider" min="0" max="30" value="3" oninput="syncInputs('single-monthlySlider', 'single-monthly', 'single-monthlyLabel', '万', true)">
-                            <div id="single-monthlyGroup" class="flex items-center border-2 rounded-xl px-3 py-2 bg-cleared">
-                                <input type="number" id="single-monthly" class="bg-transparent w-full text-xl font-bold text-right outline-none" value="3" oninput="checkInput('single-monthly', 'single-monthlyGroup'); syncInputs('single-monthly', 'single-monthlySlider', 'single-monthlyLabel', '万', true);">
-                                <span class="font-bold ml-2">万円</span>
+                            <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
+                                <span>毎月の積立額</span>
+                                <span class="text-emerald-500 font-bold" id="single-monthlyLabel">3万円</span>
+                            </label>
+                            <input type="range" id="single-monthlySlider" min="0" max="30" value="3" oninput="syncInputs('single-monthlySlider', 'single-monthly', 'single-monthlyLabel', '万円', true)">
+                            <div id="single-monthlyGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 bg-cleared transition-colors">
+                                <input type="number" id="single-monthly" class="bg-transparent w-full text-xl font-bold text-right outline-none text-slate-700" value="3" oninput="checkInput('single-monthly', 'single-monthlyGroup'); syncInputs('single-monthly', 'single-monthlySlider', 'single-monthlyLabel', '万円', true);">
+                                <span class="font-bold ml-2 text-slate-500">万円</span>
                             </div>
                         </div>
                         <div>
-                            <label class="text-sm font-bold text-slate-600 mb-1">運用期間</label>
-                            <input type="range" id="single-yearsSlider" min="1" max="50" value="20" oninput="syncInputs('single-yearsSlider', 'single-years', null, null, true)">
-                            <div id="single-yearsGroup" class="flex items-center border-2 rounded-xl px-3 py-2 bg-cleared">
-                                <input type="number" id="single-years" class="bg-transparent w-full text-xl font-bold text-right outline-none" value="20" oninput="checkInput('single-years', 'single-yearsGroup'); syncInputs('single-years', 'single-yearsSlider', null, null, true);">
-                                <span class="font-bold ml-2">年</span>
+                            <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
+                                <span>運用期間</span>
+                                <span class="text-emerald-500 font-bold" id="single-yearsLabel">20年</span>
+                            </label>
+                            <input type="range" id="single-yearsSlider" min="1" max="50" value="20" oninput="syncInputs('single-yearsSlider', 'single-years', 'single-yearsLabel', '年', true)">
+                            <div id="single-yearsGroup" class="input-group flex items-center border-2 rounded-xl px-3 py-2 bg-cleared transition-colors">
+                                <input type="number" id="single-years" class="bg-transparent w-full text-xl font-bold text-right outline-none text-slate-700" value="20" oninput="checkInput('single-years', 'single-yearsGroup'); syncInputs('single-years', 'single-yearsSlider', 'single-yearsLabel', '年', true);">
+                                <span class="font-bold ml-2 text-slate-500">年</span>
                             </div>
                         </div>
                     </section>
@@ -127,6 +152,7 @@
                     <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-6 text-white shadow-md">
                         <p class="text-emerald-50 text-sm font-bold mb-1">最終資産残高</p>
                         <div class="text-4xl md:text-5xl font-bold tracking-tight" id="single-displayFinalAsset">0円</div>
+                        <p class="text-emerald-100 text-xs mt-2 text-right">元本: <span id="single-displayInvestment">0円</span></p>
                     </div>
                     <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
                         <div class="relative h-72 w-full"><canvas id="single-chart"></canvas></div>
@@ -134,68 +160,158 @@
                 </div>
             </div>
 
-            <div id="tab-content-dual" class="hidden fade-in space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 text-center">
-                    <p class="text-slate-500 font-bold">2銘柄の計算画面（内容は維持）</p>
-                    <button onclick="calculateDual()" class="mt-4 px-6 py-2 bg-custom-green text-white rounded-lg font-bold">再計算する</button>
-                    <div class="mt-6 text-3xl font-bold text-custom-green" id="dual-displayFinalAsset">0円</div>
-                    <div class="relative h-64 w-full mt-4"><canvas id="dual-chart"></canvas></div>
+            <div id="tab-content-dual" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start fade-in">
+                <div class="lg:col-span-5 space-y-4">
+                    
+                    <div class="bg-blue-50 rounded-2xl p-5 border border-blue-100">
+                        <h3 class="font-bold text-blue-800 mb-3 flex items-center">🇺🇸 S&P500 (米国株)</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-bold text-blue-700 block mb-1">初期投資額</label>
+                                <div class="input-group flex items-center bg-white border border-blue-200 rounded-xl px-3 py-2">
+                                    <input type="number" id="dual-sp500-init" class="bg-transparent w-full text-lg font-bold text-right outline-none" placeholder="0" oninput="calculateDual()">
+                                    <span class="text-slate-500 text-sm font-bold ml-2">万円</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-blue-700 block mb-1">毎月の積立額</label>
+                                <div class="input-group flex items-center bg-white border border-blue-200 rounded-xl px-3 py-2">
+                                    <input type="number" id="dual-sp500-month" class="bg-transparent w-full text-lg font-bold text-right outline-none" placeholder="例: 3" value="3" oninput="calculateDual()">
+                                    <span class="text-slate-500 text-sm font-bold ml-2">万円</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-green-50 rounded-2xl p-5 border border-green-100">
+                        <h3 class="font-bold text-green-800 mb-3 flex items-center">🌍 全世界株式 (オルカン)</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-xs font-bold text-green-700 block mb-1">初期投資額</label>
+                                <div class="input-group flex items-center bg-white border border-green-200 rounded-xl px-3 py-2">
+                                    <input type="number" id="dual-all-init" class="bg-transparent w-full text-lg font-bold text-right outline-none" placeholder="0" oninput="calculateDual()">
+                                    <span class="text-slate-500 text-sm font-bold ml-2">万円</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-green-700 block mb-1">毎月の積立額</label>
+                                <div class="input-group flex items-center bg-white border border-green-200 rounded-xl px-3 py-2">
+                                    <input type="number" id="dual-all-month" class="bg-transparent w-full text-lg font-bold text-right outline-none" placeholder="例: 2" value="2" oninput="calculateDual()">
+                                    <span class="text-slate-500 text-sm font-bold ml-2">万円</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-700 mb-3">共通設定</h2>
+                        <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
+                            <span>運用期間</span>
+                            <span class="text-custom-green font-bold" id="dual-yearsLabel">20年</span>
+                        </label>
+                        <input type="range" id="dual-yearsSlider" min="1" max="50" value="20" class="dual-range" oninput="syncInputs('dual-yearsSlider', 'dual-years', 'dual-yearsLabel', '年', false)">
+                        <div class="input-group-dual flex items-center border-2 rounded-xl px-3 py-2 mt-1 bg-white border-slate-200">
+                            <input type="number" id="dual-years" class="bg-transparent w-full text-xl font-bold text-right outline-none" value="20" oninput="syncInputs('dual-years', 'dual-yearsSlider', 'dual-yearsLabel', '年', false)">
+                            <span class="text-slate-500 font-bold ml-2">年</span>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="bg-custom-green rounded-2xl p-6 text-white shadow-md">
+                        <p class="text-green-100 text-sm font-bold mb-1">最終資産残高 (2銘柄合計)</p>
+                        <div class="text-4xl md:text-5xl font-bold tracking-tight" id="dual-displayFinalAsset">0円</div>
+                        <p class="text-green-200 text-xs mt-2 text-right">元本合計: <span id="dual-displayInvestment">0円</span></p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                        <div class="relative h-72 w-full"><canvas id="dual-chart"></canvas></div>
+                    </div>
                 </div>
             </div>
 
             <div id="tab-content-hierarchy" class="hidden fade-in space-y-6">
-                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6">資産階層ピラミッド診断</h2>
-                    <svg viewBox="0 0 400 320" class="w-full max-w-md h-auto">
-                        <path id="tier-super" d="M200 20 L240 70 H160 Z" fill="#f87171" opacity="0.3" stroke="#f87171" />
-                        <path id="tier-rich" d="M160 72 L240 72 L275 125 H125 Z" fill="#fb923c" opacity="0.3" stroke="#fb923c" />
-                        <path id="tier-semi" d="M125 127 L275 127 L315 185 H85 Z" fill="#fbbf24" opacity="0.3" stroke="#fbbf24" />
-                        <path id="tier-upper" d="M85 187 L315 187 L355 250 H45 Z" fill="#4ade80" opacity="0.3" stroke="#4ade80" />
-                        <path id="tier-mass" d="M45 252 L355 252 L400 310 H0 Z" fill="#2dd4bf" opacity="0.3" stroke="#2dd4bf" />
-                        <circle id="marker-now" cx="0" cy="0" r="5" fill="#334155" class="marker-pulse" style="display:none;" />
-                        <circle id="marker-future" cx="0" cy="0" r="5" fill="#15803d" class="marker-pulse" style="display:none;" />
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col items-center text-center">
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">資産階層ピラミッド診断</h2>
+                    <p class="text-sm text-slate-500 mb-6">直前のシミュレーション結果をもとに判定します</p>
+                    
+                    <svg viewBox="0 0 400 320" class="w-full max-w-md h-auto drop-shadow-sm">
+                        <path id="tier-super" d="M200 20 L240 70 H160 Z" fill="#f87171" opacity="0.3" stroke="#fff" stroke-width="2" />
+                        <text x="200" y="60" text-anchor="middle" font-size="10" fill="#b91c1c" font-weight="bold">超富裕層(5億~)</text>
+                        
+                        <path id="tier-rich" d="M160 72 L240 72 L275 125 H125 Z" fill="#fb923c" opacity="0.3" stroke="#fff" stroke-width="2" />
+                        <text x="200" y="110" text-anchor="middle" font-size="10" fill="#c2410c" font-weight="bold">富裕層(1億~)</text>
+                        
+                        <path id="tier-semi" d="M125 127 L275 127 L315 185 H85 Z" fill="#fbbf24" opacity="0.3" stroke="#fff" stroke-width="2" />
+                        <text x="200" y="170" text-anchor="middle" font-size="10" fill="#b45309" font-weight="bold">準富裕層(5000万~)</text>
+                        
+                        <path id="tier-upper" d="M85 187 L315 187 L355 250 H45 Z" fill="#4ade80" opacity="0.3" stroke="#fff" stroke-width="2" />
+                        <text x="200" y="230" text-anchor="middle" font-size="10" fill="#15803d" font-weight="bold">アッパーマス(3000万~)</text>
+                        
+                        <path id="tier-mass" d="M45 252 L355 252 L400 310 H0 Z" fill="#2dd4bf" opacity="0.3" stroke="#fff" stroke-width="2" />
+                        <text x="200" y="290" text-anchor="middle" font-size="10" fill="#0f766e" font-weight="bold">マス層(~3000万)</text>
+                        
+                        <circle id="marker-now" cx="0" cy="0" r="6" fill="#334155" stroke="white" stroke-width="2" class="marker-pulse" style="display:none;" />
+                        <circle id="marker-future" cx="0" cy="0" r="8" fill="#15803d" stroke="white" stroke-width="2" class="marker-pulse" style="display:none;" />
                     </svg>
-                    <div class="grid grid-cols-2 gap-4 mt-6 w-full">
-                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center">
-                            <p class="text-xs font-bold text-slate-500">現在地</p>
-                            <p id="current-tier-name" class="text-lg font-bold">判定中</p>
+
+                    <div class="grid grid-cols-2 gap-4 mt-6 w-full max-w-md">
+                        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                            <p class="text-xs font-bold text-slate-500 mb-1">スタート時</p>
+                            <p id="current-tier-name" class="text-lg font-bold text-slate-700">--</p>
                         </div>
-                        <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-100 text-center">
-                            <p class="text-xs font-bold text-emerald-600">運用後</p>
-                            <p id="future-tier-name" class="text-lg font-bold">判定中</p>
+                        <div class="p-4 rounded-xl bg-custom-green bg-opacity-10 border border-custom-green">
+                            <p class="text-xs font-bold text-custom-green mb-1">運用終了時</p>
+                            <p id="future-tier-name" class="text-xl font-bold text-custom-green">--</p>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="tab-content-guide" class="hidden fade-in bg-white rounded-2xl p-8 border border-slate-100">
-                <h2 class="text-2xl font-bold mb-4">🔰 使い方ガイド</h2>
-                <p class="text-slate-600">各項目を入力すると、リアルタイムで資産の推移と階層判定が更新されます。</p>
+                <h2 class="text-2xl font-bold mb-4 text-slate-800">🔰 使い方ガイド</h2>
+                <div class="space-y-4 text-slate-600">
+                    <p><strong>1銘柄で計算：</strong> S&P500または全世界株式のどちらかを選んで、シンプルにシミュレーションします。</p>
+                    <p><strong>2銘柄で計算：</strong> 「S&P500を毎月3万、オルカンを毎月2万」のように組み合わせて、合計資産がどうなるかを計算します。</p>
+                    <p><strong>資産クラス診断：</strong> シミュレーション結果が、世の中で言う「富裕層」や「マス層」のどこに位置するかを図解します。</p>
+                </div>
             </div>
+
         </div>
     </div>
 
     <script>
-        // 既存のPRODUCTS設定と階層データ
+        // --- 設定データ ---
         const PRODUCTS = {
             sp500: { name: 'S&P500 (米国株)', rate: 13.25 },
             all: { name: '全世界株式 (オルカン)', rate: 9.99 }
         };
+        
+        // 資産階層データ
         const TIERS = [
-            { id: 'tier-super', name: '超富裕層', min: 50000, color: '#f87171' },
-            { id: 'tier-rich', name: '富裕層', min: 10000, color: '#fb923c' },
-            { id: 'tier-semi', name: '準富裕層', min: 5000, color: '#fbbf24' },
-            { id: 'tier-upper', name: 'アッパーマス層', min: 3000, color: '#4ade80' },
+            { id: 'tier-super', name: '超富裕層', min: 50000, color: '#f87171' }, // 5億
+            { id: 'tier-rich', name: '富裕層', min: 10000, color: '#fb923c' },  // 1億
+            { id: 'tier-semi', name: '準富裕層', min: 5000, color: '#fbbf24' },  // 5000万
+            { id: 'tier-upper', name: 'アッパーマス層', min: 3000, color: '#4ade80' }, // 3000万
             { id: 'tier-mass', name: 'マス層', min: 0, color: '#2dd4bf' }
         ];
         
         let currentSingleProduct = 'sp500';
         let singleChart = null;
         let dualChart = null;
-        let lastResult = { initial: 0, final: 0 };
+        let lastResult = { initial: 0, final: 0 }; // 診断用に結果を保存
 
-        window.onload = () => { selectProductSingle('sp500'); calculateSingle(); };
+        // --- 初期化 ---
+        window.onload = () => {
+            selectProductSingle('sp500');
+            calculateSingle(); // 初回計算
+            
+            // Dualモードの初期値を入れておく（プレースホルダー用）
+            document.getElementById('dual-sp500-month').value = 3;
+            document.getElementById('dual-all-month').value = 2;
+            calculateDual(); // 裏でDualも計算しておく
+        };
 
+        // --- タブ切り替え ---
         function switchTab(tabName) {
             ['single', 'dual', 'hierarchy', 'guide'].forEach(t => {
                 document.getElementById('tab-btn-' + t).classList.remove('active');
@@ -203,9 +319,62 @@
             });
             document.getElementById('tab-btn-' + tabName).classList.add('active');
             document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+            
             if(tabName === 'hierarchy') updateHierarchyUI();
             if(tabName === 'single' && singleChart) singleChart.resize();
-            if(tabName === 'dual' && dualChart) dualChart.resize();
+            if(tabName === 'dual') {
+                if(dualChart) dualChart.resize();
+                calculateDual(); // 念のため再計算
+            }
+        }
+
+        // --- 共通ユーティリティ ---
+        function formatMoney(n) {
+            if(n < 10000) return Math.round(n).toLocaleString() + '円';
+            const oku = Math.floor(n / 100000000);
+            const man = Math.floor((n % 100000000) / 10000);
+            if(oku > 0) return `${oku}億${man > 0 ? man.toLocaleString() + '万' : ''}円`;
+            return `${man.toLocaleString()}万円`;
+        }
+
+        function checkInput(id, group) {
+            const val = document.getElementById(id).value;
+            const el = document.getElementById(group);
+            if(val > 0) {
+                el.classList.add('bg-cleared'); el.classList.remove('bg-required');
+            } else {
+                el.classList.remove('bg-cleared'); el.classList.add('bg-required');
+            }
+        }
+
+        function syncInputs(from, to, labelId, unit, isSingle) {
+            const val = document.getElementById(from).value;
+            document.getElementById(to).value = val;
+            if(labelId) document.getElementById(labelId).innerText = val + unit;
+            
+            if(isSingle) {
+                checkInput('single-monthly', 'single-monthlyGroup');
+                checkInput('single-years', 'single-yearsGroup');
+                calculateSingle();
+            } else {
+                calculateDual();
+            }
+        }
+
+        // --- Single Mode Logic ---
+        function selectProductSingle(key) {
+            currentSingleProduct = key;
+            ['sp500', 'all'].forEach(k => {
+                const btn = document.getElementById('btn-single-' + k);
+                if(k === key) {
+                    btn.className = "p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold transition-all relative";
+                    if(!btn.innerHTML.includes('svg')) btn.innerHTML += '<span class="absolute top-1 right-1 text-emerald-500">●</span>';
+                } else {
+                    btn.className = "p-3 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium transition-all relative";
+                    const span = btn.querySelector('span'); if(span) span.remove();
+                }
+            });
+            calculateSingle();
         }
 
         function calculateSingle() {
@@ -213,67 +382,153 @@
             const monthly = (parseFloat(document.getElementById('single-monthly').value) || 0) * 10000;
             const years = parseInt(document.getElementById('single-years').value) || 20;
             const rate = PRODUCTS[currentSingleProduct].rate / 100 / 12;
-            
+
             let current = initial;
-            const labels = ['開始'], data = [initial];
-            for(let i=1; i<=years; i++){
-                for(let m=0; m<12; m++) current = (current + monthly) * (1 + rate);
-                labels.push(i+'年'); data.push(Math.round(current));
+            const labels = ['開始'];
+            const data = [Math.round(current)];
+
+            for(let y=1; y<=years; y++) {
+                for(let m=0; m<12; m++) {
+                    current = (current + monthly) * (1 + rate);
+                }
+                labels.push(y + '年');
+                data.push(Math.round(current));
             }
-            lastResult = { initial, final: current };
-            document.getElementById('single-displayFinalAsset').innerText = Math.round(current).toLocaleString() + '円';
+
+            // 結果保存と表示
+            lastResult = { initial: initial, final: current };
+            document.getElementById('single-displayFinalAsset').innerText = formatMoney(current);
+            document.getElementById('single-displayInvestment').innerText = formatMoney(initial + (monthly * 12 * years));
+            
             drawChart('single-chart', labels, data, 'single');
         }
 
-        function selectProductSingle(key) {
-            currentSingleProduct = key;
-            ['sp500', 'all'].forEach(k => {
-                const btn = document.getElementById('btn-single-' + k);
-                btn.className = k === key ? "p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold" : "p-3 rounded-xl border border-slate-200 bg-white text-slate-500 font-medium";
-            });
-            calculateSingle();
+        // --- Dual Mode Logic (復活させた部分) ---
+        function calculateDual() {
+            // S&P500
+            const spInit = (parseFloat(document.getElementById('dual-sp500-init').value) || 0) * 10000;
+            const spMonth = (parseFloat(document.getElementById('dual-sp500-month').value) || 0) * 10000;
+            const spRate = PRODUCTS.sp500.rate / 100 / 12;
+
+            // All Country
+            const allInit = (parseFloat(document.getElementById('dual-all-init').value) || 0) * 10000;
+            const allMonth = (parseFloat(document.getElementById('dual-all-month').value) || 0) * 10000;
+            const allRate = PRODUCTS.all.rate / 100 / 12;
+
+            // 共通
+            const years = parseInt(document.getElementById('dual-years').value) || 20;
+
+            let spCurrent = spInit;
+            let allCurrent = allInit;
+            const labels = ['開始'];
+            const data = [Math.round(spCurrent + allCurrent)];
+
+            for(let y=1; y<=years; y++) {
+                for(let m=0; m<12; m++) {
+                    spCurrent = (spCurrent + spMonth) * (1 + spRate);
+                    allCurrent = (allCurrent + allMonth) * (1 + allRate);
+                }
+                labels.push(y + '年');
+                data.push(Math.round(spCurrent + allCurrent));
+            }
+
+            const totalCurrent = spCurrent + allCurrent;
+            const totalInvest = (spInit + allInit) + ((spMonth + allMonth) * 12 * years);
+
+            // 結果保存と表示
+            lastResult = { initial: (spInit + allInit), final: totalCurrent };
+            document.getElementById('dual-displayFinalAsset').innerText = formatMoney(totalCurrent);
+            document.getElementById('dual-displayInvestment').innerText = formatMoney(totalInvest);
+
+            // 2銘柄モードは「指定された深緑」で描画
+            drawChart('dual-chart', labels, data, 'dual');
         }
 
+        // --- Chart Function ---
         function drawChart(id, labels, data, mode) {
             const ctx = document.getElementById(id).getContext('2d');
-            if(id === 'single-chart' && singleChart) singleChart.destroy();
-            if(id === 'dual-chart' && dualChart) dualChart.destroy();
-            const color = mode === 'single' ? '#10b981' : '#15803d';
-            const chart = new Chart(ctx, {
+            if(id === 'single-chart') { if(singleChart) singleChart.destroy(); }
+            else { if(dualChart) dualChart.destroy(); }
+
+            // 色設定
+            let color = '#10b981'; // Single: Emerald
+            if(mode === 'dual') color = '#15803d'; // Dual: Custom Dark Green
+
+            const grad = ctx.createLinearGradient(0, 0, 0, 300);
+            grad.addColorStop(0, color + '66'); // hex + alpha
+            grad.addColorStop(1, color + '00');
+
+            const config = {
                 type: 'line',
-                data: { labels, datasets: [{ data, borderColor: color, backgroundColor: color + '22', fill: true, tension: 0.3, pointRadius: 0 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-            if(id === 'single-chart') singleChart = chart; else dualChart = chart;
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: grad,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { mode: 'index', intersect: false, backgroundColor: '#334155' } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 6, color: '#94a3b8', font: { size: 10 } } },
+                        y: { grid: { color: '#f1f5f9' }, border: { display: false }, ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v >= 100000000 ? v/100000000+'億' : v/10000+'万' } }
+                    },
+                    interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                }
+            };
+
+            if(id === 'single-chart') singleChart = new Chart(ctx, config);
+            else dualChart = new Chart(ctx, config);
         }
 
+        // --- 資産クラス診断ロジック ---
         function updateHierarchyUI() {
-            const nT = TIERS.find(t => lastResult.initial/10000 >= t.min) || TIERS[4];
-            const fT = TIERS.find(t => lastResult.final/10000 >= t.min) || TIERS[4];
-            document.getElementById('current-tier-name').innerText = nT.name;
-            document.getElementById('future-tier-name').innerText = fT.name;
-            // マーカー座標（簡易）
-            const coords = { 'tier-super': 45, 'tier-rich': 95, 'tier-semi': 155, 'tier-upper': 215, 'tier-mass': 280 };
+            // 単位を万円に換算
+            const initialMan = lastResult.initial / 10000;
+            const finalMan = lastResult.final / 10000;
+
+            // 該当するティアを探す
+            const currentTier = TIERS.find(t => initialMan >= t.min) || TIERS[4];
+            const futureTier = TIERS.find(t => finalMan >= t.min) || TIERS[4];
+
+            // テキスト更新
+            document.getElementById('current-tier-name').innerText = currentTier.name + ` (${formatMoney(lastResult.initial)})`;
+            document.getElementById('future-tier-name').innerText = futureTier.name + ` (${formatMoney(lastResult.final)})`;
+
+            // SVGマーカー移動
+            // 各層の中心Y座標（簡易マッピング）
+            const yMap = {
+                'tier-super': 45,
+                'tier-rich': 95,
+                'tier-semi': 155,
+                'tier-upper': 215,
+                'tier-mass': 280
+            };
+
             const mN = document.getElementById('marker-now');
-            mN.setAttribute('cx', 160); mN.setAttribute('cy', coords[nT.id]); mN.style.display = 'block';
             const mF = document.getElementById('marker-future');
-            mF.setAttribute('cx', 240); mF.setAttribute('cy', coords[fT.id]); mF.style.display = 'block';
-        }
 
-        function syncInputs(f, t, l, u, s) {
-            document.getElementById(t).value = document.getElementById(f).value;
-            if(l) document.getElementById(l).innerText = document.getElementById(f).value + u;
-            s ? calculateSingle() : calculateDual();
-        }
+            // 現在地マーカー（左側）
+            mN.setAttribute('cy', yMap[currentTier.id]);
+            mN.setAttribute('cx', 100); // 左寄り
+            mN.style.display = 'block';
 
-        function checkInput(i, g) {
-            const v = document.getElementById(i).value;
-            const el = document.getElementById(g);
-            v > 0 ? (el.classList.add('bg-cleared'), el.classList.remove('bg-required')) : (el.classList.remove('bg-cleared'), el.classList.add('bg-required'));
+            // 未来マーカー（右側）
+            mF.setAttribute('cy', yMap[futureTier.id]);
+            mF.setAttribute('cx', 300); // 右寄り
+            mF.style.display = 'block';
+            
+            // 色も合わせる
+            mF.setAttribute('fill', '#15803d');
         }
-        
-        // 互換性維持のための空関数
-        function calculateDual() { console.log("Dual calc requested"); }
     </script>
 </body>
 </html>
