@@ -56,11 +56,14 @@
         /* フォーム部品 */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin: 8px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #10b981; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-top: -8px; }
-        .dual-range::-webkit-slider-thumb { border: 2px solid #15803d; }
+        
+        /* 取り崩し用スライダー（赤系） */
+        .range-withdraw::-webkit-slider-thumb { border: 2px solid #ef4444; }
+        
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; background: #e2e8f0; border-radius: 2px; }
         
         .input-group:focus-within { border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-        .input-group-dual:focus-within { border-color: #15803d; box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1); }
+        .input-group-red:focus-within { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1); }
 
         .bg-required { background-color: #fef9c3; border-color: #fde047; }
         .bg-cleared { background-color: #ffffff; border-color: #e2e8f0; }
@@ -140,6 +143,21 @@
                             </div>
                         </div>
                     </section>
+                    <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
+                        <h2 class="text-lg font-bold text-slate-700 mb-2">3. 取り崩し設定 <span class="text-xs font-normal text-slate-400 ml-1">(任意)</span></h2>
+                        <div>
+                            <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
+                                <span>毎年1回の取り崩し率</span>
+                                <span class="text-red-500 font-bold" id="single-withdrawalLabel">0%</span>
+                            </label>
+                            <input type="range" id="single-withdrawalSlider" min="0" max="20" value="0" step="0.1" class="range-withdraw" oninput="syncInputs('single-withdrawalSlider', 'single-withdrawal', 'single-withdrawalLabel', '%', true)">
+                            <div class="input-group-red flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1">
+                                <input type="number" id="single-withdrawal" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="0" step="0.1" oninput="syncInputs('single-withdrawal', 'single-withdrawalSlider', 'single-withdrawalLabel', '%', true)" onfocus="this.select()">
+                                <span class="text-slate-500 font-bold ml-2">%</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2 text-right">※年末に一括で取り崩す計算です</p>
+                        </div>
+                    </section>
                 </div>
                 <div class="lg:col-span-7 space-y-4">
                     <div class="bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl p-6 text-white shadow-md">
@@ -202,6 +220,18 @@
                         <div class="input-group-dual flex items-center border-2 rounded-xl px-3 py-2 mt-1 bg-white border-slate-200">
                             <input type="number" id="dual-years" class="bg-transparent w-full text-xl font-bold text-right outline-none" value="20" oninput="syncInputs('dual-years', 'dual-yearsSlider', 'dual-yearsLabel', '年', false)">
                             <span class="text-slate-500 font-bold ml-2">年</span>
+                        </div>
+                        
+                        <div class="mt-6 border-t pt-4">
+                            <label class="text-sm font-bold text-slate-600 mb-1 flex justify-between">
+                                <span>毎年1回の取り崩し率 <span class="text-xs font-normal text-slate-400 ml-1">(任意)</span></span>
+                                <span class="text-red-500 font-bold" id="dual-withdrawalLabel">0%</span>
+                            </label>
+                            <input type="range" id="dual-withdrawalSlider" min="0" max="20" value="0" step="0.1" class="range-withdraw" oninput="syncInputs('dual-withdrawalSlider', 'dual-withdrawal', 'dual-withdrawalLabel', '%', false)">
+                            <div class="input-group-red flex items-center bg-white border-2 border-slate-200 rounded-xl px-3 py-2 mt-1">
+                                <input type="number" id="dual-withdrawal" class="bg-transparent w-full text-xl font-bold text-slate-800 outline-none text-right" value="0" step="0.1" oninput="syncInputs('dual-withdrawal', 'dual-withdrawalSlider', 'dual-withdrawalLabel', '%', false)" onfocus="this.select()">
+                                <span class="text-slate-500 font-bold ml-2">%</span>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -396,13 +426,22 @@
             const monthly = (parseFloat(document.getElementById('single-monthly').value) || 0) * 10000;
             const years = parseInt(document.getElementById('single-years').value) || 20;
             const rateYearly = parseFloat(document.getElementById('single-input-rate').value) || 0;
+            const withdrawPercent = parseFloat(document.getElementById('single-withdrawal').value) || 0; // 追加
+            
             const rate = rateYearly / 100 / 12;
 
             let current = initial;
             const labels = ['開始'], data = [Math.round(current)];
 
             for(let y=1; y<=years; y++) {
+                // 毎月の積立と運用
                 for(let m=0; m<12; m++) current = (current + monthly) * (1 + rate);
+                
+                // 年末に取り崩し (指定%分を引く)
+                if(withdrawPercent > 0) {
+                    current = current * (1 - withdrawPercent / 100);
+                }
+                
                 labels.push(y + '年');
                 data.push(Math.round(current));
             }
@@ -433,15 +472,25 @@
             const allMonth = (parseFloat(document.getElementById('dual-all-month').value) || 0) * 10000;
             const allRate = (parseFloat(document.getElementById('dual-all-rate').value) || 0) / 100 / 12;
             const years = parseInt(document.getElementById('dual-years').value) || 20;
+            const withdrawPercent = parseFloat(document.getElementById('dual-withdrawal').value) || 0; // 追加
 
             let spCurrent = spInit, allCurrent = allInit;
             const labels = ['開始'], data = [Math.round(spInit + allInit)];
 
             for(let y=1; y<=years; y++) {
+                // 毎月の運用
                 for(let m=0; m<12; m++) {
                     spCurrent = (spCurrent + spMonth) * (1 + spRate);
                     allCurrent = (allCurrent + allMonth) * (1 + allRate);
                 }
+                
+                // 年末に取り崩し（それぞれの資産から均等に引く計算）
+                if(withdrawPercent > 0) {
+                    const factor = 1 - (withdrawPercent / 100);
+                    spCurrent *= factor;
+                    allCurrent *= factor;
+                }
+
                 labels.push(y + '年');
                 data.push(Math.round(spCurrent + allCurrent));
             }
@@ -451,7 +500,6 @@
             const profit = totalFinal - totalInvest;
             const totalMonthly = spMonth + allMonth;
             
-            // 擬似的な加重平均利回りを計算（診断用）
             const weightedRate = totalMonthly > 0 
                 ? ((parseFloat(document.getElementById('dual-sp500-rate').value) * spMonth) + (parseFloat(document.getElementById('dual-all-rate').value) * allMonth)) / totalMonthly
                 : parseFloat(document.getElementById('dual-sp500-rate').value);
@@ -515,7 +563,7 @@
             if(id === 'single-chart') singleChart = chart; else dualChart = chart;
         }
 
-        // --- 資産診断＆アドバイス計算ロジック (ここを修正) ---
+        // --- 資産診断＆アドバイス計算ロジック ---
         function updateHierarchyUI() {
             const finalMan = lastResult.final / 10000;
             const initMan = lastResult.initial / 10000;
@@ -531,21 +579,16 @@
             document.getElementById('group-now').setAttribute('transform', `translate(0, ${yMap[currentTier.id]})`);
             document.getElementById('group-future').setAttribute('transform', `translate(0, ${yMap[futureTier.id]})`);
 
-            // 次のランク判定
             let targetTier = futureTierIndex > 0 ? TIERS[futureTierIndex - 1] : TIERS[0];
             const targetAmount = targetTier.min * 10000;
             
-            // プログレスバーとメッセージの更新
             if(finalMan >= targetTier.min && futureTierIndex === 0) {
-                 // 最高ランク到達済み
                 document.getElementById('next-tier-gap').innerText = "最高ランク到達！";
                 document.getElementById('next-tier-progress').style.width = "100%";
                 document.getElementById('next-tier-target').innerText = "Goal!";
-                
                 document.getElementById('advice-box-time').innerHTML = `<p class="text-sm font-bold text-emerald-600">おめでとうございます！</p><p class="text-xs text-slate-500">最高ランクに到達しています。</p>`;
                 document.getElementById('advice-box-money').innerHTML = `<p class="text-sm font-bold text-emerald-600">維持・継承</p><p class="text-xs text-slate-500">リスク管理を徹底しましょう。</p>`;
             } else {
-                // まだ上のランクがある場合
                 const gap = targetAmount - lastResult.final;
                 const progress = Math.min(100, (lastResult.final / targetAmount) * 100);
                 
@@ -553,17 +596,14 @@
                 document.getElementById('next-tier-progress').style.width = `${progress}%`;
                 document.getElementById('next-tier-target').innerText = `目標: ${targetTier.name} (${targetTier.min}万円)`;
 
-                // アドバイス計算
                 const r = lastResult.inputs.rate / 100 / 12; 
                 const monthly = lastResult.inputs.monthly;
-                const currentAsset = lastResult.initial; // ※計算の基点は初期投資額ではなく「現在」とみなすか等は仕様次第だが、ここでは初期投資+運用結果ではなくシミュレーション開始時点とする
+                const currentAsset = lastResult.initial;
 
-                // 1. 時間で解決（今の積立額で何年かかる？）
                 let yearsToGoal = 0;
-                let tempAsset = currentAsset; // 元手からスタート
+                let tempAsset = currentAsset;
                 let reached = false;
                 
-                // 100年分ループして到達時期を探る
                 for(let i=1; i<=1200; i++) {
                     tempAsset = (tempAsset + monthly) * (1 + r);
                     if(tempAsset >= targetAmount) {
@@ -578,19 +618,14 @@
                        <p class="text-sm text-slate-700">約 <span class="text-xl font-bold text-emerald-600">${yearsToGoal}年後</span> に<br>到達できます！</p>`
                     : `<p class="text-xs font-bold text-slate-500 mb-1">今のペースだと...</p>
                        <p class="text-sm text-slate-700">100年以上かかります。<br>積立額を増やしましょう。</p>`;
-                
                 document.getElementById('advice-box-time').innerHTML = timeHtml;
 
-                // 2. お金で解決（指定年数で届くには毎月いくら必要？）
-                // 目標額 = (現在資産 * (1+r)^n) + (積立額 * ((1+r)^n - 1)/r)
-                // これを積立額について解く
                 const n = lastResult.inputs.years * 12;
                 const compoundFactor = Math.pow(1 + r, n);
                 const initialGrown = currentAsset * compoundFactor;
                 
                 let requiredMonthly = 0;
                 if (targetAmount > initialGrown) {
-                    // 積立が必要
                     const numerator = (targetAmount - initialGrown) * r;
                     const denominator = compoundFactor - 1;
                     requiredMonthly = numerator / denominator;
