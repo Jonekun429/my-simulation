@@ -3,362 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>資産運用シミュレーター | 資産クラス診断付</title>
+    <title>資産運用シミュレーター | 2銘柄対応・診断付</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; background-color: #f8fafc; color: #334155; }
-        .tab-btn { flex: 1; padding: 12px 4px; font-weight: bold; font-size: 0.85rem; text-align: center; border: 2px solid #e2e8f0; border-bottom: none; border-radius: 8px 8px 0 0; background-color: #f1f5f9; color: #64748b; transition: all 0.2s; position: relative; bottom: -2px; }
-        .tab-btn.active { background-color: #ffffff; color: #15803d; border-color: #15803d; z-index: 10; }
+        body { font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif; background-color: #f1f5f9; color: #334155; }
+        .tab-btn { flex: 1; padding: 12px 4px; font-weight: bold; font-size: 0.85rem; text-align: center; border-bottom: 3px solid transparent; color: #64748b; transition: all 0.2s; }
+        .tab-btn.active { color: #15803d; border-color: #15803d; background-color: white; }
         
-        /* 上下ボタンのスタイル */
-        .stepper-container { display: flex; flex-direction: column; gap: 2px; }
-        .stepper-v-btn { width: 44px; height: 32px; display: flex; align-items: center; justify-content: center; background-color: #f1f5f9; border: 1px solid #e2e8f0; font-weight: bold; color: #475569; transition: all 0.1s; }
-        .stepper-v-btn:first-child { border-radius: 6px 6px 0 0; }
-        .stepper-v-btn:last-child { border-radius: 0 0 6px 6px; }
-        .stepper-v-btn:active { background-color: #e2e8f0; }
+        /* 上下ボタンの独自デザイン */
+        .v-stepper { display: flex; flex-direction: column; border-left: 1px solid #e2e8f0; }
+        .v-btn { height: 24px; width: 40px; display: flex; align-items: center; justify-content: center; background: #fff; font-size: 14px; font-weight: bold; color: #64748b; }
+        .v-btn:active { background: #f8fafc; color: #15803d; }
+        .v-btn:first-child { border-bottom: 1px solid #e2e8f0; }
 
-        .input-card { background: white; border-radius: 1rem; padding: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+        .input-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #f1f5f9; }
+        .input-row:last-child { border-bottom: none; }
     </style>
 </head>
-<body class="min-h-screen pb-10">
+<body class="min-h-screen pb-20">
 
     <div class="bg-white shadow-sm sticky top-0 z-50 mb-6">
-        <div class="max-w-6xl mx-auto px-4 pt-4">
+        <div class="max-w-4xl mx-auto px-4 pt-4">
             <h1 class="text-xl font-bold text-slate-800 flex items-center mb-4">
-                <span class="text-emerald-600 mr-2">📈</span> 資産運用シミュレーター
+                <span class="mr-2">💹</span> 資産運用シミュレーター
             </h1>
-            <div class="flex overflow-x-auto border-bottom border-emerald-700" style="border-bottom: 2px solid #15803d;">
+            <div class="flex">
                 <button onclick="switchTab('single')" id="tab-btn-single" class="tab-btn active">1銘柄</button>
-                <button onclick="switchTab('dual')" id="tab-btn-dual" class="tab-btn">2銘柄（組合せ）</button>
+                <button onclick="switchTab('dual')" id="tab-btn-dual" class="tab-btn">2銘柄</button>
                 <button onclick="switchTab('hierarchy')" id="tab-btn-hierarchy" class="tab-btn">資産診断</button>
-                <button onclick="switchTab('guide')" id="tab-btn-guide" class="tab-btn">ガイド</button>
             </div>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4">
-        
-        <div id="summary-area" class="mb-6 bg-gradient-to-br from-emerald-600 to-teal-500 rounded-2xl p-6 text-white shadow-lg fade-in">
-            <p class="text-emerald-50 text-sm font-bold mb-1">最終予想資産</p>
-            <div class="text-4xl md:text-5xl font-bold tracking-tight mb-4" id="display-final-asset">0円</div>
-            <div class="grid grid-cols-2 gap-4 border-t border-white/20 pt-4">
+    <div class="max-w-4xl mx-auto px-4 space-y-6">
+
+        <div class="bg-gradient-to-br from-emerald-700 to-emerald-500 rounded-2xl p-6 text-white shadow-lg shadow-emerald-900/20">
+            <p class="text-emerald-100 text-xs font-bold mb-1">最終予想資産 (合計)</p>
+            <div class="text-4xl font-bold mb-4" id="total-final-asset">0円</div>
+            <div class="grid grid-cols-2 gap-4 pt-4 border-t border-white/20">
                 <div>
-                    <p class="text-xs text-emerald-100">投資元本 合計</p>
-                    <p class="text-lg font-bold" id="display-investment">0円</p>
+                    <p class="text-[10px] text-emerald-100">投資元本</p>
+                    <p class="text-md font-bold" id="total-investment">0円</p>
                 </div>
                 <div>
-                    <p class="text-xs text-emerald-100">運用収益 (増えた分)</p>
-                    <p class="text-lg font-bold text-yellow-300" id="display-profit">+0円</p>
+                    <p class="text-[10px] text-emerald-100">運用収益</p>
+                    <p class="text-md font-bold text-yellow-300" id="total-profit">+0円</p>
                 </div>
             </div>
         </div>
 
-        <div id="tab-content-single" class="grid grid-cols-1 lg:grid-cols-12 gap-6 fade-in">
-            <div class="lg:col-span-5 space-y-4">
-                <div class="input-card">
-                    <h2 class="font-bold text-slate-700 mb-3">運用商品</h2>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="selectProductSingle('sp500')" id="btn-single-sp500" class="p-3 rounded-xl border-2 border-emerald-500 bg-emerald-50 text-emerald-700 font-bold">S&P500</button>
-                        <button onclick="selectProductSingle('all')" id="btn-single-all" class="p-3 rounded-xl border border-slate-200 text-slate-500 font-medium">全世界株式</button>
+        <div id="tab-content-single" class="space-y-6">
+            <div class="card">
+                <div class="p-4 border-b bg-slate-50 flex justify-between items-center">
+                    <span class="font-bold text-slate-700">条件設定</span>
+                    <div class="flex gap-2">
+                        <button onclick="setProduct('sp500')" id="p-sp" class="px-3 py-1 text-xs rounded-full border bg-emerald-600 text-white font-bold">S&P500</button>
+                        <button onclick="setProduct('all')" id="p-all" class="px-3 py-1 text-xs rounded-full border bg-white text-slate-500">全世界株</button>
                     </div>
                 </div>
-
-                <div class="input-card space-y-4">
-                    <h2 class="font-bold text-slate-700">条件設定</h2>
-                    <div class="flex items-center justify-between gap-4">
-                        <label class="text-sm font-bold text-slate-600 flex-grow">想定利回り (%)</label>
-                        <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden">
-                            <input type="number" id="single-rate" class="w-20 bg-transparent text-right font-bold px-2 outline-none" value="13.25" step="0.1" oninput="calculateSingle()">
-                            <div class="stepper-container">
-                                <button onclick="step('single-rate', 0.1, true)" class="stepper-v-btn">＋</button>
-                                <button onclick="step('single-rate', -0.1, true)" class="stepper-v-btn">－</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between gap-4">
-                        <label class="text-sm font-bold text-slate-600 flex-grow">元手資産 (万円)</label>
-                        <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden">
-                            <input type="number" id="single-init" class="w-20 bg-transparent text-right font-bold px-2 outline-none" value="0" oninput="calculateSingle()">
-                            <div class="stepper-container">
-                                <button onclick="step('single-init', 10, true)" class="stepper-v-btn">＋</button>
-                                <button onclick="step('single-init', -10, true)" class="stepper-v-btn">－</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between"><label class="text-sm font-bold text-slate-600">毎月の積立 (万円)</label><span id="single-monthly-val" class="text-emerald-600 font-bold">3万円</span></div>
-                        <div class="flex items-center gap-4">
-                            <input type="range" id="single-monthly-slider" class="flex-grow" min="0" max="50" value="3" oninput="sync('single-monthly-slider', 'single-monthly-val', '万円', true)">
-                            <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden">
-                                <input type="number" id="single-monthly-input" class="w-16 bg-transparent text-right font-bold px-2 outline-none" value="3" oninput="sync('single-monthly-input', 'single-monthly-val', '万円', true)">
-                                <div class="stepper-container">
-                                    <button onclick="step('single-monthly-input', 1, true, 'single-monthly-slider', 'single-monthly-val', '万円')" class="stepper-v-btn">＋</button>
-                                    <button onclick="step('single-monthly-input', -1, true, 'single-monthly-slider', 'single-monthly-val', '万円')" class="stepper-v-btn">－</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between"><label class="text-sm font-bold text-slate-600">運用期間 (年)</label><span id="single-years-val" class="text-emerald-600 font-bold">20年</span></div>
-                        <div class="flex items-center gap-4">
-                            <input type="range" id="single-years-slider" class="flex-grow" min="1" max="50" value="20" oninput="sync('single-years-slider', 'single-years-val', '年', true)">
-                            <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden">
-                                <input type="number" id="single-years-input" class="w-16 bg-transparent text-right font-bold px-2 outline-none" value="20" oninput="sync('single-years-input', 'single-years-val', '年', true)">
-                                <div class="stepper-container">
-                                    <button onclick="step('single-years-input', 1, true, 'single-years-slider', 'single-years-val', '年')" class="stepper-v-btn">＋</button>
-                                    <button onclick="step('single-years-input', -1, true, 'single-years-slider', 'single-years-val', '年')" class="stepper-v-btn">－</button>
-                                </div>
-                            </div>
+                <div class="input-row">
+                    <label class="text-sm font-bold text-slate-600">想定利回り (%)</label>
+                    <input type="number" id="s-rate" class="w-24 text-right font-bold outline-none" value="13.25" step="0.1" oninput="calc()">
+                </div>
+                <div class="input-row">
+                    <label class="text-sm font-bold text-slate-600">手元資産 (万円)</label>
+                    <input type="number" id="s-init" class="w-24 text-right font-bold outline-none" value="0" oninput="calc()">
+                </div>
+                <div class="input-row">
+                    <label class="text-sm font-bold text-slate-600">毎月の積立額 (万円)</label>
+                    <div class="flex items-center border rounded-lg overflow-hidden">
+                        <input type="number" id="s-month" class="w-16 text-center font-bold outline-none" value="3" oninput="calc()">
+                        <div class="v-stepper">
+                            <button onclick="step('s-month', 1)" class="v-btn">＋</button>
+                            <button onclick="step('s-month', -1)" class="v-btn">－</button>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="lg:col-span-7 bg-white rounded-2xl p-4 border"><canvas id="chart-single" class="h-80"></canvas></div>
-        </div>
-
-        <div id="tab-content-dual" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 fade-in">
-            <div class="lg:col-span-5 space-y-4">
-                <div class="input-card border-l-4 border-blue-500">
-                    <h2 class="font-bold text-blue-700 mb-3 flex items-center">🇺🇸 S&P500 設定</h2>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500">初期投資/積立 (万円)</span>
-                            <div class="flex gap-2">
-                                <input type="number" id="dual-sp-init" class="w-16 border rounded px-1 text-right font-bold" value="0" oninput="calculateDual()">
-                                <input type="number" id="dual-sp-month" class="w-16 border rounded px-1 text-right font-bold" value="3" oninput="calculateDual()">
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500">利回り (%)</span>
-                            <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden scale-90 origin-right">
-                                <input type="number" id="dual-sp-rate" class="w-16 bg-transparent text-right font-bold px-1 outline-none" value="13.25" step="0.1" oninput="calculateDual()">
-                                <div class="stepper-container"><button onclick="step('dual-sp-rate', 0.1, false)" class="stepper-v-btn">＋</button><button onclick="step('dual-sp-rate', -0.1, false)" class="stepper-v-btn">－</button></div>
-                            </div>
+                <div class="input-row">
+                    <label class="text-sm font-bold text-slate-600">運用期間 (年)</label>
+                    <div class="flex items-center border rounded-lg overflow-hidden">
+                        <input type="number" id="s-year" class="w-16 text-center font-bold outline-none" value="20" oninput="calc()">
+                        <div class="v-stepper">
+                            <button onclick="step('s-year', 1)" class="v-btn">＋</button>
+                            <button onclick="step('s-year', -1)" class="v-btn">－</button>
                         </div>
                     </div>
                 </div>
-                <div class="input-card border-l-4 border-emerald-500">
-                    <h2 class="font-bold text-emerald-700 mb-3 flex items-center">🌏 全世界株式 設定</h2>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500">初期投資/積立 (万円)</span>
-                            <div class="flex gap-2">
-                                <input type="number" id="dual-all-init" class="w-16 border rounded px-1 text-right font-bold" value="0" oninput="calculateDual()">
-                                <input type="number" id="dual-all-month" class="w-16 border rounded px-1 text-right font-bold" value="2" oninput="calculateDual()">
-                            </div>
-                        </div>
-                        <div class="flex items-center justify-between"><span class="text-xs font-bold text-slate-500">利回り (%)</span>
-                            <div class="flex items-center bg-slate-50 border rounded-lg overflow-hidden scale-90 origin-right">
-                                <input type="number" id="dual-all-rate" class="w-16 bg-transparent text-right font-bold px-1 outline-none" value="9.99" step="0.1" oninput="calculateDual()">
-                                <div class="stepper-container"><button onclick="step('dual-all-rate', 0.1, false)" class="stepper-v-btn">＋</button><button onclick="step('dual-all-rate', -0.1, false)" class="stepper-v-btn">－</button></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="input-card">
-                    <div class="flex justify-between items-center"><label class="font-bold text-slate-700">運用期間 (年)</label><span id="dual-years-val" class="font-bold text-emerald-600">20年</span></div>
-                    <div class="flex items-center gap-4 mt-2">
-                        <input type="range" id="dual-years-slider" class="flex-grow" min="1" max="50" value="20" oninput="sync('dual-years-slider', 'dual-years-val', '年', false)">
-                        <button onclick="step('dual-years-slider', 1, false, null, 'dual-years-val', '年')" class="stepper-v-btn rounded-lg">＋</button>
-                    </div>
-                </div>
-            </div>
-            <div class="lg:col-span-7 bg-white rounded-2xl p-4 border"><canvas id="chart-dual" class="h-80"></canvas></div>
-        </div>
-
-        <div id="tab-content-hierarchy" class="hidden space-y-6 fade-in">
-            <div class="bg-white rounded-2xl p-6 border text-center">
-                <h2 class="text-xl font-bold mb-4">資産階層ピラミッド</h2>
-                <div class="flex flex-col md:flex-row items-center gap-8">
-                    <div class="w-full max-w-xs mx-auto">
-                        <svg viewBox="0 0 200 160">
-                            <polygon id="p-super" points="100,10 120,40 80,40" fill="#f87171" opacity="0.3"/>
-                            <polygon id="p-rich" points="80,42 120,42 140,75 60,75" fill="#fb923c" opacity="0.3"/>
-                            <polygon id="p-semi" points="60,77 140,77 160,110 40,110" fill="#fbbf24" opacity="0.3"/>
-                            <polygon id="p-upper" points="40,112 160,112 180,145 20,145" fill="#4ade80" opacity="0.3"/>
-                            <text x="100" y="30" font-size="6" text-anchor="middle" font-weight="bold">超富裕層</text>
-                            <text x="100" y="60" font-size="6" text-anchor="middle" font-weight="bold">富裕層</text>
-                            <text x="100" y="95" font-size="6" text-anchor="middle" font-weight="bold">準富裕層</text>
-                            <text x="100" y="130" font-size="6" text-anchor="middle" font-weight="bold">アッパーマス</text>
-                        </svg>
-                    </div>
-                    <div class="flex-grow space-y-4 text-left">
-                        <div class="p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400">
-                            <p class="text-xs font-bold text-slate-500">現在地</p>
-                            <p id="diag-now" class="text-lg font-bold">---</p>
-                        </div>
-                        <div class="p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500">
-                            <p class="text-xs font-bold text-emerald-600">将来の予測</p>
-                            <p id="diag-future" class="text-2xl font-bold text-emerald-700">---</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="advice-card" class="bg-yellow-50 p-6 rounded-2xl border border-yellow-200">
-                <h3 class="font-bold text-yellow-800 mb-2">💡 アドバイス</h3>
-                <p id="diag-advice" class="text-slate-700 leading-relaxed"></p>
             </div>
         </div>
 
-        <div id="tab-content-guide" class="hidden bg-white p-8 rounded-2xl border fade-in">
-            <h2 class="text-xl font-bold mb-4">🔰 使い方</h2>
-            <ul class="space-y-3 text-slate-600">
-                <li>・<span class="font-bold">＋ / － ボタン</span>：数値を細かく調整できます。</li>
-                <li>・<span class="font-bold">スライダー</span>：ざっくりと数値を動かせます。</li>
-                <li>・<span class="font-bold">グラフ</span>：横軸は経過年数、縦軸は資産（万円）です。</li>
-                <li>・<span class="font-bold">2銘柄モード</span>：人気の2商品を組み合わせたシミュレーションができます。</li>
-            </ul>
+        <div id="tab-content-dual" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="card border-blue-100">
+                    <div class="p-3 bg-blue-50 border-b font-bold text-blue-700 text-sm">🇺🇸 S&P500</div>
+                    <div class="p-4 space-y-4">
+                        <div class="flex justify-between items-center text-xs"><span>利回り(%)</span><input type="number" id="d-sp-rate" class="w-16 text-right font-bold" value="13.25" oninput="calc()"></div>
+                        <div class="flex justify-between items-center text-xs"><span>初期(万)</span><input type="number" id="d-sp-init" class="w-16 text-right font-bold" value="0" oninput="calc()"></div>
+                        <div class="flex justify-between items-center text-sm font-bold"><span>毎月積立</span>
+                            <div class="flex items-center border rounded overflow-hidden">
+                                <input type="number" id="d-sp-month" class="w-12 text-center" value="3" oninput="calc()">
+                                <div class="v-stepper"><button onclick="step('d-sp-month', 1)" class="v-btn">＋</button><button onclick="step('d-sp-month', -1)" class="v-btn">－</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-emerald-100">
+                    <div class="p-3 bg-emerald-50 border-b font-bold text-emerald-700 text-sm">🌏 全世界株式</div>
+                    <div class="p-4 space-y-4">
+                        <div class="flex justify-between items-center text-xs"><span>利回り(%)</span><input type="number" id="d-all-rate" class="w-16 text-right font-bold" value="9.99" oninput="calc()"></div>
+                        <div class="flex justify-between items-center text-xs"><span>初期(万)</span><input type="number" id="d-all-init" class="w-16 text-right font-bold" value="0" oninput="calc()"></div>
+                        <div class="flex justify-between items-center text-sm font-bold"><span>毎月積立</span>
+                            <div class="flex items-center border rounded overflow-hidden">
+                                <input type="number" id="d-all-month" class="w-12 text-center" value="2" oninput="calc()">
+                                <div class="v-stepper"><button onclick="step('d-all-month', 1)" class="v-btn">＋</button><button onclick="step('d-all-month', -1)" class="v-btn">－</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card p-4 flex justify-between items-center">
+                <label class="text-sm font-bold text-slate-600">共通運用期間 (年)</label>
+                <div class="flex items-center border rounded-lg overflow-hidden">
+                    <input type="number" id="d-year" class="w-16 text-center font-bold" value="20" oninput="calc()">
+                    <div class="v-stepper"><button onclick="step('d-year', 1)" class="v-btn">＋</button><button onclick="step('d-year', -1)" class="v-btn">－</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4">
+            <div class="flex justify-between items-center mb-4"><h3 class="text-xs font-bold text-slate-400">資産推移グラフ (万円)</h3></div>
+            <div class="h-64"><canvas id="mainChart"></canvas></div>
+        </div>
+
+        <div id="tab-content-hierarchy" class="hidden card p-8 text-center space-y-4">
+            <h2 class="font-bold text-lg">あなたの資産クラス診断</h2>
+            <div id="diagnosis-result" class="text-2xl font-bold text-emerald-700">---</div>
+            <p id="diagnosis-advice" class="text-sm text-slate-500"></p>
         </div>
 
     </div>
 
     <script>
-        let myChart = null;
-        let resultData = { initial: 0, final: 0, investment: 0 };
+        let chart = null;
+        let activeTab = 'single';
 
-        // --- ステップ機能 ---
-        function step(id, val, isSingle, sliderId = null, labelId = null, unit = '') {
+        function step(id, val) {
             const el = document.getElementById(id);
-            let n = parseFloat(el.value) || 0;
-            el.value = (id.includes('rate')) ? (n + val).toFixed(2) : Math.max(0, n + val);
-            
-            if (sliderId) document.getElementById(sliderId).value = el.value;
-            if (labelId) document.getElementById(labelId).innerText = el.value + unit;
-            
-            isSingle ? calculateSingle() : calculateDual();
+            el.value = Math.max(0, parseInt(el.value) + val);
+            calc();
         }
 
-        // --- 同期機能 ---
-        function sync(fromId, labelId, unit, isSingle) {
-            const val = document.getElementById(fromId).value;
-            if (fromId.includes('slider')) {
-                const inputId = fromId.replace('slider', 'input');
-                if (document.getElementById(inputId)) document.getElementById(inputId).value = val;
-            } else if (fromId.includes('input')) {
-                const sliderId = fromId.replace('input', 'slider');
-                if (document.getElementById(sliderId)) document.getElementById(sliderId).value = val;
-            }
-            document.getElementById(labelId).innerText = val + unit;
-            isSingle ? calculateSingle() : calculateDual();
+        function setProduct(type) {
+            document.getElementById('s-rate').value = (type === 'sp500') ? 13.25 : 9.99;
+            document.getElementById('p-sp').className = (type === 'sp500') ? 'px-3 py-1 text-xs rounded-full border bg-emerald-600 text-white font-bold' : 'px-3 py-1 text-xs rounded-full border bg-white text-slate-500';
+            document.getElementById('p-all').className = (type === 'all') ? 'px-3 py-1 text-xs rounded-full border bg-emerald-600 text-white font-bold' : 'px-3 py-1 text-xs rounded-full border bg-white text-slate-500';
+            calc();
         }
 
-        function switchTab(name) {
-            ['single', 'dual', 'hierarchy', 'guide'].forEach(t => {
-                document.getElementById('tab-btn-'+t).classList.remove('active');
-                document.getElementById('tab-content-'+t).classList.add('hidden');
+        function switchTab(tab) {
+            activeTab = tab;
+            ['single', 'dual', 'hierarchy'].forEach(t => {
+                document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+                document.getElementById('tab-content-' + t).classList.toggle('hidden', t !== tab);
             });
-            document.getElementById('tab-btn-'+name).classList.add('active');
-            document.getElementById('tab-content-'+name).classList.remove('hidden');
-            if (name === 'single') calculateSingle();
-            if (name === 'dual') calculateDual();
-            if (name === 'hierarchy') updateDiagnosis();
+            calc();
         }
 
         function format(n) {
             if (n < 10000) return Math.round(n).toLocaleString() + "円";
             const oku = Math.floor(n / 100000000);
             const man = Math.floor((n % 100000000) / 10000);
-            return oku > 0 ? `${oku}億${man.toLocaleString()}万円` : `${man.toLocaleString()}万円`;
+            return (oku > 0) ? `${oku}億${man.toLocaleString()}万円` : `${man.toLocaleString()}万円`;
         }
 
-        function draw(ctxId, labels, data) {
-            const ctx = document.getElementById(ctxId).getContext('2d');
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
+        function calc() {
+            let labels = [], data = [], initialTotal = 0, finalTotal = 0, investmentTotal = 0;
+
+            if (activeTab === 'single') {
+                const init = (parseFloat(document.getElementById('s-init').value) || 0) * 10000;
+                const month = (parseFloat(document.getElementById('s-month').value) || 0) * 10000;
+                const rate = (parseFloat(document.getElementById('s-rate').value) || 0) / 100 / 12;
+                const year = parseInt(document.getElementById('s-year').value) || 0;
+                
+                let curr = init;
+                labels = [0]; data = [init / 10000];
+                for(let i=1; i<=year; i++) {
+                    for(let m=0; m<12; m++) curr = (curr + month) * (1 + rate);
+                    labels.push(i); data.push(Math.round(curr / 10000));
+                }
+                initialTotal = init; finalTotal = curr; investmentTotal = init + (month * 12 * year);
+            } else {
+                const sp_init = (parseFloat(document.getElementById('d-sp-init').value) || 0) * 10000;
+                const sp_month = (parseFloat(document.getElementById('d-sp-month').value) || 0) * 10000;
+                const sp_rate = (parseFloat(document.getElementById('d-sp-rate').value) || 0) / 100 / 12;
+                const all_init = (parseFloat(document.getElementById('d-all-init').value) || 0) * 10000;
+                const all_month = (parseFloat(document.getElementById('d-all-month').value) || 0) * 10000;
+                const all_rate = (parseFloat(document.getElementById('d-all-rate').value) || 0) / 100 / 12;
+                const year = parseInt(document.getElementById('d-year').value) || 0;
+
+                let sp_curr = sp_init, all_curr = all_init;
+                labels = [0]; data = [(sp_init + all_init) / 10000];
+                for(let i=1; i<=year; i++) {
+                    for(let m=0; m<12; m++) {
+                        sp_curr = (sp_curr + sp_month) * (1 + sp_rate);
+                        all_curr = (all_curr + all_month) * (1 + all_rate);
+                    }
+                    labels.push(i); data.push(Math.round((sp_curr + all_curr) / 10000));
+                }
+                initialTotal = sp_init + all_init; finalTotal = sp_curr + all_curr; investmentTotal = (sp_init + all_init) + ((sp_month + all_month) * 12 * year);
+            }
+
+            document.getElementById('total-final-asset').innerText = format(finalTotal);
+            document.getElementById('total-investment').innerText = format(investmentTotal);
+            document.getElementById('total-profit').innerText = "+" + format(finalTotal - investmentTotal);
+
+            // Diagnosis Logic
+            const resultMan = finalTotal / 10000;
+            let rank = "マス層";
+            if (resultMan >= 50000) rank = "超富裕層";
+            else if (resultMan >= 10000) rank = "富裕層";
+            else if (resultMan >= 5000) rank = "準富裕層";
+            else if (resultMan >= 3000) rank = "アッパーマス層";
+            document.getElementById('diagnosis-result').innerText = rank;
+
+            updateChart(labels, data);
+        }
+
+        function updateChart(labels, data) {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels,
                     datasets: [{
-                        label: '資産推移',
-                        data,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        fill: true, tension: 0.3, pointRadius: 2
+                        data, borderColor: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', fill: true, tension: 0.3, pointRadius: 2
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
                     scales: {
-                        x: { title: { display: true, text: '経過年数' } },
-                        y: { title: { display: true, text: '資産 (万円)' }, beginAtZero: true }
+                        x: { title: { display: true, text: '年数', font: { size: 10 } } },
+                        y: { beginAtZero: true }
                     }
                 }
             });
         }
 
-        // --- 1銘柄計算 ---
-        function calculateSingle() {
-            const init = (parseFloat(document.getElementById('single-init').value) || 0) * 10000;
-            const month = (parseFloat(document.getElementById('single-monthly-input').value) || 0) * 10000;
-            const rate = (parseFloat(document.getElementById('single-rate').value) || 0) / 100 / 12;
-            const years = parseInt(document.getElementById('single-years-input').value) || 1;
-
-            let curr = init;
-            const labels = [0], data = [init/10000];
-            for(let y=1; y<=years; y++) {
-                for(let m=0; m<12; m++) curr = (curr + month) * (1 + rate);
-                labels.push(y);
-                data.push(Math.round(curr/10000));
-            }
-            updateSummary(init, curr, month, years);
-            draw('chart-single', labels, data);
-        }
-
-        // --- 2銘柄計算 (修正) ---
-        function calculateDual() {
-            const spInit = (parseFloat(document.getElementById('dual-sp-init').value) || 0) * 10000;
-            const spMonth = (parseFloat(document.getElementById('dual-sp-month').value) || 0) * 10000;
-            const spRate = (parseFloat(document.getElementById('dual-sp-rate').value) || 0) / 100 / 12;
-
-            const allInit = (parseFloat(document.getElementById('dual-all-init').value) || 0) * 10000;
-            const allMonth = (parseFloat(document.getElementById('dual-all-month').value) || 0) * 10000;
-            const allRate = (parseFloat(document.getElementById('dual-all-rate').value) || 0) / 100 / 12;
-
-            const years = parseInt(document.getElementById('dual-years-slider').value);
-
-            let spCurr = spInit, allCurr = allInit;
-            const labels = [0], data = [(spInit + allInit)/10000];
-
-            for(let y=1; y<=years; y++) {
-                for(let m=0; m<12; m++) {
-                    spCurr = (spCurr + spMonth) * (1 + spRate);
-                    allCurr = (allCurr + allMonth) * (1 + allRate);
-                }
-                labels.push(y);
-                data.push(Math.round((spCurr + allCurr)/10000));
-            }
-            updateSummary(spInit + allInit, spCurr + allCurr, spMonth + allMonth, years);
-            draw('chart-dual', labels, data);
-        }
-
-        function updateSummary(init, final, month, years) {
-            const invest = init + (month * 12 * years);
-            resultData = { initial: init, final: final, investment: invest };
-            document.getElementById('display-final-asset').innerText = format(final);
-            document.getElementById('display-investment').innerText = format(invest);
-            document.getElementById('display-profit').innerText = "+" + format(final - invest);
-        }
-
-        function updateDiagnosis() {
-            const tiers = [
-                { name: '超富裕層', min: 500000000 },
-                { name: '富裕層', min: 100000000 },
-                { name: '準富裕層', min: 50000000 },
-                { name: 'アッパーマス層', min: 30000000 },
-                { name: 'マス層', min: 0 }
-            ];
-            const now = tiers.find(t => resultData.initial >= t.min) || tiers[4];
-            const future = tiers.find(t => resultData.final >= t.min) || tiers[4];
-
-            document.getElementById('diag-now').innerText = now.name;
-            document.getElementById('diag-future').innerText = future.name;
-            
-            let advice = `現在のプランでは、${resultData.inputs?.years || '設定'}年後に「${future.name}」に到達する見込みです。`;
-            if (future.min < 50000000) advice += " 積立額をあと1万円増やすだけで、準富裕層への道がぐっと近くなります。";
-            document.getElementById('diag-advice').innerText = advice;
-        }
-
-        window.onload = calculateSingle;
+        window.onload = () => { calc(); };
     </script>
 </body>
 </html>
