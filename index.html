@@ -199,17 +199,16 @@
             <div><span class="logo-text">つみたて投資ナビ</span><span class="logo-sub">資産運用シミュレーター</span></div>
         </div>
         <nav class="tab-bar">
-            <button class="tab-btn active" data-tab="single"><span class="tab-emoji">📊</span>1銘柄で計算</button>
-            <button class="tab-btn" data-tab="dual"><span class="tab-emoji">📊📊</span>2銘柄で比較</button>
-            <button class="tab-btn" data-tab="hierarchy"><span class="tab-emoji">🏆</span>資産クラス診断</button>
-            <button class="tab-btn" data-tab="guide"><span class="tab-emoji">📖</span>使い方ガイド</button>
+            <button class="tab-btn active" data-tab="single" onclick="saveTab('single')"><span class="tab-emoji">📊</span>1銘柄で計算</button>
+            <button class="tab-btn" data-tab="dual" onclick="saveTab('dual')"><span class="tab-emoji">📊📊</span>2銘柄で比較</button>
+            <button class="tab-btn" data-tab="hierarchy" onclick="saveTab('hierarchy')"><span class="tab-emoji">🏆</span>資産クラス診断</button>
+            <button class="tab-btn" data-tab="guide" onclick="saveTab('guide')"><span class="tab-emoji">📖</span>使い方ガイド</button>
         </nav>
     </div>
 </header>
 
 <main class="main">
 
-<!-- SINGLE -->
 <section class="tab-content active" id="tab-single">
 <div class="sim-grid">
 <div class="col">
@@ -227,23 +226,23 @@
                 <span class="fl-text">想定利回り（年率）<span class="tt" tabindex="0">?<span class="tc">過去の平均リターンをデフォルト表示。将来の利回りを保証するものではありません。</span></span></span>
                 <button class="rbtn" onclick="resetRate()">平均値に戻す</button>
             </div>
-            <div class="iw"><input type="number" id="s-rate" value="13.25" step="0.01" oninput="calc()" onfocus="this.select()"><span class="iu">%</span></div>
+            <div class="iw"><input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()"><span class="iu">%</span></div>
             <div class="hint" id="s-rate-src">※ S&P500の過去30年間（1994〜2024）の年平均リターン</div>
         </div>
         <div class="field">
             <div class="fl"><span class="fl-text">初期投資額（まとまったお金）</span></div>
-            <div class="iw hl" id="s-init-w"><input type="number" id="s-init" placeholder="0" oninput="onIn('s-init','s-init-w');calc()"><span class="iu">万円</span></div>
+            <div class="iw hl" id="s-init-w"><input type="number" id="s-init" placeholder="0" oninput="onIn('s-init','s-init-w');saveAndCalc()"><span class="iu">万円</span></div>
         </div>
         <div class="field">
             <div class="fl"><span class="fl-text">毎月の積立額</span><span class="fl-val" id="s-mo-v">3万円</span></div>
             <input type="range" id="s-mo-r" min="0" max="30" value="3" oninput="sR('s-mo')">
-            <div class="iw"><input type="number" id="s-mo" value="3" oninput="sI('s-mo');calc()"><span class="iu">万円</span></div>
+            <div class="iw"><input type="number" id="s-mo" value="3" oninput="sI('s-mo');saveAndCalc()"><span class="iu">万円</span></div>
             <div class="hint">※ 新NISAつみたて投資枠: 月10万円まで非課税</div>
         </div>
         <div class="field">
             <div class="fl"><span class="fl-text">運用期間</span><span class="fl-val" id="s-yr-v">20年</span></div>
             <input type="range" id="s-yr-r" min="1" max="50" value="20" oninput="sR('s-yr')">
-            <div class="iw"><input type="number" id="s-yr" value="20" oninput="sI('s-yr');calc()"><span class="iu">年</span></div>
+            <div class="iw"><input type="number" id="s-yr" value="20" oninput="sI('s-yr');saveAndCalc()"><span class="iu">年</span></div>
         </div>
     </div>
     <div class="card">
@@ -251,7 +250,7 @@
         <div class="field">
             <div class="fl"><span class="fl-text">毎年の取り崩し率<span class="tt" tabindex="0">?<span class="tc">年末に資産の一定割合を引き出す設定。「4%ルール」は有名なリタイア戦略です。</span></span></span><span class="fl-val red" id="s-wd-v">0%</span></div>
             <input type="range" id="s-wd-r" min="0" max="20" value="0" step="0.1" class="rr" oninput="sR('s-wd')">
-            <div class="iw rf"><input type="number" id="s-wd" value="0" step="0.1" oninput="sI('s-wd');calc()" onfocus="this.select()"><span class="iu">%</span></div>
+            <div class="iw rf"><input type="number" id="s-wd" value="0" step="0.1" oninput="sI('s-wd');saveAndCalc()" onfocus="this.select()"><span class="iu">%</span></div>
             <div class="hint">※ 年末に一括で取り崩す計算です</div>
         </div>
         <div class="trow">
@@ -287,7 +286,6 @@
 </div>
 </section>
 
-<!-- DUAL -->
 <section class="tab-content" id="tab-dual">
 <div class="sim-grid">
 <div class="col">
@@ -295,15 +293,15 @@
         <div class="card-hdr"><div class="card-step">1</div><div class="card-title">銘柄ごとの金額を決める</div></div>
         <div class="dpc usa">
             <div class="dpt">🇺🇸 S&P500（米国株）</div>
-            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('sp500')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-sp-r" value="13.25" step="0.01" oninput="cD()" onfocus="this.select()"><span class="u">%</span></div></div>
-            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-sp-i" placeholder="0" oninput="cD()"><span class="u">万円</span></div></div>
-            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-sp-m" value="3" oninput="cD()"><span class="u">万円</span></div></div>
+            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('sp500')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-sp-r" value="13.25" step="0.01" oninput="saveAndCD()" onfocus="this.select()"><span class="u">%</span></div></div>
+            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-sp-i" placeholder="0" oninput="saveAndCD()"><span class="u">万円</span></div></div>
+            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-sp-m" value="3" oninput="saveAndCD()"><span class="u">万円</span></div></div>
         </div>
         <div class="dpc world">
             <div class="dpt">🌍 全世界株式（オルカン）</div>
-            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('all')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-al-r" value="9.99" step="0.01" oninput="cD()" onfocus="this.select()"><span class="u">%</span></div></div>
-            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-al-i" placeholder="0" oninput="cD()"><span class="u">万円</span></div></div>
-            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-al-m" value="2" oninput="cD()"><span class="u">万円</span></div></div>
+            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('all')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-al-r" value="9.99" step="0.01" oninput="saveAndCD()" onfocus="this.select()"><span class="u">%</span></div></div>
+            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-al-i" placeholder="0" oninput="saveAndCD()"><span class="u">万円</span></div></div>
+            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-al-m" value="2" oninput="saveAndCD()"><span class="u">万円</span></div></div>
         </div>
     </div>
     <div class="card">
@@ -311,12 +309,12 @@
         <div class="field">
             <div class="fl"><span class="fl-text">運用期間</span><span class="fl-val" id="d-yr-v">20年</span></div>
             <input type="range" id="d-yr-r" min="1" max="50" value="20" oninput="sR('d-yr')">
-            <div class="iw"><input type="number" id="d-yr" value="20" oninput="sI('d-yr');cD()"><span class="iu">年</span></div>
+            <div class="iw"><input type="number" id="d-yr" value="20" oninput="sI('d-yr');saveAndCD()"><span class="iu">年</span></div>
         </div>
         <div class="field">
             <div class="fl"><span class="fl-text">毎年の取り崩し率 <span style="font-weight:400;color:var(--s400);font-size:.68rem">(任意)</span></span><span class="fl-val red" id="d-wd-v">0%</span></div>
             <input type="range" id="d-wd-r" min="0" max="20" value="0" step="0.1" class="rr" oninput="sR('d-wd')">
-            <div class="iw rf"><input type="number" id="d-wd" value="0" step="0.1" oninput="sI('d-wd');cD()" onfocus="this.select()"><span class="iu">%</span></div>
+            <div class="iw rf"><input type="number" id="d-wd" value="0" step="0.1" oninput="sI('d-wd');saveAndCD()" onfocus="this.select()"><span class="iu">%</span></div>
         </div>
         <div class="trow">
             <span class="tlbl">NISA枠で非課税と仮定<span class="tt" tabindex="0">?<span class="tc">OFFで運用益に20.315%課税。</span></span></span>
@@ -353,7 +351,6 @@
 </div>
 </section>
 
-<!-- HIERARCHY -->
 <section class="tab-content" id="tab-hierarchy">
 <div class="card" style="margin-bottom:18px;">
     <h2 style="font-size:1.05rem;font-weight:800;color:var(--s800);text-align:center;margin-bottom:6px;">資産階層ピラミッド診断</h2>
@@ -402,7 +399,6 @@
 </div>
 </section>
 
-<!-- GUIDE -->
 <section class="tab-content" id="tab-guide">
 <div class="gs">
     <div class="gi"><h3>📊 1銘柄で計算</h3><p>S&P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p></div>
@@ -424,7 +420,131 @@ const TAX=.20315;
 let cProd='sp500',sC=null,dC=null,nS=true,nD=true;
 let LR={initial:0,final:0,profit:0,inputs:{rate:0,monthly:0,years:0,initial:0}};
 
-window.addEventListener('DOMContentLoaded',()=>{setIcon();initTabs();calc();cD();});
+// === Local Storage 関連の処理を追加 ===
+const STORAGE_KEY = 'investmentSimData';
+
+function loadData() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            
+            // Single
+            if(data.s) {
+                if(data.s.prod) selProd(data.s.prod);
+                if(data.s.rate !== undefined) document.getElementById('s-rate').value = data.s.rate;
+                if(data.s.init !== undefined) document.getElementById('s-init').value = data.s.init;
+                if(data.s.mo !== undefined) {
+                    document.getElementById('s-mo').value = data.s.mo;
+                    document.getElementById('s-mo-r').value = data.s.mo;
+                    sI('s-mo');
+                }
+                if(data.s.yr !== undefined) {
+                    document.getElementById('s-yr').value = data.s.yr;
+                    document.getElementById('s-yr-r').value = data.s.yr;
+                    sI('s-yr');
+                }
+                if(data.s.wd !== undefined) {
+                    document.getElementById('s-wd').value = data.s.wd;
+                    document.getElementById('s-wd-r').value = data.s.wd;
+                    sI('s-wd');
+                }
+                if(data.s.nisa !== undefined) {
+                    nS = data.s.nisa;
+                    document.getElementById('s-nisa').classList.toggle('on', nS);
+                }
+            }
+
+            // Dual
+            if(data.d) {
+                if(data.d.sp_r !== undefined) document.getElementById('d-sp-r').value = data.d.sp_r;
+                if(data.d.sp_i !== undefined) document.getElementById('d-sp-i').value = data.d.sp_i;
+                if(data.d.sp_m !== undefined) document.getElementById('d-sp-m').value = data.d.sp_m;
+                
+                if(data.d.al_r !== undefined) document.getElementById('d-al-r').value = data.d.al_r;
+                if(data.d.al_i !== undefined) document.getElementById('d-al-i').value = data.d.al_i;
+                if(data.d.al_m !== undefined) document.getElementById('d-al-m').value = data.d.al_m;
+
+                if(data.d.yr !== undefined) {
+                    document.getElementById('d-yr').value = data.d.yr;
+                    document.getElementById('d-yr-r').value = data.d.yr;
+                    sI('d-yr');
+                }
+                if(data.d.wd !== undefined) {
+                    document.getElementById('d-wd').value = data.d.wd;
+                    document.getElementById('d-wd-r').value = data.d.wd;
+                    sI('d-wd');
+                }
+                if(data.d.nisa !== undefined) {
+                    nD = data.d.nisa;
+                    document.getElementById('d-nisa').classList.toggle('on', nD);
+                }
+            }
+
+            // Tab
+            if(data.tab) {
+                const tabBtn = document.querySelector(`.tab-btn[data-tab="${data.tab}"]`);
+                if(tabBtn) tabBtn.click();
+            }
+
+            // 初期表示用のクラス調整
+            onIn('s-init', 's-init-w');
+            
+        } catch(e) {
+            console.error('Failed to parse saved data', e);
+        }
+    }
+}
+
+function saveData() {
+    const data = {
+        s: {
+            prod: cProd,
+            rate: document.getElementById('s-rate').value,
+            init: document.getElementById('s-init').value,
+            mo: document.getElementById('s-mo').value,
+            yr: document.getElementById('s-yr').value,
+            wd: document.getElementById('s-wd').value,
+            nisa: nS
+        },
+        d: {
+            sp_r: document.getElementById('d-sp-r').value,
+            sp_i: document.getElementById('d-sp-i').value,
+            sp_m: document.getElementById('d-sp-m').value,
+            al_r: document.getElementById('d-al-r').value,
+            al_i: document.getElementById('d-al-i').value,
+            al_m: document.getElementById('d-al-m').value,
+            yr: document.getElementById('d-yr').value,
+            wd: document.getElementById('d-wd').value,
+            nisa: nD
+        },
+        tab: document.querySelector('.tab-btn.active').dataset.tab
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function saveTab(tabName) {
+    saveData();
+}
+
+function saveAndCalc() {
+    calc();
+    saveData();
+}
+
+function saveAndCD() {
+    cD();
+    saveData();
+}
+// ====================================
+
+window.addEventListener('DOMContentLoaded',()=>{
+    setIcon();
+    initTabs();
+    loadData(); // 保存されたデータを読み込む
+    calc();
+    cD();
+});
 
 function setIcon(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,512,512);g.addColorStop(0,'#15803d');g.addColorStop(1,'#0d9488');x.fillStyle=g;x.fillRect(0,0,512,512);x.beginPath();x.moveTo(80,360);x.lineTo(190,260);x.lineTo(300,310);x.lineTo(420,140);x.lineWidth=36;x.strokeStyle='white';x.lineCap='round';x.lineJoin='round';x.stroke();x.beginPath();x.arc(420,140,30,0,Math.PI*2);x.fillStyle='#fcd34d';x.fill();const u=c.toDataURL('image/png');['dynamic-favicon','dynamic-apple-icon'].forEach(id=>{const e=document.getElementById(id);if(e)e.href=u;});}
 
@@ -434,15 +554,15 @@ function fm(n){const a=Math.abs(n),s=n<0?'-':'';if(a<10000)return s+Math.round(a
 function fman(n){const a=Math.abs(n),s=n<0?'-':'';const o=Math.floor(a/1e8),m=Math.floor((a%1e8)/1e4);if(o>0)return`${s}${o}億${m>0?m.toLocaleString()+'万':''}`;return`${s}${m.toLocaleString()}万`;}
 
 const UN={'s-mo':'万円','s-yr':'年','s-wd':'%','d-yr':'年','d-wd':'%'};
-function sR(p){const r=document.getElementById(p+'-r'),i=document.getElementById(p),l=document.getElementById(p+'-v');i.value=r.value;if(l)l.textContent=r.value+(UN[p]||'');if(p.startsWith('s-'))calc();else cD();}
+function sR(p){const r=document.getElementById(p+'-r'),i=document.getElementById(p),l=document.getElementById(p+'-v');i.value=r.value;if(l)l.textContent=r.value+(UN[p]||'');if(p.startsWith('s-'))saveAndCalc();else saveAndCD();}
 function sI(p){const i=document.getElementById(p),r=document.getElementById(p+'-r'),l=document.getElementById(p+'-v');if(r)r.value=i.value;if(l)l.textContent=i.value+(UN[p]||'');}
-function onIn(id,wid){const v=document.getElementById(id).value,w=document.getElementById(wid);parseFloat(v)>0?w.classList.remove('hl'):w.classList.add('hl');calc();}
+function onIn(id,wid){const v=document.getElementById(id).value,w=document.getElementById(wid);parseFloat(v)>0?w.classList.remove('hl'):w.classList.add('hl');}
 
-function selProd(k){cProd=k;document.getElementById('btn-s-sp').className=k==='sp500'?'product-btn sel':'product-btn';document.getElementById('btn-s-al').className=k==='all'?'product-btn sel':'product-btn';document.getElementById('s-rate').value=P[k].rate;document.getElementById('s-rate-src').textContent=P[k].src;calc();}
-function resetRate(){document.getElementById('s-rate').value=P[cProd].rate;calc();}
-function rDR(t){if(t==='sp500')document.getElementById('d-sp-r').value=P.sp500.rate;else document.getElementById('d-al-r').value=P.all.rate;cD();}
+function selProd(k){cProd=k;document.getElementById('btn-s-sp').className=k==='sp500'?'product-btn sel':'product-btn';document.getElementById('btn-s-al').className=k==='all'?'product-btn sel':'product-btn';document.getElementById('s-rate').value=P[k].rate;document.getElementById('s-rate-src').textContent=P[k].src;saveAndCalc();}
+function resetRate(){document.getElementById('s-rate').value=P[cProd].rate;saveAndCalc();}
+function rDR(t){if(t==='sp500')document.getElementById('d-sp-r').value=P.sp500.rate;else document.getElementById('d-al-r').value=P.all.rate;saveAndCD();}
 
-function tgN(p){if(p==='s'){nS=!nS;document.getElementById('s-nisa').classList.toggle('on',nS);calc();}else{nD=!nD;document.getElementById('d-nisa').classList.toggle('on',nD);cD();}}
+function tgN(p){if(p==='s'){nS=!nS;document.getElementById('s-nisa').classList.toggle('on',nS);saveAndCalc();}else{nD=!nD;document.getElementById('d-nisa').classList.toggle('on',nD);saveAndCD();}}
 function tgD(p){document.getElementById(p+'-dtb').classList.toggle('open');document.getElementById(p+'-dtw').classList.toggle('show');}
 
 function calc(){
