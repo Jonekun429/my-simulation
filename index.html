@@ -64,24 +64,28 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 0 10px;
+  padding: 10px 0 8px;
 }
+@media(min-width:600px) { .hdr-top { padding: 14px 0 10px; } }
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
 }
 .logo-mark {
-  width: 36px; height: 36px;
+  width: 32px; height: 32px;
   background: linear-gradient(135deg, var(--g-d) 0%, #00cec9 100%);
-  border-radius: 10px;
+  border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,185,148,.3);
 }
-.logo-name { font-size: 1.1rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
-.logo-tag { font-size: .6rem; font-weight: 500; color: var(--soft); margin-left: 2px; }
+@media(min-width:600px) { .logo-mark { width: 36px; height: 36px; border-radius: 10px; font-size: 18px; } }
+.logo-name { font-size: 1rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+@media(min-width:600px) { .logo-name { font-size: 1.1rem; } }
+.logo-tag { font-size: .55rem; font-weight: 500; color: var(--soft); margin-left: 2px; display: none; }
+@media(min-width:420px) { .logo-tag { display: inline; font-size: .6rem; } }
 
 /* ─── TABS ─── */
 .tabs {
@@ -95,27 +99,29 @@ body {
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
   flex: 1;
-  min-width: 80px;
-  padding: 10px 8px;
+  min-width: 0;
+  padding: 8px 4px;
   border: none;
   background: transparent;
   color: var(--soft);
   font-family: inherit;
   font-weight: 700;
-  font-size: .72rem;
+  font-size: .65rem;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   border-bottom: 3px solid transparent;
   transition: color .2s, border-color .2s;
   white-space: nowrap;
   position: relative;
 }
+@media(min-width:480px) { .tab { font-size: .72rem; padding: 10px 8px; gap: 3px; } }
 .tab:hover { color: var(--mid); }
 .tab.active { color: var(--g-d); border-bottom-color: var(--g); }
-.tab-icon { font-size: 1.15rem; }
+.tab-icon { font-size: 1rem; }
+@media(min-width:480px) { .tab-icon { font-size: 1.15rem; } }
 
 /* ─── MAIN ─── */
 .main {
@@ -123,7 +129,13 @@ body {
   max-width: 1120px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px 16px 60px;
+  padding: 16px 12px 60px;
+}
+@media(min-width:600px) {
+  .main { padding: 20px 16px 60px; }
+}
+@media(min-width:960px) {
+  .main { padding: 24px 20px 60px; }
 }
 .pane { display: none; animation: slideUp .3s ease-out; }
 .pane.active { display: block; }
@@ -133,12 +145,21 @@ body {
 .grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 14px;
 }
 @media(min-width:960px) {
   .grid { grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
 }
-.col { display: flex; flex-direction: column; gap: 14px; }
+.col { display: flex; flex-direction: column; gap: 12px; }
+@media(min-width:600px) { .col { gap: 14px; } }
+
+/* スマホでは入力(col-left)より先に結果(col-right)を表示 */
+.col-left  { order: 2; }
+.col-right { order: 1; }
+@media(min-width:960px) {
+  .col-left  { order: 1; }
+  .col-right { order: 2; }
+}
 
 /* ─── CARD ─── */
 .card {
@@ -152,9 +173,10 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 16px 20px 12px;
+  padding: 12px 14px 10px;
   border-bottom: 1px solid var(--line);
 }
+@media(min-width:600px) { .card-head { padding: 16px 20px 12px; } }
 .step-badge {
   width: 24px; height: 24px;
   border-radius: 50%;
@@ -167,7 +189,8 @@ body {
 }
 .step-badge.opt { background: var(--soft); }
 .card-title { font-size: .85rem; font-weight: 800; color: var(--ink); }
-.card-body { padding: 18px 20px; }
+.card-body { padding: 14px 14px; }
+@media(min-width:600px) { .card-body { padding: 18px 20px; } }
 
 /* ─── PRODUCT SELECTOR ─── */
 .prod-grid {
@@ -178,13 +201,14 @@ body {
 .prod-btn {
   border: 2px solid var(--line);
   border-radius: 12px;
-  padding: 14px 10px;
+  padding: 12px 8px;
   background: var(--bg);
   cursor: pointer;
   text-align: center;
   transition: all .2s;
   position: relative;
 }
+@media(min-width:600px) { .prod-btn { padding: 14px 10px; } }
 .prod-btn:hover { border-color: var(--soft); }
 .prod-btn.active {
   border-color: var(--g);
@@ -395,11 +419,12 @@ input[type=range]::-moz-range-thumb {
 /* ─── RESULT HERO ─── */
 .hero {
   border-radius: var(--rad);
-  padding: 24px;
+  padding: 18px 16px;
   position: relative;
   overflow: hidden;
   color: #fff;
 }
+@media(min-width:600px) { .hero { padding: 24px; } }
 .hero.green { background: linear-gradient(135deg, #00916e 0%, #00cec9 100%); }
 .hero.dark { background: linear-gradient(135deg, #0a3d62 0%, #1e5799 100%); }
 .hero::after {
@@ -415,7 +440,7 @@ input[type=range]::-moz-range-thumb {
 
 .hero-label { font-size: .72rem; font-weight: 600; opacity: .75; margin-bottom: 4px; }
 .hero-amount {
-  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-size: clamp(1.7rem, 8vw, 2.8rem);
   font-weight: 900;
   letter-spacing: -.04em;
   line-height: 1.05;
@@ -437,7 +462,7 @@ input[type=range]::-moz-range-thumb {
 .hero-badges {
   display: flex;
   gap: 6px;
-  margin-top: 12px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 .badge {
@@ -447,26 +472,35 @@ input[type=range]::-moz-range-thumb {
   background: rgba(255,255,255,.15);
   border: 1px solid rgba(255,255,255,.2);
   border-radius: 20px;
-  padding: 4px 10px;
-  font-size: .65rem;
+  padding: 3px 9px;
+  font-size: .62rem;
   font-weight: 700;
   backdrop-filter: blur(4px);
 }
+@media(min-width:600px) { .badge { font-size: .65rem; padding: 4px 10px; } }
 .badge-highlight { color: #ffe066; }
 
 /* ─── SUMMARY TILES ─── */
 .tiles {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-bottom: 14px;
+}
+@media(min-width:480px) {
+  .tiles { grid-template-columns: repeat(3, 1fr); }
 }
 .tile {
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 12px;
-  padding: 12px 10px;
+  padding: 10px 8px;
   text-align: center;
+}
+@media(min-width:600px) { .tile { padding: 12px 10px; } }
+/* スマホ3枚目タイルは全幅に */
+@media(max-width:479px) {
+  .tile:last-child { grid-column: 1 / -1; }
 }
 .tile-label { font-size: .58rem; font-weight: 700; color: var(--soft); margin-bottom: 4px; }
 .tile-value { font-size: .88rem; font-weight: 800; color: var(--ink); font-family: 'Outfit', sans-serif; }
@@ -475,7 +509,8 @@ input[type=range]::-moz-range-thumb {
 .tile-value.blue { color: var(--b); }
 
 /* ─── CHART ─── */
-.chart-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--rad); padding: 18px 16px; box-shadow: var(--shadow-sm); }
+.chart-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--rad); padding: 14px 12px; box-shadow: var(--shadow-sm); }
+@media(min-width:600px) { .chart-card { padding: 18px 16px; } }
 .chart-title { font-size: .78rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
 .chart-legend {
   display: flex;
@@ -485,7 +520,8 @@ input[type=range]::-moz-range-thumb {
 }
 .legend-item { display: flex; align-items: center; gap: 5px; font-size: .65rem; font-weight: 600; color: var(--soft); }
 .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-.chart-wrap { position: relative; height: 260px; }
+.chart-wrap { position: relative; height: 220px; }
+@media(min-width:600px) { .chart-wrap { height: 260px; } }
 
 /* ─── DETAIL TABLE ─── */
 .detail-toggle {
@@ -516,19 +552,22 @@ input[type=range]::-moz-range-thumb {
 }
 .detail-wrap.show { display: block; }
 
-table.dt { width: 100%; border-collapse: collapse; font-size: .68rem; }
+table.dt { width: 100%; border-collapse: collapse; font-size: .63rem; }
+@media(min-width:480px) { table.dt { font-size: .68rem; } }
 table.dt th {
   background: var(--bg);
   font-weight: 700;
   color: var(--soft);
-  padding: 8px 10px;
+  padding: 7px 8px;
   text-align: right;
   position: sticky;
   top: 0;
   border-bottom: 1px solid var(--line);
 }
+@media(min-width:480px) { table.dt th { padding: 8px 10px; } }
 table.dt th:first-child { text-align: left; }
-table.dt td { padding: 7px 10px; text-align: right; border-bottom: 1px solid #f0f4fb; color: var(--ink2); font-family: 'Outfit', sans-serif; font-weight: 500; }
+table.dt td { padding: 6px 8px; text-align: right; border-bottom: 1px solid #f0f4fb; color: var(--ink2); font-family: 'Outfit', sans-serif; font-weight: 500; }
+@media(min-width:480px) { table.dt td { padding: 7px 10px; } }
 table.dt td:first-child { text-align: left; color: var(--soft); font-weight: 700; }
 table.dt tr:last-child td { border-bottom: none; }
 table.dt tr:hover td { background: var(--g-l); }
@@ -548,10 +587,11 @@ table.dt tr:hover td { background: var(--g-l); }
 .asset-card {
   border: 2px solid var(--line);
   border-radius: 14px;
-  padding: 16px;
+  padding: 12px;
   margin-bottom: 12px;
   transition: border-color .2s;
 }
+@media(min-width:600px) { .asset-card { padding: 16px; } }
 .asset-card:last-of-type { margin-bottom: 0; }
 .asset-card.usa { background: #f0f7ff; border-color: #b3d4ff; }
 .asset-card.world { background: #f0fdf8; border-color: #9de8d0; }
@@ -559,7 +599,9 @@ table.dt tr:hover td { background: var(--g-l); }
 .asset-name { font-size: .88rem; font-weight: 800; }
 .asset-card.usa .asset-name { color: #1247a0; }
 .asset-card.world .asset-name { color: var(--g-d); }
-.asset-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.asset-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media(min-width:400px) { .asset-row { grid-template-columns: 1fr 1fr; } }
+@media(min-width:560px) { .asset-row { grid-template-columns: 1fr 1fr 1fr; } }
 .af { display: flex; flex-direction: column; gap: 4px; }
 .af label { font-size: .62rem; font-weight: 700; color: var(--soft); }
 .af-in {
@@ -619,14 +661,16 @@ table.dt tr:hover td { background: var(--g-l); }
 .prog-bar-bg { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
 .prog-bar { height: 100%; background: linear-gradient(90deg, var(--g), #00cec9); border-radius: 4px; transition: width .8s ease; }
 
-.advice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.advice-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
+@media(min-width:480px) { .advice-grid { grid-template-columns: 1fr 1fr; } }
 .advice-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
 .advice-label { font-size: .62rem; font-weight: 700; color: var(--soft); margin-bottom: 6px; }
 .advice-val { font-size: .82rem; color: var(--ink2); line-height: 1.6; }
 .advice-hl { font-size: 1.15rem; font-weight: 900; color: var(--g-d); font-family: 'Outfit', sans-serif; }
 
 /* ─── GUIDE ─── */
-.guide-grid { display: grid; gap: 12px; }
+.guide-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media(min-width:600px) { .guide-grid { grid-template-columns: 1fr 1fr; } }
 .guide-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
 .guide-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .guide-icon { font-size: 1.3rem; }
@@ -688,7 +732,7 @@ footer {
   <div class="grid">
 
     <!-- LEFT: INPUTS -->
-    <div class="col">
+    <div class="col col-left">
       <div class="card">
         <div class="card-head">
           <div class="step-badge">1</div>
@@ -819,7 +863,7 @@ footer {
     </div>
 
     <!-- RIGHT: RESULTS -->
-    <div class="col">
+    <div class="col col-right">
 
       <div class="hero green" id="s-hero">
         <p class="hero-label">最終資産残高</p>
@@ -888,7 +932,7 @@ footer {
 <!-- ═══════════════ 2銘柄 ═══════════════ -->
 <section class="pane" id="pane-dual">
   <div class="grid">
-    <div class="col">
+    <div class="col col-left">
       <div class="card">
         <div class="card-head">
           <div class="step-badge">1</div>
@@ -959,7 +1003,7 @@ footer {
       </div>
     </div>
 
-    <div class="col">
+    <div class="col col-right">
       <div class="hero dark">
         <p class="hero-label">最終資産残高（2銘柄合計）</p>
         <div class="hero-amount" id="d-final">0円</div>
@@ -1132,7 +1176,7 @@ footer {
       <div class="guide-head"><span class="guide-icon">🔢</span><span class="guide-title">計算ロジックについて</span></div>
       <p class="guide-body">月初積立・月次複利で計算しています。年利は厳密な複利換算（(1+年利)^(1/12)−1）で月利に変換しており、精度の高いシミュレーションを実現しています。取り崩しは年末一括方式です。</p>
     </div>
-    <div class="cta-box" style="grid-column:1/-1">
+    <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
       <div class="cta-title">🔰 投資初心者へのワンポイント</div>
       <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
     </div>
