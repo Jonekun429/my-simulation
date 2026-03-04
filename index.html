@@ -1,640 +1,1657 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>つみたて投資ナビ | 資産運用シミュレーター</title>
-    <link rel="icon" id="dynamic-favicon">
-    <link rel="apple-touch-icon" id="dynamic-apple-icon">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        :root {
-            --g50:#f0fdf4;--g100:#dcfce7;--g200:#bbf7d0;--g400:#4ade80;--g500:#22c55e;--g600:#16a34a;--g700:#15803d;--g800:#166534;
-            --s50:#f8fafc;--s100:#f1f5f9;--s200:#e2e8f0;--s300:#cbd5e1;--s400:#94a3b8;--s500:#64748b;--s600:#475569;--s700:#334155;--s800:#1e293b;
-            --a50:#fffbeb;--a100:#fef3c7;--a200:#fde68a;--a700:#b45309;
-            --r400:#f87171;--r500:#ef4444;--r600:#dc2626;
-            --b50:#eff6ff;--b500:#3b82f6;--b700:#1d4ed8;--b800:#1e40af;
-            --t50:#f0fdfa;--t500:#14b8a6;
-            --y300:#fde047;
-            --o400:#fb923c;--o700:#c2410c;
-            --rad:16px;
-        }
-        *{box-sizing:border-box;margin:0;padding:0;}
-        body{font-family:'Noto Sans JP','DM Sans',sans-serif;background:var(--s50);color:var(--s700);line-height:1.7;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>つみたて投資ナビ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --ink: #0a1628;
+  --ink2: #1e3a5f;
+  --mid: #4a6fa5;
+  --soft: #8ba3c7;
+  --line: #dde6f4;
+  --bg: #f5f8ff;
+  --white: #ffffff;
+  --g: #00b894;
+  --g-d: #00916e;
+  --g-l: #e0faf3;
+  --r: #e17055;
+  --r-l: #fff0eb;
+  --y: #f9ca24;
+  --y-l: #fffae0;
+  --b: #0984e3;
+  --b-l: #e8f4ff;
+  --shadow-sm: 0 1px 3px rgba(10,22,40,.07), 0 1px 2px rgba(10,22,40,.04);
+  --shadow: 0 4px 16px rgba(10,22,40,.08), 0 1px 4px rgba(10,22,40,.04);
+  --shadow-lg: 0 8px 32px rgba(10,22,40,.12), 0 2px 8px rgba(10,22,40,.06);
+  --rad: 18px;
+  --rad-sm: 10px;
+  --rad-xs: 6px;
+}
 
-        .header{background:#fff;border-bottom:1px solid var(--s200);position:sticky;top:0;z-index:50;box-shadow:0 1px 2px rgba(0,0,0,.04);}
-        .header-inner{max-width:1100px;margin:0 auto;padding:14px 20px 0;}
-        .logo-area{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
-        .logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--g700),var(--t500));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(22,163,74,.25);}
-        .logo-text{font-size:1.15rem;font-weight:800;color:var(--s800);letter-spacing:-.02em;}
-        .logo-sub{font-size:.62rem;color:var(--s400);font-weight:500;margin-left:6px;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .tab-bar{display:flex;gap:2px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none;}
-        .tab-bar::-webkit-scrollbar{display:none;}
-        .tab-btn{flex:1;min-width:0;padding:9px 6px;font-weight:700;font-size:.75rem;text-align:center;border:none;background:transparent;color:var(--s400);cursor:pointer;border-bottom:3px solid transparent;transition:color .2s;white-space:nowrap;}
-        .tab-btn:hover{color:var(--s600);}
-        .tab-btn.active{color:var(--g700);border-bottom-color:var(--g600);}
-        .tab-emoji{display:block;font-size:1rem;margin-bottom:1px;}
+body {
+  font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
 
-        .main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:20px 20px 40px;}
-        .tab-content{display:none;animation:fu .35s ease-out;}
-        .tab-content.active{display:block;}
-        @keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+/* ─── HEADER ─── */
+.hdr {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.hdr-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.hdr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0 10px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--g-d) 0%, #00cec9 100%);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 2px 8px rgba(0,185,148,.3);
+}
+.logo-name { font-size: 1.1rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+.logo-tag { font-size: .6rem; font-weight: 500; color: var(--soft); margin-left: 2px; }
 
-        .sim-grid{display:grid;grid-template-columns:1fr;gap:18px;}
-        @media(min-width:1024px){.sim-grid{grid-template-columns:420px 1fr;gap:24px;}}
-        .col{display:flex;flex-direction:column;gap:14px;}
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  color: var(--soft);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .72rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  border-bottom: 3px solid transparent;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+  position: relative;
+}
+.tab:hover { color: var(--mid); }
+.tab.active { color: var(--g-d); border-bottom-color: var(--g); }
+.tab-icon { font-size: 1.15rem; }
 
-        .card{background:#fff;border-radius:var(--rad);padding:22px;border:1px solid var(--s200);box-shadow:0 1px 2px rgba(0,0,0,.04);}
-        .card-hdr{display:flex;align-items:center;gap:9px;margin-bottom:14px;}
-        .card-step{width:26px;height:26px;border-radius:50%;background:var(--g600);color:#fff;font-size:.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .card-step.gray{background:var(--s400);}
-        .card-title{font-size:.9rem;font-weight:800;color:var(--s800);}
+/* ─── MAIN ─── */
+.main {
+  flex: 1;
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px 16px 60px;
+}
+.pane { display: none; animation: slideUp .3s ease-out; }
+.pane.active { display: block; }
+@keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-        .product-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-        .product-btn{padding:12px 8px;border-radius:12px;border:2px solid var(--s200);background:#fff;cursor:pointer;text-align:center;transition:all .2s;position:relative;}
-        .product-btn .p-name{font-weight:700;font-size:.82rem;color:var(--s600);display:block;}
-        .product-btn .p-rate{font-size:.66rem;color:var(--s400);margin-top:2px;display:block;}
-        .product-btn.sel{border-color:var(--g500);background:var(--g50);}
-        .product-btn.sel .p-name{color:var(--g700);}
-        .product-btn.sel .p-rate{color:var(--g600);}
-        .product-btn.sel::after{content:'✓';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--g600);font-weight:800;}
+/* ─── LAYOUT ─── */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media(min-width:960px) {
+  .grid { grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
+}
+.col { display: flex; flex-direction: column; gap: 14px; }
 
-        .field{margin-bottom:16px;}.field:last-child{margin-bottom:0;}
-        .fl{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
-        .fl-text{font-size:.78rem;font-weight:700;color:var(--s600);}
-        .fl-val{font-size:.78rem;font-weight:700;color:var(--g600);}
-        .fl-val.red{color:var(--r500);}
-        .hint{font-size:.66rem;color:var(--s400);margin-top:3px;}
+/* ─── CARD ─── */
+.card {
+  background: var(--white);
+  border-radius: var(--rad);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.step-badge {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--g);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-badge.opt { background: var(--soft); }
+.card-title { font-size: .85rem; font-weight: 800; color: var(--ink); }
+.card-body { padding: 18px 20px; }
 
-        .iw{display:flex;align-items:center;border:2px solid var(--s200);border-radius:11px;padding:7px 12px;background:#fff;transition:all .2s;}
-        .iw:focus-within{border-color:var(--g400);box-shadow:0 0 0 3px rgba(34,197,94,.1);}
-        .iw.rf:focus-within{border-color:var(--r400);box-shadow:0 0 0 3px rgba(239,68,68,.1);}
-        .iw.hl{background:#fffef5;border-color:var(--a200);}
-        .iw input[type="number"]{border:none;outline:none;background:transparent;width:100%;text-align:right;font-size:1.1rem;font-weight:700;color:var(--s800);font-family:'DM Sans','Noto Sans JP',sans-serif;-moz-appearance:textfield;}
-        .iw input::-webkit-inner-spin-button,.iw input::-webkit-outer-spin-button{-webkit-appearance:none;}
-        .iu{font-size:.78rem;font-weight:700;color:var(--s400);margin-left:5px;white-space:nowrap;}
+/* ─── PRODUCT SELECTOR ─── */
+.prod-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.prod-btn {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 10px;
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+  position: relative;
+}
+.prod-btn:hover { border-color: var(--soft); }
+.prod-btn.active {
+  border-color: var(--g);
+  background: var(--g-l);
+}
+.prod-flag { font-size: 1.5rem; margin-bottom: 4px; display: block; }
+.prod-name { font-size: .82rem; font-weight: 800; color: var(--ink); display: block; }
+.prod-desc { font-size: .62rem; color: var(--soft); margin-top: 2px; display: block; }
+.prod-btn.active .prod-name { color: var(--g-d); }
+.prod-check {
+  position: absolute;
+  top: 6px; right: 8px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--g);
+  color: #fff;
+  font-size: .55rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.prod-btn.active .prod-check { display: flex; }
 
-        .rbtn{font-size:.68rem;color:var(--g600);font-weight:700;cursor:pointer;background:none;border:none;padding:2px 5px;border-radius:4px;transition:background .15s;}
-        .rbtn:hover{background:var(--g50);}
+/* ─── FORM FIELDS ─── */
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
 
-        input[type="range"]{-webkit-appearance:none;width:100%;height:5px;border-radius:3px;background:var(--s200);outline:none;margin:5px 0 7px;cursor:pointer;}
-        input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--g500);box-shadow:0 1px 4px rgba(0,0,0,.12);cursor:pointer;transition:transform .15s;}
-        input[type="range"]::-webkit-slider-thumb:hover{transform:scale(1.12);}
-        input[type="range"].rr::-webkit-slider-thumb{border-color:var(--r500);}
-        input[type="range"]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid var(--g500);box-shadow:0 1px 4px rgba(0,0,0,.12);cursor:pointer;}
+.field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.field-label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.field-val { font-size: .75rem; font-weight: 800; color: var(--g-d); }
+.field-val.danger { color: var(--r); }
+.field-hint { font-size: .62rem; color: var(--soft); margin-top: 4px; line-height: 1.5; }
 
-        .result-hero{border-radius:var(--rad);padding:26px;color:#fff;position:relative;overflow:hidden;}
-        .result-hero::before{content:'';position:absolute;top:-50%;right:-30%;width:200%;height:200%;background:radial-gradient(circle at 70% 30%,rgba(255,255,255,.07) 0%,transparent 60%);pointer-events:none;}
-        .result-hero.gr{background:linear-gradient(135deg,var(--g700),#0d9488);}
-        .result-hero.dg{background:linear-gradient(135deg,var(--g800),var(--g700));}
-        .rl{font-size:.78rem;font-weight:600;opacity:.8;margin-bottom:3px;}
-        .ra{font-size:2.3rem;font-weight:900;letter-spacing:-.03em;line-height:1.1;font-family:'DM Sans','Noto Sans JP',sans-serif;}
-        @media(min-width:640px){.ra{font-size:2.8rem;}}
-        .rsr{display:flex;justify-content:space-between;align-items:flex-end;margin-top:16px;flex-wrap:wrap;gap:8px;}
-        .rp{font-size:1.1rem;font-weight:800;}
-        .rp.pos{color:var(--y300);}.rp.neg{color:var(--r400);}
-        .ri{font-size:.7rem;opacity:.7;}
-        .nisa-b{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.14);backdrop-filter:blur(4px);border-radius:7px;padding:3px 9px;font-size:.66rem;font-weight:700;margin-top:10px;color:#d1fae5;}
-        .nisa-b .nt{color:var(--y300);font-weight:800;}
+.reset-btn {
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--mid);
+  background: var(--b-l);
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.reset-btn:hover { background: var(--b); color: #fff; }
 
-        .cc{background:#fff;border-radius:var(--rad);padding:18px;border:1px solid var(--s200);box-shadow:0 1px 2px rgba(0,0,0,.04);}
-        .cc h3{font-size:.7rem;font-weight:700;color:var(--s400);margin-bottom:6px;}
-        .cl{display:flex;gap:14px;margin-bottom:6px;flex-wrap:wrap;}
-        .cli{display:flex;align-items:center;gap:4px;font-size:.68rem;font-weight:600;color:var(--s500);}
-        .cld{width:9px;height:9px;border-radius:2px;}
-        .cw{position:relative;height:270px;width:100%;}
+/* INPUT WRAPPER */
+.iw {
+  display: flex;
+  align-items: center;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: var(--rad-sm);
+  padding: 8px 12px;
+  transition: all .2s;
+  gap: 6px;
+}
+.iw:focus-within { border-color: var(--g); background: #fff; box-shadow: 0 0 0 3px rgba(0,184,148,.1); }
+.iw.highlight { background: var(--y-l); border-color: #f9ca24aa; }
+.iw.danger:focus-within { border-color: var(--r); box-shadow: 0 0 0 3px rgba(225,112,85,.1); }
 
-        .dtb{font-size:.76rem;font-weight:700;color:var(--g600);cursor:pointer;background:none;border:none;padding:6px 0;display:flex;align-items:center;gap:5px;}
-        .dtb .arr{transition:transform .2s;font-size:.6rem;}
-        .dtb.open .arr{transform:rotate(90deg);}
-        .dtw{display:none;margin-top:6px;max-height:280px;overflow-y:auto;border:1px solid var(--s200);border-radius:10px;}
-        .dtw.show{display:block;}
-        .dt{width:100%;border-collapse:collapse;font-size:.7rem;}
-        .dt th{background:var(--s50);font-weight:700;color:var(--s500);padding:7px 8px;text-align:right;position:sticky;top:0;border-bottom:1px solid var(--s200);}
-        .dt th:first-child{text-align:center;}
-        .dt td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--s100);color:var(--s600);font-family:'DM Sans',sans-serif;font-weight:500;}
-        .dt td:first-child{text-align:center;color:var(--s400);font-weight:600;}
-        .dt tr:last-child td{border-bottom:none;}
-        .dt tr:hover td{background:var(--g50);}
+.iw input[type=number] {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  text-align: right;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  -moz-appearance: textfield;
+  min-width: 0;
+}
+.iw input::-webkit-inner-spin-button,
+.iw input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.iw-unit { font-size: .75rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
+.iw-icon { font-size: .85rem; flex-shrink: 0; }
 
-        .disc{background:var(--s50);border:1px solid var(--s200);border-radius:11px;padding:12px 14px;margin-top:14px;}
-        .disc-t{font-size:.7rem;font-weight:700;color:var(--s500);margin-bottom:3px;display:flex;align-items:center;gap:4px;}
-        .disc p{font-size:.64rem;color:var(--s400);line-height:1.6;}
+/* RANGE SLIDER */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  outline: none;
+  margin: 6px 0 8px;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--g);
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type=range].danger::-webkit-slider-thumb { border-color: var(--r); }
+input[type=range]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--g);
+  cursor: pointer;
+}
 
-        .dpc{border-radius:14px;padding:18px;border:1px solid;margin-bottom:10px;}
-        .dpc:last-of-type{margin-bottom:0;}
-        .dpc.usa{background:var(--b50);border-color:#bfdbfe;}
-        .dpc.world{background:var(--t50);border-color:#99f6e4;}
-        .dpt{font-weight:800;font-size:.88rem;margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-        .dpc.usa .dpt{color:var(--b800);}
-        .dpc.world .dpt{color:var(--g800);}
-        .df{margin-bottom:10px;}.df:last-child{margin-bottom:0;}
-        .df label{font-size:.7rem;font-weight:700;display:block;margin-bottom:3px;}
-        .dpc.usa .df label{color:var(--b700);}
-        .dpc.world .df label{color:var(--g700);}
-        .diw{display:flex;align-items:center;background:#fff;border:1px solid;border-radius:9px;padding:5px 10px;}
-        .dpc.usa .diw{border-color:#bfdbfe;}
-        .dpc.world .diw{border-color:#99f6e4;}
-        .diw input{border:none;outline:none;background:transparent;width:100%;text-align:right;font-size:.95rem;font-weight:700;color:var(--s800);font-family:'DM Sans','Noto Sans JP',sans-serif;-moz-appearance:textfield;}
-        .diw input::-webkit-inner-spin-button,.diw input::-webkit-outer-spin-button{-webkit-appearance:none;}
-        .diw .u{font-size:.7rem;font-weight:700;color:var(--s400);margin-left:4px;white-space:nowrap;}
+/* TOGGLE */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  gap: 10px;
+}
+.toggle-label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sw {
+  width: 44px; height: 24px;
+  background: var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background .2s;
+}
+.sw.on { background: var(--g); }
+.sw-knob {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  transition: transform .2s;
+}
+.sw.on .sw-knob { transform: translateX(20px); }
 
-        .trow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;}
-        .tlbl{font-size:.76rem;font-weight:700;color:var(--s600);display:flex;align-items:center;gap:4px;}
-        .tsw{position:relative;width:42px;height:22px;background:var(--s300);border-radius:11px;cursor:pointer;transition:background .2s;flex-shrink:0;}
-        .tsw.on{background:var(--g500);}
-        .tsw .tk{position:absolute;top:2px;left:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.15);}
-        .tsw.on .tk{transform:translateX(20px);}
+/* TOOLTIP */
+.tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--soft);
+  font-size: .52rem;
+  font-weight: 800;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+}
+.tip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: .63rem;
+  font-weight: 400;
+  width: 200px;
+  max-width: 220px;
+  line-height: 1.55;
+  z-index: 200;
+  white-space: normal;
+  box-shadow: var(--shadow-lg);
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.tip-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+}
+.tip:hover .tip-box,
+.tip:focus .tip-box { display: block; }
 
-        .tt{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;background:var(--s200);color:var(--s500);font-size:.52rem;font-weight:800;cursor:help;margin-left:3px;position:relative;vertical-align:middle;}
-        .tt .tc{display:none;position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:var(--s800);color:#fff;padding:7px 10px;border-radius:7px;font-size:.66rem;font-weight:500;width:max-content;max-width:220px;line-height:1.5;z-index:100;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.1);}
-        .tt .tc::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:4px solid transparent;border-top-color:var(--s800);}
-        .tt:hover .tc,.tt:focus .tc{display:block;}
+/* ─── RESULT HERO ─── */
+.hero {
+  border-radius: var(--rad);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+.hero.green { background: linear-gradient(135deg, #00916e 0%, #00cec9 100%); }
+.hero.dark { background: linear-gradient(135deg, #0a3d62 0%, #1e5799 100%); }
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  right: -20%;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  pointer-events: none;
+}
 
-        .hgrid{display:grid;grid-template-columns:1fr;gap:22px;align-items:center;}
-        @media(min-width:768px){.hgrid{grid-template-columns:1fr 1fr;}}
-        .pw{display:flex;justify-content:center;}
-        .pw svg{width:100%;max-width:370px;filter:drop-shadow(0 2px 8px rgba(0,0,0,.05));}
-        .ti{display:flex;flex-direction:column;gap:14px;}
-        .tr{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px;border-bottom:1px solid var(--s200);}
-        .trl{font-size:.76rem;font-weight:700;}
-        .trl.nw{color:var(--s500);}.trl.ft{color:var(--g600);}
-        .trv{font-weight:800;}
-        .trv.nw{color:var(--s700);font-size:.95rem;}.trv.ft{color:var(--g700);font-size:1.15rem;}
-        .ps{margin-top:3px;}
-        .pl{display:flex;justify-content:space-between;margin-bottom:5px;}
-        .pl span{font-size:.7rem;font-weight:700;}
-        .pbb{width:100%;height:9px;background:var(--s200);border-radius:5px;overflow:hidden;}
-        .pbf{height:100%;background:linear-gradient(90deg,var(--g400),var(--g600));border-radius:5px;transition:width .8s ease;}
-        .pt{font-size:.66rem;color:var(--s400);text-align:right;margin-top:3px;}
+.hero-label { font-size: .72rem; font-weight: 600; opacity: .75; margin-bottom: 4px; }
+.hero-amount {
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+  font-family: 'Outfit', sans-serif;
+}
+.hero-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hero-profit { font-size: 1.1rem; font-weight: 800; }
+.hero-profit.pos { color: #a8ffdb; }
+.hero-profit.neg { color: #ffb3a7; }
+.hero-inv { font-size: .68rem; opacity: .7; }
 
-        .acard{background:linear-gradient(135deg,var(--a50),#fff9eb);border-radius:var(--rad);padding:22px;border:1px solid var(--a200);margin-top:18px;}
-        .at{font-size:.95rem;font-weight:800;color:var(--a700);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
-        .ag{display:grid;grid-template-columns:1fr;gap:10px;}
-        @media(min-width:640px){.ag{grid-template-columns:1fr 1fr;}}
-        .ab{background:#fff;border-radius:12px;padding:14px;border:1px solid var(--a100);}
-        .abl{font-size:.68rem;font-weight:700;color:var(--s500);margin-bottom:4px;}
-        .abv{font-size:.85rem;color:var(--s700);line-height:1.6;}
-        .ahl{font-size:1.2rem;font-weight:800;color:var(--g600);}
+.hero-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: .65rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+}
+.badge-highlight { color: #ffe066; }
 
-        .gs{display:grid;gap:16px;}
-        .gi{background:#fff;border-radius:14px;padding:18px;border:1px solid var(--s200);}
-        .gi h3{font-size:.88rem;font-weight:800;color:var(--s800);margin-bottom:6px;}
-        .gi p{font-size:.8rem;color:var(--s500);line-height:1.7;}
-        .gcall{background:var(--g50);border:1px solid var(--g200);border-radius:11px;padding:14px;margin-top:16px;}
-        .gcall h4{font-size:.8rem;font-weight:800;color:var(--g700);margin-bottom:4px;}
-        .gcall p{font-size:.74rem;color:var(--g600);line-height:1.6;}
+/* ─── SUMMARY TILES ─── */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.tile {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+}
+.tile-label { font-size: .58rem; font-weight: 700; color: var(--soft); margin-bottom: 4px; }
+.tile-value { font-size: .88rem; font-weight: 800; color: var(--ink); font-family: 'Outfit', sans-serif; }
+.tile-value.green { color: var(--g-d); }
+.tile-value.red { color: var(--r); }
+.tile-value.blue { color: var(--b); }
 
-        .footer{text-align:center;padding:16px;font-size:.66rem;color:var(--s400);border-top:1px solid var(--s200);background:#fff;}
-    </style>
+/* ─── CHART ─── */
+.chart-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--rad); padding: 18px 16px; box-shadow: var(--shadow-sm); }
+.chart-title { font-size: .78rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+.chart-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: .65rem; font-weight: 600; color: var(--soft); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+.chart-wrap { position: relative; height: 260px; }
+
+/* ─── DETAIL TABLE ─── */
+.detail-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--mid);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-family: inherit;
+  width: 100%;
+}
+.detail-arrow { font-size: .6rem; transition: transform .2s; }
+.detail-toggle.open .detail-arrow { transform: rotate(90deg); }
+
+.detail-wrap {
+  display: none;
+  margin-top: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 260px;
+  overflow-y: auto;
+}
+.detail-wrap.show { display: block; }
+
+table.dt { width: 100%; border-collapse: collapse; font-size: .68rem; }
+table.dt th {
+  background: var(--bg);
+  font-weight: 700;
+  color: var(--soft);
+  padding: 8px 10px;
+  text-align: right;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid var(--line);
+}
+table.dt th:first-child { text-align: left; }
+table.dt td { padding: 7px 10px; text-align: right; border-bottom: 1px solid #f0f4fb; color: var(--ink2); font-family: 'Outfit', sans-serif; font-weight: 500; }
+table.dt td:first-child { text-align: left; color: var(--soft); font-weight: 700; }
+table.dt tr:last-child td { border-bottom: none; }
+table.dt tr:hover td { background: var(--g-l); }
+
+/* ─── NOTICE ─── */
+.notice {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--soft);
+  border-radius: var(--rad-sm);
+  padding: 10px 14px;
+}
+.notice-title { font-size: .68rem; font-weight: 800; color: var(--mid); margin-bottom: 2px; }
+.notice p { font-size: .62rem; color: var(--soft); line-height: 1.6; }
+
+/* ─── DUAL FORM ─── */
+.asset-card {
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.asset-card:last-of-type { margin-bottom: 0; }
+.asset-card.usa { background: #f0f7ff; border-color: #b3d4ff; }
+.asset-card.world { background: #f0fdf8; border-color: #9de8d0; }
+.asset-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.asset-name { font-size: .88rem; font-weight: 800; }
+.asset-card.usa .asset-name { color: #1247a0; }
+.asset-card.world .asset-name { color: var(--g-d); }
+.asset-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.af { display: flex; flex-direction: column; gap: 4px; }
+.af label { font-size: .62rem; font-weight: 700; color: var(--soft); }
+.af-in {
+  background: #fff;
+  border: 1.5px solid #c8d8f0;
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: border-color .2s;
+}
+.asset-card.world .af-in { border-color: #99e0c7; }
+.af-in:focus-within { border-color: var(--g); }
+.af-in input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  text-align: right;
+  font-family: 'Outfit', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--ink);
+  -moz-appearance: textfield;
+  min-width: 0;
+}
+.af-in input::-webkit-inner-spin-button,
+.af-in input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.af-in .u { font-size: .6rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
+
+/* ─── HIERARCHY ─── */
+.pyramid-section { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media(min-width:680px) { .pyramid-section { grid-template-columns: 1fr 1fr; } }
+
+.pyramid-wrap { display: flex; justify-content: center; }
+.pyramid-wrap svg { width: 100%; max-width: 340px; }
+
+.h-status { display: flex; flex-direction: column; gap: 12px; }
+.h-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.h-row-label { font-size: .72rem; font-weight: 700; color: var(--soft); }
+.h-row-val { font-size: .9rem; font-weight: 800; color: var(--ink); }
+.h-row-val.green { color: var(--g-d); }
+
+.prog-wrap { margin-top: 4px; }
+.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.prog-head span { font-size: .65rem; font-weight: 700; color: var(--soft); }
+.prog-head .prog-gap { color: var(--g-d); }
+.prog-bar-bg { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.prog-bar { height: 100%; background: linear-gradient(90deg, var(--g), #00cec9); border-radius: 4px; transition: width .8s ease; }
+
+.advice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.advice-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.advice-label { font-size: .62rem; font-weight: 700; color: var(--soft); margin-bottom: 6px; }
+.advice-val { font-size: .82rem; color: var(--ink2); line-height: 1.6; }
+.advice-hl { font-size: 1.15rem; font-weight: 900; color: var(--g-d); font-family: 'Outfit', sans-serif; }
+
+/* ─── GUIDE ─── */
+.guide-grid { display: grid; gap: 12px; }
+.guide-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.guide-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.guide-icon { font-size: 1.3rem; }
+.guide-title { font-size: .88rem; font-weight: 800; color: var(--ink); }
+.guide-body { font-size: .78rem; color: var(--soft); line-height: 1.75; }
+
+.cta-box { background: var(--g-l); border: 1px solid #9de8d0; border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+.cta-title { font-size: .78rem; font-weight: 800; color: var(--g-d); margin-bottom: 4px; }
+.cta-body { font-size: .72rem; color: #00916ecc; line-height: 1.6; }
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 14px;
+  font-size: .6rem;
+  color: var(--soft);
+  border-top: 1px solid var(--line);
+  background: var(--white);
+}
+
+/* ─── UTILS ─── */
+.sep { height: 1px; background: var(--line); margin: 12px 0; }
+</style>
 </head>
 <body>
-<header class="header">
-    <div class="header-inner">
-        <div class="logo-area">
-            <div class="logo-icon">📈</div>
-            <div><span class="logo-text">つみたて投資ナビ</span><span class="logo-sub">資産運用シミュレーター</span></div>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-top">
+      <div class="logo">
+        <div class="logo-mark">📈</div>
+        <div>
+          <span class="logo-name">つみたて投資ナビ</span>
+          <span class="logo-tag"> 資産運用シミュレーター</span>
         </div>
-        <nav class="tab-bar">
-            <button class="tab-btn active" data-tab="single" onclick="saveTab('single')"><span class="tab-emoji">📊</span>1銘柄で計算</button>
-            <button class="tab-btn" data-tab="dual" onclick="saveTab('dual')"><span class="tab-emoji">📊📊</span>2銘柄で比較</button>
-            <button class="tab-btn" data-tab="hierarchy" onclick="saveTab('hierarchy')"><span class="tab-emoji">🏆</span>資産クラス診断</button>
-            <button class="tab-btn" data-tab="guide" onclick="saveTab('guide')"><span class="tab-emoji">📖</span>使い方ガイド</button>
-        </nav>
+      </div>
     </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="single">
+        <span class="tab-icon">📊</span>1銘柄
+      </button>
+      <button class="tab" data-tab="dual">
+        <span class="tab-icon">⚖️</span>2銘柄比較
+      </button>
+      <button class="tab" data-tab="rank">
+        <span class="tab-icon">🏆</span>資産診断
+      </button>
+      <button class="tab" data-tab="guide">
+        <span class="tab-icon">📖</span>使い方
+      </button>
+    </nav>
+  </div>
 </header>
 
 <main class="main">
 
-<section class="tab-content active" id="tab-single">
-<div class="sim-grid">
-<div class="col">
-    <div class="card">
-        <div class="card-hdr"><div class="card-step">1</div><div class="card-title">運用商品を選ぶ</div></div>
-        <div class="product-grid">
-            <button class="product-btn sel" id="btn-s-sp" onclick="selProd('sp500')"><span class="p-name">🇺🇸 S&P500</span><span class="p-rate">米国大型株500社</span></button>
-            <button class="product-btn" id="btn-s-al" onclick="selProd('all')"><span class="p-name">🌍 全世界株式</span><span class="p-rate">オルカン（先進+新興国）</span></button>
+<!-- ═══════════════ 1銘柄 ═══════════════ -->
+<section class="pane active" id="pane-single">
+  <div class="grid">
+
+    <!-- LEFT: INPUTS -->
+    <div class="col">
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">1</div>
+          <span class="card-title">運用商品を選ぶ</span>
         </div>
-    </div>
-    <div class="card">
-        <div class="card-hdr"><div class="card-step">2</div><div class="card-title">金額・期間を入力する</div></div>
-        <div class="field">
-            <div class="fl">
-                <span class="fl-text">想定利回り（年率）<span class="tt" tabindex="0">?<span class="tc">過去の平均リターンをデフォルト表示。将来の利回りを保証するものではありません。</span></span></span>
-                <button class="rbtn" onclick="resetRate()">平均値に戻す</button>
+        <div class="card-body">
+          <div class="prod-grid">
+            <button class="prod-btn active" id="btn-sp" onclick="selectProd('sp500')">
+              <div class="prod-check">✓</div>
+              <span class="prod-flag">🇺🇸</span>
+              <span class="prod-name">S&P500</span>
+              <span class="prod-desc">米国大型株500社</span>
+            </button>
+            <button class="prod-btn" id="btn-all" onclick="selectProd('all')">
+              <div class="prod-check">✓</div>
+              <span class="prod-flag">🌍</span>
+              <span class="prod-name">全世界株式</span>
+              <span class="prod-desc">オルカン（先進+新興国）</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">2</div>
+          <span class="card-title">金額・期間を入力する</span>
+        </div>
+        <div class="card-body">
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">
+                想定利回り（年率）
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">過去の平均リターンをデフォルト表示。将来の利回りを保証するものではありません。</span>
+                </span>
+              </span>
+              <button class="reset-btn" onclick="resetRate()">↺ 平均値に戻す</button>
             </div>
-            <div class="iw"><input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()"><span class="iu">%</span></div>
-            <div class="hint" id="s-rate-src">※ S&P500の過去30年間（1994〜2024）の年平均リターン</div>
-        </div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">初期投資額（まとまったお金）</span></div>
-            <div class="iw hl" id="s-init-w"><input type="number" id="s-init" placeholder="0" oninput="onIn('s-init','s-init-w');saveAndCalc()"><span class="iu">万円</span></div>
-        </div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">毎月の積立額</span><span class="fl-val" id="s-mo-v">3万円</span></div>
-            <input type="range" id="s-mo-r" min="0" max="30" value="3" oninput="sR('s-mo')">
-            <div class="iw"><input type="number" id="s-mo" value="3" oninput="sI('s-mo');saveAndCalc()"><span class="iu">万円</span></div>
-            <div class="hint">※ 新NISAつみたて投資枠: 月10万円まで非課税</div>
-        </div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">運用期間</span><span class="fl-val" id="s-yr-v">20年</span></div>
-            <input type="range" id="s-yr-r" min="1" max="50" value="20" oninput="sR('s-yr')">
-            <div class="iw"><input type="number" id="s-yr" value="20" oninput="sI('s-yr');saveAndCalc()"><span class="iu">年</span></div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-hdr"><div class="card-step gray">3</div><div class="card-title" style="color:var(--s500)">オプション設定</div></div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">毎年の取り崩し率<span class="tt" tabindex="0">?<span class="tc">年末に資産の一定割合を引き出す設定。「4%ルール」は有名なリタイア戦略です。</span></span></span><span class="fl-val red" id="s-wd-v">0%</span></div>
-            <input type="range" id="s-wd-r" min="0" max="20" value="0" step="0.1" class="rr" oninput="sR('s-wd')">
-            <div class="iw rf"><input type="number" id="s-wd" value="0" step="0.1" oninput="sI('s-wd');saveAndCalc()" onfocus="this.select()"><span class="iu">%</span></div>
-            <div class="hint">※ 年末に一括で取り崩す計算です</div>
-        </div>
-        <div class="trow">
-            <span class="tlbl">NISA枠で非課税と仮定<span class="tt" tabindex="0">?<span class="tc">OFFにすると運用益に20.315%の税金がかかります（特定口座）。</span></span></span>
-            <div class="tsw on" id="s-nisa" onclick="tgN('s')"><div class="tk"></div></div>
-        </div>
-    </div>
-</div>
-<div class="col">
-    <div class="result-hero gr" id="s-rh">
-        <p class="rl">最終資産残高</p>
-        <div class="ra" id="s-final">0円</div>
-        <div class="rsr">
-            <div><p style="font-size:.66rem;opacity:.7">運用収益（利益）</p><p class="rp pos" id="s-profit">+0円</p></div>
-            <p class="ri">投資元本: <span id="s-inv">0円</span></p>
-        </div>
-        <div class="nisa-b" id="s-nb"><span id="s-nb-l">🏛️ NISA非課税</span><span class="nt" id="s-tax">節税額: 0円</span></div>
-    </div>
-    <div class="cc">
-        <h3>資産推移グラフ</h3>
-        <div class="cl">
-            <span class="cli"><span class="cld" style="background:var(--g500)"></span>資産残高</span>
-            <span class="cli"><span class="cld" style="background:var(--s300)"></span>投資元本</span>
-        </div>
-        <div class="cw"><canvas id="s-chart"></canvas></div>
-    </div>
-    <div class="cc">
-        <button class="dtb" id="s-dtb" onclick="tgD('s')"><span class="arr">▶</span> 年別の詳細データを見る</button>
-        <div class="dtw" id="s-dtw"><table class="dt"><thead><tr><th>年</th><th>投資元本</th><th>資産残高</th><th>運用益</th><th>取崩額</th></tr></thead><tbody id="s-dtbody"></tbody></table></div>
-    </div>
-    <div class="disc"><div class="disc-t">⚠️ 重要な注意事項</div><p>本シミュレーションは過去データに基づく仮想計算であり、将来の成果を保証しません。市場変動により元本割れのリスクがあります。投資判断はご自身の責任で行ってください。利回り出典：S&P Dow Jones Indices / MSCI ACWI Index 公開データ参考。</p></div>
-</div>
-</div>
-</section>
-
-<section class="tab-content" id="tab-dual">
-<div class="sim-grid">
-<div class="col">
-    <div class="card">
-        <div class="card-hdr"><div class="card-step">1</div><div class="card-title">銘柄ごとの金額を決める</div></div>
-        <div class="dpc usa">
-            <div class="dpt">🇺🇸 S&P500（米国株）</div>
-            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('sp500')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-sp-r" value="13.25" step="0.01" oninput="saveAndCD()" onfocus="this.select()"><span class="u">%</span></div></div>
-            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-sp-i" placeholder="0" oninput="saveAndCD()"><span class="u">万円</span></div></div>
-            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-sp-m" value="3" oninput="saveAndCD()"><span class="u">万円</span></div></div>
-        </div>
-        <div class="dpc world">
-            <div class="dpt">🌍 全世界株式（オルカン）</div>
-            <div class="df"><div style="display:flex;justify-content:space-between;align-items:center"><label>想定利回り</label><button class="rbtn" onclick="rDR('all')">平均値に戻す</button></div><div class="diw"><input type="number" id="d-al-r" value="9.99" step="0.01" oninput="saveAndCD()" onfocus="this.select()"><span class="u">%</span></div></div>
-            <div class="df"><label>初期投資額</label><div class="diw"><input type="number" id="d-al-i" placeholder="0" oninput="saveAndCD()"><span class="u">万円</span></div></div>
-            <div class="df"><label>毎月の積立額</label><div class="diw"><input type="number" id="d-al-m" value="2" oninput="saveAndCD()"><span class="u">万円</span></div></div>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-hdr"><div class="card-step">2</div><div class="card-title">共通設定</div></div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">運用期間</span><span class="fl-val" id="d-yr-v">20年</span></div>
-            <input type="range" id="d-yr-r" min="1" max="50" value="20" oninput="sR('d-yr')">
-            <div class="iw"><input type="number" id="d-yr" value="20" oninput="sI('d-yr');saveAndCD()"><span class="iu">年</span></div>
-        </div>
-        <div class="field">
-            <div class="fl"><span class="fl-text">毎年の取り崩し率 <span style="font-weight:400;color:var(--s400);font-size:.68rem">(任意)</span></span><span class="fl-val red" id="d-wd-v">0%</span></div>
-            <input type="range" id="d-wd-r" min="0" max="20" value="0" step="0.1" class="rr" oninput="sR('d-wd')">
-            <div class="iw rf"><input type="number" id="d-wd" value="0" step="0.1" oninput="sI('d-wd');saveAndCD()" onfocus="this.select()"><span class="iu">%</span></div>
-        </div>
-        <div class="trow">
-            <span class="tlbl">NISA枠で非課税と仮定<span class="tt" tabindex="0">?<span class="tc">OFFで運用益に20.315%課税。</span></span></span>
-            <div class="tsw on" id="d-nisa" onclick="tgN('d')"><div class="tk"></div></div>
-        </div>
-    </div>
-</div>
-<div class="col">
-    <div class="result-hero dg">
-        <p class="rl">最終資産残高（2銘柄合計）</p>
-        <div class="ra" id="d-final">0円</div>
-        <div class="rsr">
-            <div><p style="font-size:.66rem;opacity:.7">運用収益（利益）</p><p class="rp pos" id="d-profit">+0円</p></div>
-            <p class="ri">元本合計: <span id="d-inv">0円</span></p>
-        </div>
-        <div class="nisa-b" id="d-nb"><span id="d-nb-l">🏛️ NISA非課税</span><span class="nt" id="d-tax">節税額: 0円</span></div>
-    </div>
-    <div class="cc">
-        <h3>資産推移グラフ（2銘柄合計）</h3>
-        <div class="cl">
-            <span class="cli"><span class="cld" style="background:var(--g500)"></span>合計</span>
-            <span class="cli"><span class="cld" style="background:var(--b500)"></span>S&P500</span>
-            <span class="cli"><span class="cld" style="background:var(--t500)"></span>全世界</span>
-            <span class="cli"><span class="cld" style="background:var(--s300)"></span>元本</span>
-        </div>
-        <div class="cw"><canvas id="d-chart"></canvas></div>
-    </div>
-    <div class="cc">
-        <button class="dtb" id="d-dtb" onclick="tgD('d')"><span class="arr">▶</span> 年別の詳細データを見る</button>
-        <div class="dtw" id="d-dtw"><table class="dt"><thead><tr><th>年</th><th>元本</th><th>S&P500</th><th>全世界</th><th>合計</th></tr></thead><tbody id="d-dtbody"></tbody></table></div>
-    </div>
-    <div class="disc"><div class="disc-t">⚠️ 重要な注意事項</div><p>仮想計算であり将来の成果を保証しません。元本割れリスクがあります。投資判断はご自身の責任で。</p></div>
-</div>
-</div>
-</section>
-
-<section class="tab-content" id="tab-hierarchy">
-<div class="card" style="margin-bottom:18px;">
-    <h2 style="font-size:1.05rem;font-weight:800;color:var(--s800);text-align:center;margin-bottom:6px;">資産階層ピラミッド診断</h2>
-    <p style="text-align:center;font-size:.72rem;color:var(--s400);margin-bottom:20px;">野村総合研究所の資産階層分類に基づき判定</p>
-    <div class="hgrid">
-        <div class="pw">
-            <svg viewBox="0 0 400 330">
-                <defs>
-                    <linearGradient id="gs" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
-                    <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#fb923c"/></linearGradient>
-                    <linearGradient id="gm" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
-                    <linearGradient id="gu" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bbf7d0"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>
-                    <linearGradient id="gma" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#99f6e4"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient>
-                </defs>
-                <path id="py-super" d="M200 20 L240 72 H160 Z" fill="url(#gs)" opacity=".35" stroke="#fff" stroke-width="2"/>
-                <text x="200" y="55" text-anchor="middle" font-size="9" fill="#b91c1c" font-weight="bold">超富裕層</text><text x="200" y="65" text-anchor="middle" font-size="7" fill="#b91c1c" opacity=".7">5億円〜</text>
-                <path id="py-rich" d="M160 74 L240 74 L278 130 H122 Z" fill="url(#gr)" opacity=".35" stroke="#fff" stroke-width="2"/>
-                <text x="200" y="108" text-anchor="middle" font-size="9" fill="#c2410c" font-weight="bold">富裕層</text><text x="200" y="118" text-anchor="middle" font-size="7" fill="#c2410c" opacity=".7">1億〜5億円</text>
-                <path id="py-semi" d="M122 132 L278 132 L318 192 H82 Z" fill="url(#gm)" opacity=".35" stroke="#fff" stroke-width="2"/>
-                <text x="200" y="168" text-anchor="middle" font-size="9" fill="#b45309" font-weight="bold">準富裕層</text><text x="200" y="178" text-anchor="middle" font-size="7" fill="#b45309" opacity=".7">5000万〜1億円</text>
-                <path id="py-upper" d="M82 194 L318 194 L358 258 H42 Z" fill="url(#gu)" opacity=".35" stroke="#fff" stroke-width="2"/>
-                <text x="200" y="232" text-anchor="middle" font-size="9" fill="#15803d" font-weight="bold">アッパーマス層</text><text x="200" y="242" text-anchor="middle" font-size="7" fill="#15803d" opacity=".7">3000万〜5000万円</text>
-                <path id="py-mass" d="M42 260 L358 260 L400 320 H0 Z" fill="url(#gma)" opacity=".35" stroke="#fff" stroke-width="2"/>
-                <text x="200" y="296" text-anchor="middle" font-size="9" fill="#0f766e" font-weight="bold">マス層</text><text x="200" y="306" text-anchor="middle" font-size="7" fill="#0f766e" opacity=".7">〜3000万円</text>
-                <g id="a-now"><text x="60" y="0" text-anchor="end" font-size="12" font-weight="bold" fill="#94a3b8">現在</text><path d="M75 -4 L95 -4 L95 -9 L110 0 L95 9 L95 4 L75 4 Z" fill="#94a3b8"/></g>
-                <g id="a-fut"><text x="340" y="0" text-anchor="start" font-size="12" font-weight="bold" fill="#15803d">将来</text><path d="M325 -4 L305 -4 L305 -9 L290 0 L305 9 L305 4 L325 4 Z" fill="#15803d"/></g>
-            </svg>
-        </div>
-        <div class="ti">
-            <div class="tr"><span class="trl nw">📍 現在の階層</span><span class="trv nw" id="h-now">--</span></div>
-            <div class="tr" style="border-color:var(--g200)"><span class="trl ft">🎯 将来の階層</span><span class="trv ft" id="h-fut">--</span></div>
-            <div class="ps">
-                <div class="pl"><span style="color:var(--s500)">NEXT RANKまで</span><span style="color:var(--g600)" id="h-gap">あと --万円</span></div>
-                <div class="pbb"><div class="pbf" id="h-prog" style="width:0%"></div></div>
-                <p class="pt" id="h-tgt">目標: --万円</p>
+            <div class="iw">
+              <span class="iw-icon">📈</span>
+              <input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
             </div>
+            <p class="field-hint" id="s-rate-src">※ S&P500の過去30年間（1994〜2024）の年平均リターン</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">初期投資額（まとまったお金）</span>
+            </div>
+            <div class="iw highlight" id="s-init-wrap">
+              <span class="iw-icon">💰</span>
+              <input type="number" id="s-init" placeholder="0" oninput="onInitChange('s-init','s-init-wrap');saveAndCalc()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 0円でも計算できます（積立のみ）</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">毎月の積立額</span>
+              <span class="field-val" id="s-mo-v">3万円</span>
+            </div>
+            <input type="range" id="s-mo-r" min="0" max="30" value="3" oninput="syncRange('s-mo')">
+            <div class="iw">
+              <span class="iw-icon">📅</span>
+              <input type="number" id="s-mo" value="3" oninput="syncInput('s-mo');saveAndCalc()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 新NISAつみたて投資枠: 月10万円まで非課税</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">運用期間</span>
+              <span class="field-val" id="s-yr-v">20年</span>
+            </div>
+            <input type="range" id="s-yr-r" min="1" max="50" value="20" oninput="syncRange('s-yr')">
+            <div class="iw">
+              <span class="iw-icon">🗓️</span>
+              <input type="number" id="s-yr" value="20" oninput="syncInput('s-yr');saveAndCalc()">
+              <span class="iw-unit">年</span>
+            </div>
+          </div>
+
         </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt">3</div>
+          <span class="card-title" style="color:var(--soft)">オプション設定</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">
+                毎年の取り崩し率
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">年末に資産の一定割合を引き出す設定。「4%ルール」は有名なリタイア戦略です。</span>
+                </span>
+              </span>
+              <span class="field-val danger" id="s-wd-v">0%</span>
+            </div>
+            <input type="range" id="s-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('s-wd')">
+            <div class="iw danger">
+              <span class="iw-icon">📤</span>
+              <input type="number" id="s-wd" value="0" step="0.1" oninput="syncInput('s-wd');saveAndCalc()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
+            </div>
+            <p class="field-hint">※ 年末に一括で取り崩す計算です</p>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">
+              🏛️ NISA枠で非課税と仮定
+              <span class="tip" tabindex="0">?
+                <span class="tip-box">OFFにすると運用益に20.315%の税金がかかります（特定口座）。</span>
+              </span>
+            </span>
+            <div class="sw on" id="s-nisa" onclick="toggleNisa('s')">
+              <div class="sw-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-<div class="acard">
-    <div class="at">⚡ 次のステージへ行くには？</div>
-    <div class="ag">
-        <div class="ab" id="adv-t"></div>
-        <div class="ab" id="adv-m"></div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="col">
+
+      <div class="hero green" id="s-hero">
+        <p class="hero-label">最終資産残高</p>
+        <div class="hero-amount" id="s-final">0円</div>
+        <div class="hero-sub">
+          <div>
+            <p style="font-size:.62rem;opacity:.65;margin-bottom:2px">運用収益（利益）</p>
+            <p class="hero-profit pos" id="s-profit">+0円</p>
+          </div>
+          <p class="hero-inv">元本: <span id="s-inv">0円</span></p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge" id="s-nisa-badge">
+            <span>🏛️ NISA非課税</span>
+            <span class="badge-highlight" id="s-tax">節税 0円</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 3枚サマリータイル -->
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile-label">投資元本</div>
+          <div class="tile-value" id="t-s-inv">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">運用益</div>
+          <div class="tile-value green" id="t-s-gain">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">倍率</div>
+          <div class="tile-value blue" id="t-s-mult">-倍</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">資産推移グラフ</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>資産残高</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>投資元本</span>
+        </div>
+        <div class="chart-wrap"><canvas id="s-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <button class="detail-toggle" id="s-dtb" onclick="toggleDetail('s')">
+          <span class="detail-arrow">▶</span> 年別の詳細データを見る
+        </button>
+        <div class="detail-wrap" id="s-dtw">
+          <table class="dt">
+            <thead><tr><th>年</th><th>投資元本</th><th>資産残高</th><th>運用益</th><th>取崩額</th></tr></thead>
+            <tbody id="s-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="notice">
+        <div class="notice-title">⚠️ 重要な注意事項</div>
+        <p>本シミュレーションは過去データに基づく仮想計算であり、将来の成果を保証しません。市場変動により元本割れのリスクがあります。投資判断はご自身の責任で行ってください。</p>
+      </div>
+
     </div>
-</div>
+  </div>
 </section>
 
-<section class="tab-content" id="tab-guide">
-<div class="gs">
-    <div class="gi"><h3>📊 1銘柄で計算</h3><p>S&P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p></div>
-    <div class="gi"><h3>📊📊 2銘柄で比較</h3><p>「S&P500に月3万、全世界株式に月2万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p></div>
-    <div class="gi"><h3>🏆 資産クラス診断</h3><p>野村総合研究所の定義に基づく「資産階層ピラミッド」で現在と将来の位置を診断。ランクアップのためのアドバイスも表示されます。</p></div>
-    <div class="gi"><h3>💡 利回りの数字について</h3><p>デフォルトの利回りは過去の実績平均です。S&P500は過去30年で年平均約13%のリターンがありましたが、途中で-37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p></div>
-    <div class="gi"><h3>🏛️ 税金（NISA）について</h3><p>新NISAでは年間360万円（つみたて投資枠120万+成長投資枠240万）、生涯投資枠1800万円まで非課税で運用できます。本シミュレーターでは「NISA非課税」をON/OFFで切り替え、課税口座（20.315%）との差を確認できます。</p></div>
-    <div class="gcall"><h4>🔰 投資初心者へのワンポイント</h4><p>「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p></div>
-</div>
+<!-- ═══════════════ 2銘柄 ═══════════════ -->
+<section class="pane" id="pane-dual">
+  <div class="grid">
+    <div class="col">
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">1</div>
+          <span class="card-title">銘柄ごとの設定</span>
+        </div>
+        <div class="card-body">
+          <div class="asset-card usa">
+            <div class="asset-head">
+              <span class="asset-name">🇺🇸 S&P500（米国株）</span>
+              <button class="reset-btn" onclick="resetDualRate('sp500')">↺ 平均値</button>
+            </div>
+            <div class="asset-row">
+              <div class="af"><label>利回り</label><div class="af-in"><input type="number" id="d-sp-r" value="13.25" step="0.01" oninput="saveAndCalcD()"><span class="u">%</span></div></div>
+              <div class="af"><label>初期投資</label><div class="af-in"><input type="number" id="d-sp-i" placeholder="0" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>毎月積立</label><div class="af-in"><input type="number" id="d-sp-m" value="3" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+            </div>
+          </div>
+
+          <div class="asset-card world">
+            <div class="asset-head">
+              <span class="asset-name">🌍 全世界株式（オルカン）</span>
+              <button class="reset-btn" onclick="resetDualRate('all')">↺ 平均値</button>
+            </div>
+            <div class="asset-row">
+              <div class="af"><label>利回り</label><div class="af-in"><input type="number" id="d-al-r" value="9.99" step="0.01" oninput="saveAndCalcD()"><span class="u">%</span></div></div>
+              <div class="af"><label>初期投資</label><div class="af-in"><input type="number" id="d-al-i" placeholder="0" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>毎月積立</label><div class="af-in"><input type="number" id="d-al-m" value="2" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">2</div>
+          <span class="card-title">共通設定</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">運用期間</span>
+              <span class="field-val" id="d-yr-v">20年</span>
+            </div>
+            <input type="range" id="d-yr-r" min="1" max="50" value="20" oninput="syncRange('d-yr')">
+            <div class="iw">
+              <span class="iw-icon">🗓️</span>
+              <input type="number" id="d-yr" value="20" oninput="syncInput('d-yr');saveAndCalcD()">
+              <span class="iw-unit">年</span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">毎年の取り崩し率</span>
+              <span class="field-val danger" id="d-wd-v">0%</span>
+            </div>
+            <input type="range" id="d-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('d-wd')">
+            <div class="iw danger">
+              <span class="iw-icon">📤</span>
+              <input type="number" id="d-wd" value="0" step="0.1" oninput="syncInput('d-wd');saveAndCalcD()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">🏛️ NISA枠で非課税と仮定</span>
+            <div class="sw on" id="d-nisa" onclick="toggleNisa('d')"><div class="sw-knob"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="hero dark">
+        <p class="hero-label">最終資産残高（2銘柄合計）</p>
+        <div class="hero-amount" id="d-final">0円</div>
+        <div class="hero-sub">
+          <div>
+            <p style="font-size:.62rem;opacity:.65;margin-bottom:2px">運用収益（利益）</p>
+            <p class="hero-profit pos" id="d-profit">+0円</p>
+          </div>
+          <p class="hero-inv">元本合計: <span id="d-inv">0円</span></p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge" id="d-nisa-badge">
+            <span>🏛️ NISA非課税</span>
+            <span class="badge-highlight" id="d-tax">節税 0円</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile-label">🇺🇸 S&P500</div>
+          <div class="tile-value blue" id="t-d-sp">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">🌍 全世界株式</div>
+          <div class="tile-value green" id="t-d-al">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">合計倍率</div>
+          <div class="tile-value" id="t-d-mult">-倍</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">資産推移グラフ（2銘柄合計）</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>合計</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--b)"></span>S&P500</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#00cec9"></span>全世界</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>元本</span>
+        </div>
+        <div class="chart-wrap"><canvas id="d-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <button class="detail-toggle" id="d-dtb" onclick="toggleDetail('d')">
+          <span class="detail-arrow">▶</span> 年別の詳細データを見る
+        </button>
+        <div class="detail-wrap" id="d-dtw">
+          <table class="dt">
+            <thead><tr><th>年</th><th>元本</th><th>🇺🇸 S&P500</th><th>🌍 全世界</th><th>合計</th></tr></thead>
+            <tbody id="d-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="notice">
+        <div class="notice-title">⚠️ 重要な注意事項</div>
+        <p>仮想計算であり将来の成果を保証しません。元本割れリスクがあります。投資判断はご自身の責任で。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 資産診断 ═══════════════ -->
+<section class="pane" id="pane-rank">
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="step-badge">🏆</div>
+      <span class="card-title">資産クラス診断（野村総研分類）</span>
+    </div>
+    <div class="card-body">
+      <div class="pyramid-section">
+        <div class="pyramid-wrap">
+          <svg viewBox="0 0 360 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#fb923c"/></linearGradient>
+              <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+              <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bbf7d0"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>
+              <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#99f6e4"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient>
+            </defs>
+            <path id="py-super" d="M180 18 L218 66 H142 Z" fill="url(#g1)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="48" text-anchor="middle" font-size="8.5" fill="#b91c1c" font-weight="700" font-family="Outfit, sans-serif">超富裕層</text>
+            <text x="180" y="58" text-anchor="middle" font-size="6.5" fill="#b91c1c" opacity=".7" font-family="Outfit, sans-serif">5億円〜</text>
+            <path id="py-rich" d="M142 68 L218 68 L254 120 H106 Z" fill="url(#g2)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="99" text-anchor="middle" font-size="8.5" fill="#c2410c" font-weight="700" font-family="Outfit, sans-serif">富裕層</text>
+            <text x="180" y="109" text-anchor="middle" font-size="6.5" fill="#c2410c" opacity=".7" font-family="Outfit, sans-serif">1億〜5億円</text>
+            <path id="py-semi" d="M106 122 L254 122 L292 178 H68 Z" fill="url(#g3)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="155" text-anchor="middle" font-size="8.5" fill="#b45309" font-weight="700" font-family="Outfit, sans-serif">準富裕層</text>
+            <text x="180" y="165" text-anchor="middle" font-size="6.5" fill="#b45309" opacity=".7" font-family="Outfit, sans-serif">5000万〜1億円</text>
+            <path id="py-upper" d="M68 180 L292 180 L332 240 H28 Z" fill="url(#g4)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="215" text-anchor="middle" font-size="8.5" fill="#15803d" font-weight="700" font-family="Outfit, sans-serif">アッパーマス層</text>
+            <text x="180" y="225" text-anchor="middle" font-size="6.5" fill="#15803d" opacity=".7" font-family="Outfit, sans-serif">3000万〜5000万円</text>
+            <path id="py-mass" d="M28 242 L332 242 L360 295 H0 Z" fill="url(#g5)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="273" text-anchor="middle" font-size="8.5" fill="#0f766e" font-weight="700" font-family="Outfit, sans-serif">マス層</text>
+            <text x="180" y="283" text-anchor="middle" font-size="6.5" fill="#0f766e" opacity=".7" font-family="Outfit, sans-serif">〜3000万円</text>
+            <!-- 現在マーカー -->
+            <g id="a-now" transform="translate(0,250)">
+              <text x="22" y="4" text-anchor="end" font-size="11" font-weight="700" fill="#94a3b8" font-family="Outfit, sans-serif">現在</text>
+              <path d="M26 0 L38 -5 L38 5 Z" fill="#94a3b8"/>
+            </g>
+            <!-- 将来マーカー -->
+            <g id="a-fut" transform="translate(0,215)">
+              <text x="338" y="4" text-anchor="start" font-size="11" font-weight="700" fill="#00916e" font-family="Outfit, sans-serif">将来</text>
+              <path d="M334 0 L322 -5 L322 5 Z" fill="#00916e"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="h-status">
+          <div class="h-row">
+            <span class="h-row-label">📍 現在の資産階層</span>
+            <span class="h-row-val" id="h-now">--</span>
+          </div>
+          <div class="h-row">
+            <span class="h-row-label">🎯 将来の資産階層</span>
+            <span class="h-row-val green" id="h-fut">--</span>
+          </div>
+          <div class="prog-wrap">
+            <div class="prog-head">
+              <span>NEXT RANKまで</span>
+              <span class="prog-gap" id="h-gap">あと --万円</span>
+            </div>
+            <div class="prog-bar-bg">
+              <div class="prog-bar" id="h-bar" style="width:0%"></div>
+            </div>
+            <p style="font-size:.62rem;color:var(--soft);text-align:right;margin-top:3px" id="h-target">目標: --万円</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="advice-grid">
+        <div class="advice-card">
+          <div class="advice-label">⏱️ 到達予測</div>
+          <div class="advice-val" id="adv-time">--</div>
+        </div>
+        <div class="advice-card">
+          <div class="advice-label">💰 月額アップ目安</div>
+          <div class="advice-val" id="adv-money">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ガイド ═══════════════ -->
+<section class="pane" id="pane-guide">
+  <div class="guide-grid">
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">📊</span><span class="guide-title">1銘柄で計算</span></div>
+      <p class="guide-body">S&P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">⚖️</span><span class="guide-title">2銘柄で比較</span></div>
+      <p class="guide-body">「S&P500に月3万、全世界株式に月2万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">🏆</span><span class="guide-title">資産クラス診断</span></div>
+      <p class="guide-body">野村総合研究所の定義に基づく「資産階層ピラミッド」で現在と将来の位置を診断。ランクアップのためのアドバイスも表示されます。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">💡</span><span class="guide-title">利回りの数字について</span></div>
+      <p class="guide-body">デフォルトの利回りは過去の実績平均です。S&P500は過去30年で年平均約13%のリターンがありましたが、途中で−37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">🏛️</span><span class="guide-title">税金（NISA）について</span></div>
+      <p class="guide-body">新NISAでは年間360万円（つみたて投資枠120万+成長投資枠240万）、生涯投資枠1800万円まで非課税で運用できます。本シミュレーターでは「NISA非課税」をON/OFFで切り替え、課税口座（20.315%）との差を確認できます。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon">🔢</span><span class="guide-title">計算ロジックについて</span></div>
+      <p class="guide-body">月初積立・月次複利で計算しています。年利は厳密な複利換算（(1+年利)^(1/12)−1）で月利に変換しており、精度の高いシミュレーションを実現しています。取り崩しは年末一括方式です。</p>
+    </div>
+    <div class="cta-box" style="grid-column:1/-1">
+      <div class="cta-title">🔰 投資初心者へのワンポイント</div>
+      <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
+    </div>
+  </div>
 </section>
 
 </main>
-<footer class="footer">本ツールは情報提供のみを目的としており、投資助言ではありません。投資はご自身の判断と責任で行ってください。</footer>
+
+<footer>本ツールは情報提供のみを目的としており、投資助言ではありません。投資はご自身の判断と責任で行ってください。</footer>
 
 <script>
-const P={sp500:{name:'S&P500',rate:13.25,src:'※ S&P500の過去30年間（1994〜2024）の年平均リターン'},all:{name:'全世界株式',rate:9.99,src:'※ MSCI ACWI Indexの過去30年間の年平均リターン'}};
-const T=[{id:'py-super',name:'超富裕層',min:50000,y:46},{id:'py-rich',name:'富裕層',min:10000,y:102},{id:'py-semi',name:'準富裕層',min:5000,y:162},{id:'py-upper',name:'アッパーマス層',min:3000,y:226},{id:'py-mass',name:'マス層',min:0,y:290}];
-const TAX=.20315;
-let cProd='sp500',sC=null,dC=null,nS=true,nD=true;
-let LR={initial:0,final:0,profit:0,inputs:{rate:0,monthly:0,years:0,initial:0}};
+// ─────────────────────────────────────
+// 定数・状態
+// ─────────────────────────────────────
+const PRODUCTS = {
+  sp500: { name: 'S&P500', rate: 13.25, src: '※ S&P500の過去30年間（1994〜2024）の年平均リターン' },
+  all:   { name: '全世界株式', rate: 9.99,  src: '※ MSCI ACWI Indexの過去30年間の年平均リターン' }
+};
+const TIERS = [
+  { id: 'py-super', name: '超富裕層',      min: 50000, y: 43  },
+  { id: 'py-rich',  name: '富裕層',        min: 10000, y: 99  },
+  { id: 'py-semi',  name: '準富裕層',      min: 5000,  y: 155 },
+  { id: 'py-upper', name: 'アッパーマス層', min: 3000,  y: 215 },
+  { id: 'py-mass',  name: 'マス層',        min: 0,     y: 273 }
+];
+const TAX_RATE = 0.20315;
+const STORAGE_KEY = 'investNaviV2';
 
-// === Local Storage 関連の処理を追加 ===
-const STORAGE_KEY = 'investmentSimData';
+let curProd = 'sp500';
+let nisaS = true, nisaD = true;
+let chartS = null, chartD = null;
+let lastResult = { initial: 0, final: 0, profit: 0, inputs: { rate: 0, monthly: 0, years: 0, initial: 0 } };
 
-function loadData() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-        try {
-            const data = JSON.parse(saved);
-            
-            // Single
-            if(data.s) {
-                if(data.s.prod) selProd(data.s.prod);
-                if(data.s.rate !== undefined) document.getElementById('s-rate').value = data.s.rate;
-                if(data.s.init !== undefined) document.getElementById('s-init').value = data.s.init;
-                if(data.s.mo !== undefined) {
-                    document.getElementById('s-mo').value = data.s.mo;
-                    document.getElementById('s-mo-r').value = data.s.mo;
-                    sI('s-mo');
-                }
-                if(data.s.yr !== undefined) {
-                    document.getElementById('s-yr').value = data.s.yr;
-                    document.getElementById('s-yr-r').value = data.s.yr;
-                    sI('s-yr');
-                }
-                if(data.s.wd !== undefined) {
-                    document.getElementById('s-wd').value = data.s.wd;
-                    document.getElementById('s-wd-r').value = data.s.wd;
-                    sI('s-wd');
-                }
-                if(data.s.nisa !== undefined) {
-                    nS = data.s.nisa;
-                    document.getElementById('s-nisa').classList.toggle('on', nS);
-                }
-            }
+// ─────────────────────────────────────
+// ★ 計算ロジック（正確な複利換算）
+// yearRate: 年利 % → 月利 = (1 + yearRate/100)^(1/12) - 1
+// ─────────────────────────────────────
+function monthlyRate(yearRatePct) {
+  return Math.pow(1 + yearRatePct / 100, 1 / 12) - 1;
+}
 
-            // Dual
-            if(data.d) {
-                if(data.d.sp_r !== undefined) document.getElementById('d-sp-r').value = data.d.sp_r;
-                if(data.d.sp_i !== undefined) document.getElementById('d-sp-i').value = data.d.sp_i;
-                if(data.d.sp_m !== undefined) document.getElementById('d-sp-m').value = data.d.sp_m;
-                
-                if(data.d.al_r !== undefined) document.getElementById('d-al-r').value = data.d.al_r;
-                if(data.d.al_i !== undefined) document.getElementById('d-al-i').value = data.d.al_i;
-                if(data.d.al_m !== undefined) document.getElementById('d-al-m').value = data.d.al_m;
+function simulate(initMan, moMan, yearRatePct, years, wdPct) {
+  const init = initMan * 1e4;
+  const mo   = moMan  * 1e4;
+  const r    = monthlyRate(yearRatePct);  // ← 厳密な複利換算
+  const wd   = wdPct / 100;
 
-                if(data.d.yr !== undefined) {
-                    document.getElementById('d-yr').value = data.d.yr;
-                    document.getElementById('d-yr-r').value = data.d.yr;
-                    sI('d-yr');
-                }
-                if(data.d.wd !== undefined) {
-                    document.getElementById('d-wd').value = data.d.wd;
-                    document.getElementById('d-wd-r').value = data.d.wd;
-                    sI('d-wd');
-                }
-                if(data.d.nisa !== undefined) {
-                    nD = data.d.nisa;
-                    document.getElementById('d-nisa').classList.toggle('on', nD);
-                }
-            }
+  let c = init;
+  const labels = ['開始'];
+  const dAsset = [Math.round(c)];
+  const dPrin  = [Math.round(init)];
+  const rows   = [];
 
-            // Tab
-            if(data.tab) {
-                const tabBtn = document.querySelector(`.tab-btn[data-tab="${data.tab}"]`);
-                if(tabBtn) tabBtn.click();
-            }
-
-            // 初期表示用のクラス調整
-            onIn('s-init', 's-init-w');
-            
-        } catch(e) {
-            console.error('Failed to parse saved data', e);
-        }
+  for (let y = 1; y <= years; y++) {
+    // 月初積立・月次複利（12ヶ月）
+    for (let m = 0; m < 12; m++) {
+      c = (c + mo) * (1 + r);
     }
+    // 年末一括取り崩し
+    let wAmt = 0;
+    if (wd > 0) { wAmt = c * wd; c -= wAmt; }
+
+    const principal = init + mo * 12 * y;
+    labels.push(y + '年');
+    dAsset.push(Math.round(c));
+    dPrin.push(Math.round(principal));
+    rows.push({ y, principal, asset: c, profit: c - principal, withdraw: wAmt });
+  }
+
+  const totalInvested = init + mo * 12 * years;
+  return { labels, dAsset, dPrin, rows, finalAsset: c, totalInvested };
 }
 
-function saveData() {
-    const data = {
-        s: {
-            prod: cProd,
-            rate: document.getElementById('s-rate').value,
-            init: document.getElementById('s-init').value,
-            mo: document.getElementById('s-mo').value,
-            yr: document.getElementById('s-yr').value,
-            wd: document.getElementById('s-wd').value,
-            nisa: nS
-        },
-        d: {
-            sp_r: document.getElementById('d-sp-r').value,
-            sp_i: document.getElementById('d-sp-i').value,
-            sp_m: document.getElementById('d-sp-m').value,
-            al_r: document.getElementById('d-al-r').value,
-            al_i: document.getElementById('d-al-i').value,
-            al_m: document.getElementById('d-al-m').value,
-            yr: document.getElementById('d-yr').value,
-            wd: document.getElementById('d-wd').value,
-            nisa: nD
-        },
-        tab: document.querySelector('.tab-btn.active').dataset.tab
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+// ─────────────────────────────────────
+// 書式
+// ─────────────────────────────────────
+function fmt(n) {
+  const a = Math.abs(n), s = n < 0 ? '-' : '';
+  if (a < 10000) return s + Math.round(a).toLocaleString() + '円';
+  const oku = Math.floor(a / 1e8), man = Math.floor((a % 1e8) / 1e4);
+  if (oku > 0) return `${s}${oku}億${man > 0 ? man.toLocaleString() + '万' : ''}円`;
+  return `${s}${man.toLocaleString()}万円`;
+}
+function fmtShort(n) {
+  const a = Math.abs(n), s = n < 0 ? '-' : '';
+  const oku = Math.floor(a / 1e8), man = Math.floor((a % 1e8) / 1e4);
+  if (oku > 0) return `${s}${oku}億${man > 0 ? man.toLocaleString() + '万' : ''}`;
+  return `${s}${man.toLocaleString()}万`;
 }
 
-function saveTab(tabName) {
+// ─────────────────────────────────────
+// タブ
+// ─────────────────────────────────────
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const pane = document.getElementById('pane-' + btn.dataset.tab);
+    if (pane) pane.classList.add('active');
+    if (btn.dataset.tab === 'rank') updateHierarchy();
+    if (btn.dataset.tab === 'dual') calcDual();
     saveData();
-}
-
-function saveAndCalc() {
-    calc();
-    saveData();
-}
-
-function saveAndCD() {
-    cD();
-    saveData();
-}
-// ====================================
-
-window.addEventListener('DOMContentLoaded',()=>{
-    setIcon();
-    initTabs();
-    loadData(); // 保存されたデータを読み込む
-    calc();
-    cD();
+  });
 });
 
-function setIcon(){const c=document.createElement('canvas');c.width=512;c.height=512;const x=c.getContext('2d');const g=x.createLinearGradient(0,0,512,512);g.addColorStop(0,'#15803d');g.addColorStop(1,'#0d9488');x.fillStyle=g;x.fillRect(0,0,512,512);x.beginPath();x.moveTo(80,360);x.lineTo(190,260);x.lineTo(300,310);x.lineTo(420,140);x.lineWidth=36;x.strokeStyle='white';x.lineCap='round';x.lineJoin='round';x.stroke();x.beginPath();x.arc(420,140,30,0,Math.PI*2);x.fillStyle='#fcd34d';x.fill();const u=c.toDataURL('image/png');['dynamic-favicon','dynamic-apple-icon'].forEach(id=>{const e=document.getElementById(id);if(e)e.href=u;});}
-
-function initTabs(){document.querySelectorAll('.tab-btn').forEach(b=>{b.addEventListener('click',()=>{document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('tab-'+b.dataset.tab).classList.add('active');if(b.dataset.tab==='single'&&sC)sC.resize();if(b.dataset.tab==='dual'){if(dC)dC.resize();cD();}if(b.dataset.tab==='hierarchy')uH();});});}
-
-function fm(n){const a=Math.abs(n),s=n<0?'-':'';if(a<10000)return s+Math.round(a).toLocaleString()+'円';const o=Math.floor(a/1e8),m=Math.floor((a%1e8)/1e4);if(o>0)return`${s}${o}億${m>0?m.toLocaleString()+'万':''}円`;return`${s}${m.toLocaleString()}万円`;}
-function fman(n){const a=Math.abs(n),s=n<0?'-':'';const o=Math.floor(a/1e8),m=Math.floor((a%1e8)/1e4);if(o>0)return`${s}${o}億${m>0?m.toLocaleString()+'万':''}`;return`${s}${m.toLocaleString()}万`;}
-
-const UN={'s-mo':'万円','s-yr':'年','s-wd':'%','d-yr':'年','d-wd':'%'};
-function sR(p){const r=document.getElementById(p+'-r'),i=document.getElementById(p),l=document.getElementById(p+'-v');i.value=r.value;if(l)l.textContent=r.value+(UN[p]||'');if(p.startsWith('s-'))saveAndCalc();else saveAndCD();}
-function sI(p){const i=document.getElementById(p),r=document.getElementById(p+'-r'),l=document.getElementById(p+'-v');if(r)r.value=i.value;if(l)l.textContent=i.value+(UN[p]||'');}
-function onIn(id,wid){const v=document.getElementById(id).value,w=document.getElementById(wid);parseFloat(v)>0?w.classList.remove('hl'):w.classList.add('hl');}
-
-function selProd(k){cProd=k;document.getElementById('btn-s-sp').className=k==='sp500'?'product-btn sel':'product-btn';document.getElementById('btn-s-al').className=k==='all'?'product-btn sel':'product-btn';document.getElementById('s-rate').value=P[k].rate;document.getElementById('s-rate-src').textContent=P[k].src;saveAndCalc();}
-function resetRate(){document.getElementById('s-rate').value=P[cProd].rate;saveAndCalc();}
-function rDR(t){if(t==='sp500')document.getElementById('d-sp-r').value=P.sp500.rate;else document.getElementById('d-al-r').value=P.all.rate;saveAndCD();}
-
-function tgN(p){if(p==='s'){nS=!nS;document.getElementById('s-nisa').classList.toggle('on',nS);saveAndCalc();}else{nD=!nD;document.getElementById('d-nisa').classList.toggle('on',nD);saveAndCD();}}
-function tgD(p){document.getElementById(p+'-dtb').classList.toggle('open');document.getElementById(p+'-dtw').classList.toggle('show');}
-
-function calc(){
-    const init=(parseFloat(document.getElementById('s-init').value)||0)*1e4;
-    const mo=(parseFloat(document.getElementById('s-mo').value)||0)*1e4;
-    const yr=parseInt(document.getElementById('s-yr').value)||20;
-    const rY=parseFloat(document.getElementById('s-rate').value)||0;
-    const wd=parseFloat(document.getElementById('s-wd').value)||0;
-    const r=rY/100/12;
-    let c=init;const lb=['開始'],dA=[Math.round(c)],dB=[Math.round(init)];const rows=[];
-    for(let y=1;y<=yr;y++){for(let m=0;m<12;m++)c=(c+mo)*(1+r);let wA=0;if(wd>0){wA=c*(wd/100);c-=wA;}const b=init+mo*12*y;lb.push(y+'年');dA.push(Math.round(c));dB.push(Math.round(b));rows.push({y,b,a:c,p:c-b,w:wA});}
-    const tI=init+mo*12*yr;let pr=c-tI,tx=0,fd=c;
-    if(!nS&&pr>0){tx=pr*TAX;fd=c-tx;pr-=tx;}
-    LR={initial:init,final:c,profit:pr,inputs:{rate:rY,monthly:mo,years:yr,initial:init}};
-    document.getElementById('s-final').textContent=fm(fd);
-    document.getElementById('s-inv').textContent=fm(tI);
-    const pe=document.getElementById('s-profit');if(pr<0){pe.textContent=fm(pr);pe.className='rp neg';}else{pe.textContent='+'+fm(pr);pe.className='rp pos';}
-    if(nS){document.getElementById('s-nb-l').textContent='🏛️ NISA非課税';document.getElementById('s-tax').textContent='節税額: '+fm(Math.max(0,(c-tI))*TAX);}else{document.getElementById('s-nb-l').textContent='💰 課税口座（税引後）';document.getElementById('s-tax').textContent='税額: '+fm(tx);}
-    document.getElementById('s-dtbody').innerHTML=rows.map(r=>`<tr><td>${r.y}年</td><td>${fman(r.b)}円</td><td>${fman(r.a)}円</td><td style="color:${r.p>=0?'var(--g600)':'var(--r500)'}">${r.p>=0?'+':''}${fman(r.p)}円</td><td>${r.w>0?fman(r.w)+'円':'-'}</td></tr>`).join('');
-    drawC('s-chart',lb,dA,dB);
+// ─────────────────────────────────────
+// 商品選択
+// ─────────────────────────────────────
+function selectProd(k) {
+  curProd = k;
+  document.getElementById('btn-sp').classList.toggle('active', k === 'sp500');
+  document.getElementById('btn-all').classList.toggle('active', k === 'all');
+  document.getElementById('s-rate').value = PRODUCTS[k].rate;
+  document.getElementById('s-rate-src').textContent = PRODUCTS[k].src;
+  saveAndCalc();
+}
+function resetRate() {
+  document.getElementById('s-rate').value = PRODUCTS[curProd].rate;
+  saveAndCalc();
+}
+function resetDualRate(t) {
+  if (t === 'sp500') document.getElementById('d-sp-r').value = PRODUCTS.sp500.rate;
+  else document.getElementById('d-al-r').value = PRODUCTS.all.rate;
+  saveAndCalcD();
 }
 
-function cD(){
-    const si=(parseFloat(document.getElementById('d-sp-i').value)||0)*1e4,sm=(parseFloat(document.getElementById('d-sp-m').value)||0)*1e4,sr=(parseFloat(document.getElementById('d-sp-r').value)||0)/100/12;
-    const ai=(parseFloat(document.getElementById('d-al-i').value)||0)*1e4,am=(parseFloat(document.getElementById('d-al-m').value)||0)*1e4,ar=(parseFloat(document.getElementById('d-al-r').value)||0)/100/12;
-    const yr=parseInt(document.getElementById('d-yr').value)||20,wd=parseFloat(document.getElementById('d-wd').value)||0;
-    let sp=si,al=ai;const lb=['開始'],dT=[Math.round(sp+al)],dS=[Math.round(sp)],dAl=[Math.round(al)],dB=[Math.round(si+ai)];const rows=[];
-    for(let y=1;y<=yr;y++){for(let m=0;m<12;m++){sp=(sp+sm)*(1+sr);al=(al+am)*(1+ar);}if(wd>0){const f=1-wd/100;sp*=f;al*=f;}const b=(si+ai)+(sm+am)*12*y;lb.push(y+'年');dT.push(Math.round(sp+al));dS.push(Math.round(sp));dAl.push(Math.round(al));dB.push(Math.round(b));rows.push({y,b,sp,al,t:sp+al});}
-    const tF=sp+al,tI=(si+ai)+(sm+am)*12*yr;let pr=tF-tI,tx=0,fd=tF;
-    if(!nD&&pr>0){tx=pr*TAX;fd=tF-tx;pr-=tx;}
-    const tm=sm+am;const wR=tm>0?((parseFloat(document.getElementById('d-sp-r').value)*sm)+(parseFloat(document.getElementById('d-al-r').value)*am))/tm:parseFloat(document.getElementById('d-sp-r').value);
-    LR={initial:si+ai,final:tF,profit:pr,inputs:{rate:wR,monthly:tm,years:yr,initial:si+ai}};
-    document.getElementById('d-final').textContent=fm(fd);document.getElementById('d-inv').textContent=fm(tI);
-    const pe=document.getElementById('d-profit');if(pr<0){pe.textContent=fm(pr);pe.className='rp neg';}else{pe.textContent='+'+fm(pr);pe.className='rp pos';}
-    if(nD){document.getElementById('d-nb-l').textContent='🏛️ NISA非課税';document.getElementById('d-tax').textContent='節税額: '+fm(Math.max(0,(tF-tI))*TAX);}else{document.getElementById('d-nb-l').textContent='💰 課税口座（税引後）';document.getElementById('d-tax').textContent='税額: '+fm(tx);}
-    document.getElementById('d-dtbody').innerHTML=rows.map(r=>`<tr><td>${r.y}年</td><td>${fman(r.b)}円</td><td>${fman(r.sp)}円</td><td>${fman(r.al)}円</td><td style="font-weight:700">${fman(r.t)}円</td></tr>`).join('');
-    drawDC('d-chart',lb,dT,dS,dAl,dB);
+// ─────────────────────────────────────
+// スライダー・入力の同期
+// ─────────────────────────────────────
+const UNITS = { 's-mo':'万円','s-yr':'年','s-wd':'%','d-yr':'年','d-wd':'%' };
+function syncRange(p) {
+  const r = document.getElementById(p+'-r');
+  const i = document.getElementById(p);
+  const v = document.getElementById(p+'-v');
+  i.value = r.value;
+  if (v) v.textContent = r.value + (UNITS[p] || '');
+  if (p.startsWith('s-')) saveAndCalc(); else saveAndCalcD();
+}
+function syncInput(p) {
+  const i = document.getElementById(p);
+  const r = document.getElementById(p+'-r');
+  const v = document.getElementById(p+'-v');
+  if (r) r.value = i.value;
+  if (v) v.textContent = i.value + (UNITS[p] || '');
+}
+function onInitChange(id, wid) {
+  const val = parseFloat(document.getElementById(id).value) || 0;
+  document.getElementById(wid).classList.toggle('highlight', val <= 0);
 }
 
-function cOpts(){return{responsive:true,maintainAspectRatio:false,interaction:{intersect:false,mode:'index'},plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(15,23,42,.92)',titleFont:{size:11,weight:'bold'},bodyFont:{size:11},cornerRadius:8,padding:10,callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}},scales:{x:{display:true,grid:{display:false},ticks:{font:{size:9},color:'#94a3b8',maxTicksLimit:10}},y:{display:true,grid:{color:'rgba(0,0,0,.03)'},ticks:{font:{size:9},color:'#94a3b8',callback:v=>{if(v>=1e8)return(v/1e8).toFixed(1)+'億';if(v>=1e4)return(v/1e4).toLocaleString()+'万';return v;}}}}};}
+// ─────────────────────────────────────
+// NISA トグル
+// ─────────────────────────────────────
+function toggleNisa(p) {
+  if (p === 's') { nisaS = !nisaS; document.getElementById('s-nisa').classList.toggle('on', nisaS); saveAndCalc(); }
+  else           { nisaD = !nisaD; document.getElementById('d-nisa').classList.toggle('on', nisaD); saveAndCalcD(); }
+}
 
-function drawC(id,lb,dA,dB){const ctx=document.getElementById(id).getContext('2d');if(sC)sC.destroy();sC=new Chart(ctx,{type:'line',data:{labels:lb,datasets:[{label:'資産残高',data:dA,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',fill:true,tension:.35,pointRadius:1.5,pointHoverRadius:5,borderWidth:2.5,order:1},{label:'投資元本',data:dB,borderColor:'#cbd5e1',backgroundColor:'rgba(203,213,225,.12)',fill:true,tension:0,pointRadius:0,borderWidth:1.5,borderDash:[4,4],order:2}]},options:cOpts()});}
+// ─────────────────────────────────────
+// 詳細テーブル
+// ─────────────────────────────────────
+function toggleDetail(p) {
+  document.getElementById(p+'-dtb').classList.toggle('open');
+  document.getElementById(p+'-dtw').classList.toggle('show');
+}
 
-function drawDC(id,lb,dT,dS,dAl,dB){const ctx=document.getElementById(id).getContext('2d');if(dC)dC.destroy();dC=new Chart(ctx,{type:'line',data:{labels:lb,datasets:[{label:'合計資産',data:dT,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.06)',fill:true,tension:.35,pointRadius:1.5,pointHoverRadius:5,borderWidth:2.5,order:1},{label:'S&P500',data:dS,borderColor:'#3b82f6',backgroundColor:'transparent',fill:false,tension:.35,pointRadius:0,borderWidth:1.5,borderDash:[6,3],order:2},{label:'全世界株式',data:dAl,borderColor:'#14b8a6',backgroundColor:'transparent',fill:false,tension:.35,pointRadius:0,borderWidth:1.5,borderDash:[6,3],order:3},{label:'投資元本',data:dB,borderColor:'#cbd5e1',backgroundColor:'rgba(203,213,225,.1)',fill:true,tension:0,pointRadius:0,borderWidth:1.5,borderDash:[4,4],order:4}]},options:cOpts()});}
+// ─────────────────────────────────────
+// 単銘柄計算
+// ─────────────────────────────────────
+function calcSingle() {
+  const initMan = parseFloat(document.getElementById('s-init').value) || 0;
+  const moMan   = parseFloat(document.getElementById('s-mo').value)   || 0;
+  const yr      = parseInt(document.getElementById('s-yr').value)     || 20;
+  const rPct    = parseFloat(document.getElementById('s-rate').value) || 0;
+  const wdPct   = parseFloat(document.getElementById('s-wd').value)   || 0;
 
-function uH(){
-    const fM=LR.final/1e4,iM=LR.initial/1e4;
-    const ci=T.findIndex(t=>iM>=t.min),ct=T[ci!==-1?ci:4];
-    const fi=T.findIndex(t=>fM>=t.min),ft=T[fi!==-1?fi:4];
-    document.getElementById('h-now').textContent=ct.name+` (${fm(LR.initial)})`;
-    document.getElementById('h-fut').textContent=ft.name+` (${fm(LR.final)})`;
-    document.getElementById('a-now').setAttribute('transform',`translate(0,${ct.y})`);
-    document.getElementById('a-fut').setAttribute('transform',`translate(0,${ft.y})`);
-    T.forEach(t=>{const e=document.getElementById(t.id);if(e)e.setAttribute('opacity','.35');});
-    const fe=document.getElementById(ft.id);if(fe)fe.setAttribute('opacity','.85');
-    const tt=fi>0?T[fi-1]:T[0],ta=tt.min*1e4;
-    if(fM>=50000&&fi===0){
-        document.getElementById('h-gap').textContent='最高ランク到達！🎉';document.getElementById('h-prog').style.width='100%';document.getElementById('h-tgt').textContent='Goal!';
-        document.getElementById('adv-t').innerHTML='<div class="abl">🎊 おめでとうございます！</div><div class="abv">最高ランクに到達しています。</div>';
-        document.getElementById('adv-m').innerHTML='<div class="abl">🛡️ 維持・継承</div><div class="abv">リスク管理と分散を徹底しましょう。</div>';
-    }else{
-        const gap=ta-LR.final,prog=Math.min(100,(LR.final/ta)*100);
-        document.getElementById('h-gap').textContent='あと '+fm(gap);document.getElementById('h-prog').style.width=prog+'%';document.getElementById('h-tgt').textContent='目標: '+tt.name+' ('+tt.min.toLocaleString()+'万円)';
-        const r=LR.inputs.rate/100/12,mo=LR.inputs.monthly;let tmp=LR.initial,reached=false,ytg=0;
-        for(let i=1;i<=1200;i++){tmp=(tmp+mo)*(1+r);if(tmp>=ta){ytg=(i/12).toFixed(1);reached=true;break;}}
-        document.getElementById('adv-t').innerHTML=reached
-            ?`<div class="abl">⏱️ 今の積立ペースなら...</div><div class="abv">約 <span class="ahl">${ytg}年後</span> に到達！</div>`
-            :`<div class="abl">⏱️ 今のペースだと...</div><div class="abv">100年以上かかります。積立額を増やすか初期投資を検討しましょう。</div>`;
-        const n=LR.inputs.years*12,cf=Math.pow(1+r,n),ig=LR.initial*cf;let rm=0;if(ta>ig)rm=((ta-ig)*r)/(cf-1);const ad=Math.max(0,rm-mo),adM=(ad/1e4).toFixed(1);
-        document.getElementById('adv-m').innerHTML=`<div class="abl">💰 ${LR.inputs.years}年で届くには...</div><div class="abv">毎月の積立をあと<br><span class="ahl">+${adM}万円</span> 増やそう！</div>`;
+  const { labels, dAsset, dPrin, rows, finalAsset, totalInvested } = simulate(initMan, moMan, rPct, yr, wdPct);
+
+  // 税金計算
+  let grossProfit = finalAsset - totalInvested;
+  let tax = 0, dispFinal = finalAsset;
+  if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinal = finalAsset - tax; grossProfit -= tax; }
+
+  // 表示
+  document.getElementById('s-final').textContent = fmt(dispFinal);
+  document.getElementById('s-inv').textContent   = fmt(totalInvested);
+
+  const pe = document.getElementById('s-profit');
+  if (grossProfit < 0) { pe.textContent = fmt(grossProfit); pe.className = 'hero-profit neg'; }
+  else { pe.textContent = '+' + fmt(grossProfit); pe.className = 'hero-profit pos'; }
+
+  // バッジ
+  const taxSaved = Math.max(0, finalAsset - totalInvested) * TAX_RATE;
+  const badge = document.getElementById('s-nisa-badge');
+  const taxEl = document.getElementById('s-tax');
+  if (nisaS) {
+    badge.querySelector('span').textContent = '🏛️ NISA非課税';
+    taxEl.textContent = '節税 ' + fmt(taxSaved);
+  } else {
+    badge.querySelector('span').textContent = '💰 課税口座（税引後）';
+    taxEl.textContent = '税額 ' + fmt(tax);
+  }
+
+  // タイル
+  const invM = Math.round(totalInvested / 1e4);
+  const gainM = Math.round(grossProfit / 1e4);
+  const mult = totalInvested > 0 ? (dispFinal / totalInvested).toFixed(2) : '-';
+  document.getElementById('t-s-inv').textContent  = invM.toLocaleString() + '万円';
+  document.getElementById('t-s-gain').textContent = gainM.toLocaleString() + '万円';
+  document.getElementById('t-s-mult').textContent = mult + '倍';
+
+  // 詳細テーブル
+  document.getElementById('s-tbody').innerHTML = rows.map(row => {
+    const p = row.profit, pr = p >= 0 ? `color:var(--g-d)` : `color:var(--r)`;
+    return `<tr>
+      <td>${row.y}年</td>
+      <td>${fmtShort(row.principal)}円</td>
+      <td>${fmtShort(row.asset)}円</td>
+      <td style="${pr}">${p >= 0 ? '+' : ''}${fmtShort(p)}円</td>
+      <td>${row.withdraw > 0 ? fmtShort(row.withdraw) + '円' : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  // グラフ
+  drawSingleChart(labels, dAsset, dPrin);
+
+  // 資産診断用に記録
+  lastResult = { initial: initMan * 1e4, final: finalAsset, profit: grossProfit, inputs: { rate: rPct, monthly: moMan * 1e4, years: yr, initial: initMan * 1e4 } };
+}
+
+// ─────────────────────────────────────
+// 2銘柄計算
+// ─────────────────────────────────────
+function calcDual() {
+  const spI = parseFloat(document.getElementById('d-sp-i').value) || 0;
+  const spM = parseFloat(document.getElementById('d-sp-m').value) || 0;
+  const spR = parseFloat(document.getElementById('d-sp-r').value) || 0;
+  const alI = parseFloat(document.getElementById('d-al-i').value) || 0;
+  const alM = parseFloat(document.getElementById('d-al-m').value) || 0;
+  const alR = parseFloat(document.getElementById('d-al-r').value) || 0;
+  const yr  = parseInt(document.getElementById('d-yr').value)     || 20;
+  const wdPct = parseFloat(document.getElementById('d-wd').value) || 0;
+
+  const sp = simulate(spI, spM, spR, yr, wdPct);
+  const al = simulate(alI, alM, alR, yr, wdPct);
+
+  const labels = sp.labels;
+  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i]);
+  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i]);
+
+  const totalF  = sp.finalAsset + al.finalAsset;
+  const totalI  = sp.totalInvested + al.totalInvested;
+  let grossProfit = totalF - totalI;
+  let tax = 0, dispFinal = totalF;
+  if (!nisaD && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinal = totalF - tax; grossProfit -= tax; }
+
+  document.getElementById('d-final').textContent = fmt(dispFinal);
+  document.getElementById('d-inv').textContent   = fmt(totalI);
+
+  const pe = document.getElementById('d-profit');
+  if (grossProfit < 0) { pe.textContent = fmt(grossProfit); pe.className = 'hero-profit neg'; }
+  else { pe.textContent = '+' + fmt(grossProfit); pe.className = 'hero-profit pos'; }
+
+  const taxSaved = Math.max(0, totalF - totalI) * TAX_RATE;
+  const badge = document.getElementById('d-nisa-badge');
+  const taxEl = document.getElementById('d-tax');
+  if (nisaD) {
+    badge.querySelector('span').textContent = '🏛️ NISA非課税';
+    taxEl.textContent = '節税 ' + fmt(taxSaved);
+  } else {
+    badge.querySelector('span').textContent = '💰 課税口座（税引後）';
+    taxEl.textContent = '税額 ' + fmt(tax);
+  }
+
+  document.getElementById('t-d-sp').textContent   = Math.round(sp.finalAsset/1e4).toLocaleString() + '万円';
+  document.getElementById('t-d-al').textContent   = Math.round(al.finalAsset/1e4).toLocaleString() + '万円';
+  const mult = totalI > 0 ? (dispFinal / totalI).toFixed(2) : '-';
+  document.getElementById('t-d-mult').textContent = mult + '倍';
+
+  document.getElementById('d-tbody').innerHTML = sp.rows.map((row, i) => {
+    const aRow = al.rows[i];
+    const t = row.asset + aRow.asset;
+    const pTotal = (row.principal + aRow.principal);
+    return `<tr>
+      <td>${row.y}年</td>
+      <td>${fmtShort(pTotal)}円</td>
+      <td>${fmtShort(row.asset)}円</td>
+      <td>${fmtShort(aRow.asset)}円</td>
+      <td style="font-weight:700">${fmtShort(t)}円</td>
+    </tr>`;
+  }).join('');
+
+  drawDualChart(labels, dTotal, sp.dAsset, al.dAsset, dPrin);
+
+  const totM = spM + alM;
+  const wR = totM > 0 ? (spR * spM + alR * alM) / totM : spR;
+  lastResult = { initial: (spI+alI)*1e4, final: totalF, profit: grossProfit, inputs: { rate: wR, monthly: (spM+alM)*1e4, years: yr, initial: (spI+alI)*1e4 } };
+}
+
+// ─────────────────────────────────────
+// グラフ描画
+// ─────────────────────────────────────
+function chartOpts() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(10,22,40,.92)',
+        titleFont: { size: 11, weight: 'bold', family: 'Outfit, sans-serif' },
+        bodyFont: { size: 11, family: 'Outfit, sans-serif' },
+        cornerRadius: 10,
+        padding: 12,
+        callbacks: { label: c => c.dataset.label + ': ' + fmt(c.raw) }
+      }
+    },
+    scales: {
+      x: {
+        display: true,
+        grid: { display: false },
+        ticks: { font: { size: 9 }, color: '#8ba3c7', maxTicksLimit: 11 }
+      },
+      y: {
+        display: true,
+        grid: { color: 'rgba(0,0,0,.03)' },
+        ticks: {
+          font: { size: 9 },
+          color: '#8ba3c7',
+          callback: v => {
+            if (v >= 1e8) return (v/1e8).toFixed(1) + '億';
+            if (v >= 1e4) return (v/1e4).toLocaleString() + '万';
+            return v;
+          }
+        }
+      }
     }
+  };
 }
+
+function drawSingleChart(labels, dAsset, dPrin) {
+  const ctx = document.getElementById('s-chart').getContext('2d');
+  if (chartS) chartS.destroy();
+  chartS = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'資産残高', data:dAsset, borderColor:'#00b894', backgroundColor:'rgba(0,184,148,.08)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'投資元本', data:dPrin, borderColor:'#dde6f4', backgroundColor:'rgba(221,230,244,.15)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[5,4], order:2 }
+    ]},
+    options: chartOpts()
+  });
+}
+
+function drawDualChart(labels, dTotal, dSP, dAl, dPrin) {
+  const ctx = document.getElementById('d-chart').getContext('2d');
+  if (chartD) chartD.destroy();
+  chartD = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'合計資産',  data:dTotal, borderColor:'#00b894', backgroundColor:'rgba(0,184,148,.06)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'S&P500',   data:dSP,    borderColor:'#0984e3', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:2 },
+      { label:'全世界株式', data:dAl,   borderColor:'#00cec9', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:3 },
+      { label:'投資元本',  data:dPrin,  borderColor:'#dde6f4', backgroundColor:'rgba(221,230,244,.1)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[4,4], order:4 }
+    ]},
+    options: chartOpts()
+  });
+}
+
+// ─────────────────────────────────────
+// 資産階層診断
+// ─────────────────────────────────────
+function updateHierarchy() {
+  const fM = lastResult.final / 1e4;
+  const iM = lastResult.initial / 1e4;
+
+  const ci = TIERS.findIndex(t => iM >= t.min);
+  const fi = TIERS.findIndex(t => fM >= t.min);
+  const nowTier = TIERS[ci !== -1 ? ci : 4];
+  const futTier = TIERS[fi !== -1 ? fi : 4];
+
+  document.getElementById('h-now').textContent = nowTier.name + ` (${fmt(lastResult.initial)})`;
+  document.getElementById('h-fut').textContent = futTier.name + ` (${fmt(lastResult.final)})`;
+
+  // マーカー位置
+  document.getElementById('a-now').setAttribute('transform', `translate(0,${nowTier.y})`);
+  document.getElementById('a-fut').setAttribute('transform', `translate(0,${futTier.y})`);
+
+  // ピラミッド透明度
+  TIERS.forEach(t => { const e = document.getElementById(t.id); if(e) e.setAttribute('opacity','.4'); });
+  const fe = document.getElementById(futTier.id);
+  if (fe) fe.setAttribute('opacity','.85');
+
+  // プログレスバー
+  if (fM >= 50000 && fi === 0) {
+    document.getElementById('h-gap').textContent   = '最高ランク到達！🎉';
+    document.getElementById('h-bar').style.width   = '100%';
+    document.getElementById('h-target').textContent = 'Goal!';
+    document.getElementById('adv-time').innerHTML  = '<div class="advice-hl">🎊 最高ランク達成！</div>';
+    document.getElementById('adv-money').innerHTML = '資産保全・分散に注力しましょう。';
+  } else {
+    const nextTier = fi > 0 ? TIERS[fi - 1] : TIERS[0];
+    const targetWen = nextTier.min * 1e4;
+    const gap = targetWen - lastResult.final;
+    const prog = Math.min(100, (lastResult.final / targetWen) * 100);
+
+    document.getElementById('h-gap').textContent    = 'あと ' + fmt(Math.max(0, gap));
+    document.getElementById('h-bar').style.width    = prog + '%';
+    document.getElementById('h-target').textContent = '目標: ' + nextTier.name + ' (' + nextTier.min.toLocaleString() + '万円)';
+
+    // 到達年数
+    const r = monthlyRate(lastResult.inputs.rate), mo = lastResult.inputs.monthly;
+    let tmp = lastResult.initial, reached = false, ytg = 0;
+    for (let i = 1; i <= 1200; i++) {
+      tmp = (tmp + mo) * (1 + r);
+      if (tmp >= targetWen) { ytg = (i / 12).toFixed(1); reached = true; break; }
+    }
+    document.getElementById('adv-time').innerHTML = reached
+      ? `約 <span class="advice-hl">${ytg}年後</span> に到達！`
+      : '100年以上かかります。積立増額や初期投資を検討しましょう。';
+
+    // 必要な積立額
+    const n = lastResult.inputs.years * 12;
+    const cf = Math.pow(1 + r, n);
+    const ig = lastResult.initial * cf;
+    let rm = 0;
+    if (targetWen > ig) rm = ((targetWen - ig) * r) / (cf - 1);
+    const addM = Math.max(0, (rm - mo) / 1e4).toFixed(1);
+    document.getElementById('adv-money').innerHTML = `毎月あと<br><span class="advice-hl">+${addM}万円</span> 増やそう！`;
+  }
+}
+
+// ─────────────────────────────────────
+// LocalStorage
+// ─────────────────────────────────────
+function saveData() {
+  const tab = document.querySelector('.tab.active')?.dataset.tab || 'single';
+  const data = {
+    tab,
+    curProd,
+    s: {
+      rate: document.getElementById('s-rate').value,
+      init: document.getElementById('s-init').value,
+      mo: document.getElementById('s-mo').value,
+      yr: document.getElementById('s-yr').value,
+      wd: document.getElementById('s-wd').value,
+      nisa: nisaS
+    },
+    d: {
+      spR: document.getElementById('d-sp-r').value,
+      spI: document.getElementById('d-sp-i').value,
+      spM: document.getElementById('d-sp-m').value,
+      alR: document.getElementById('d-al-r').value,
+      alI: document.getElementById('d-al-i').value,
+      alM: document.getElementById('d-al-m').value,
+      yr: document.getElementById('d-yr').value,
+      wd: document.getElementById('d-wd').value,
+      nisa: nisaD
+    }
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    if (data.curProd) {
+      curProd = data.curProd;
+      document.getElementById('btn-sp').classList.toggle('active', curProd === 'sp500');
+      document.getElementById('btn-all').classList.toggle('active', curProd === 'all');
+      if (PRODUCTS[curProd]) {
+        document.getElementById('s-rate-src').textContent = PRODUCTS[curProd].src;
+      }
+    }
+
+    const s = data.s || {};
+    if (s.rate !== undefined) document.getElementById('s-rate').value = s.rate;
+    if (s.init !== undefined) document.getElementById('s-init').value = s.init;
+    if (s.mo   !== undefined) { document.getElementById('s-mo').value = s.mo; syncInput('s-mo'); }
+    if (s.yr   !== undefined) { document.getElementById('s-yr').value = s.yr; syncInput('s-yr'); }
+    if (s.wd   !== undefined) { document.getElementById('s-wd').value = s.wd; syncInput('s-wd'); }
+    if (s.nisa !== undefined) { nisaS = s.nisa; document.getElementById('s-nisa').classList.toggle('on', nisaS); }
+
+    const d = data.d || {};
+    if (d.spR !== undefined) document.getElementById('d-sp-r').value = d.spR;
+    if (d.spI !== undefined) document.getElementById('d-sp-i').value = d.spI;
+    if (d.spM !== undefined) document.getElementById('d-sp-m').value = d.spM;
+    if (d.alR !== undefined) document.getElementById('d-al-r').value = d.alR;
+    if (d.alI !== undefined) document.getElementById('d-al-i').value = d.alI;
+    if (d.alM !== undefined) document.getElementById('d-al-m').value = d.alM;
+    if (d.yr  !== undefined) { document.getElementById('d-yr').value = d.yr; syncInput('d-yr'); }
+    if (d.wd  !== undefined) { document.getElementById('d-wd').value = d.wd; syncInput('d-wd'); }
+    if (d.nisa !== undefined) { nisaD = d.nisa; document.getElementById('d-nisa').classList.toggle('on', nisaD); }
+
+    onInitChange('s-init', 's-init-wrap');
+
+    // アクティブタブを復元
+    if (data.tab) {
+      const btn = document.querySelector(`.tab[data-tab="${data.tab}"]`);
+      if (btn) btn.click();
+    }
+  } catch(e) {}
+}
+
+function saveAndCalc()  { calcSingle(); saveData(); }
+function saveAndCalcD() { calcDual();   saveData(); }
+
+// ─────────────────────────────────────
+// 初期化
+// ─────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  calcSingle();
+  calcDual();
+});
 </script>
 </body>
 </html>
