@@ -33,7 +33,13 @@
   --rad-xs: 6px;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+
+/* ★ 横はみ出し防止: html/body レベルでガード */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
 body {
   font-family: 'Outfit', 'Noto Sans JP', sans-serif;
@@ -44,6 +50,14 @@ body {
   display: flex;
   flex-direction: column;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
+}
+
+/* ★ 英数字の折り返し許可（S&P500などが原因のはみ出しを防止） */
+.card-title, .asset-name, .h-row-val, .hero-amount, .hero-profit,
+.tile-value, .field-label, .toggle-label {
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* ─── HEADER ─── */
@@ -54,12 +68,15 @@ body {
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 .hdr-inner {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 16px;
+  width: 100%;
 }
+@media(min-width:600px) { .hdr-inner { padding: 0 20px; } }
 .hdr-top {
   display: flex;
   align-items: center;
@@ -72,6 +89,7 @@ body {
   align-items: center;
   gap: 8px;
   text-decoration: none;
+  min-width: 0;
 }
 .logo-mark {
   width: 32px; height: 32px;
@@ -80,6 +98,7 @@ body {
   display: flex; align-items: center; justify-content: center;
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(0,185,148,.3);
+  flex-shrink: 0;
 }
 @media(min-width:600px) { .logo-mark { width: 36px; height: 36px; border-radius: 10px; font-size: 18px; } }
 .logo-name { font-size: 1rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
@@ -146,14 +165,14 @@ body {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
+  width: 100%;
 }
 @media(min-width:960px) {
-  .grid { grid-template-columns: 400px 1fr; gap: 20px; align-items: start; }
+  .grid { grid-template-columns: 400px minmax(0, 1fr); gap: 20px; align-items: start; }
 }
-.col { display: flex; flex-direction: column; gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 @media(min-width:600px) { .col { gap: 14px; } }
 
-/* スマホでは入力(col-left)より先に結果(col-right)を表示 */
 .col-left  { order: 2; }
 .col-right { order: 1; }
 @media(min-width:960px) {
@@ -168,6 +187,7 @@ body {
   border: 1px solid var(--line);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
+  width: 100%;
 }
 .card-head {
   display: flex;
@@ -189,7 +209,7 @@ body {
 }
 .step-badge.opt { background: var(--soft); }
 .card-title { font-size: .85rem; font-weight: 800; color: var(--ink); }
-.card-body { padding: 14px 14px; }
+.card-body { padding: 14px; }
 @media(min-width:600px) { .card-body { padding: 18px 20px; } }
 
 /* ─── PRODUCT SELECTOR ─── */
@@ -207,6 +227,7 @@ body {
   text-align: center;
   transition: all .2s;
   position: relative;
+  min-width: 0;
 }
 @media(min-width:600px) { .prod-btn { padding: 14px 10px; } }
 .prod-btn:hover { border-color: var(--soft); }
@@ -215,7 +236,7 @@ body {
   background: var(--g-l);
 }
 .prod-flag { font-size: 1.5rem; margin-bottom: 4px; display: block; }
-.prod-name { font-size: .82rem; font-weight: 800; color: var(--ink); display: block; }
+.prod-name { font-size: .82rem; font-weight: 800; color: var(--ink); display: block; word-break: keep-all; }
 .prod-desc { font-size: .62rem; color: var(--soft); margin-top: 2px; display: block; }
 .prod-btn.active .prod-name { color: var(--g-d); }
 .prod-check {
@@ -241,6 +262,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 .field-label {
   font-size: .75rem;
@@ -249,8 +272,10 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
+  flex: 1;
+  min-width: 0;
 }
-.field-val { font-size: .75rem; font-weight: 800; color: var(--g-d); }
+.field-val { font-size: .75rem; font-weight: 800; color: var(--g-d); flex-shrink: 0; }
 .field-val.danger { color: var(--r); }
 .field-hint { font-size: .62rem; color: var(--soft); margin-top: 4px; line-height: 1.5; }
 
@@ -264,6 +289,8 @@ body {
   padding: 3px 8px;
   cursor: pointer;
   transition: all .15s;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 .reset-btn:hover { background: var(--b); color: #fff; }
 
@@ -277,6 +304,7 @@ body {
   padding: 8px 12px;
   transition: all .2s;
   gap: 6px;
+  min-width: 0;
 }
 .iw:focus-within { border-color: var(--g); background: #fff; box-shadow: 0 0 0 3px rgba(0,184,148,.1); }
 .iw.highlight { background: var(--y-l); border-color: #f9ca24aa; }
@@ -294,10 +322,11 @@ body {
   color: var(--ink);
   -moz-appearance: textfield;
   min-width: 0;
+  width: 100%;
 }
 .iw input::-webkit-inner-spin-button,
 .iw input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.iw-unit { font-size: .75rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
+.iw-unit { font-size: .75rem; font-weight: 700; color: var(--soft); white-space: nowrap; flex-shrink: 0; }
 .iw-icon { font-size: .85rem; flex-shrink: 0; }
 
 /* RANGE SLIDER */
@@ -347,6 +376,8 @@ input[type=range]::-moz-range-thumb {
   display: flex;
   align-items: center;
   gap: 5px;
+  flex: 1;
+  min-width: 0;
 }
 .sw {
   width: 44px; height: 24px;
@@ -383,6 +414,7 @@ input[type=range]::-moz-range-thumb {
   cursor: help;
   position: relative;
   vertical-align: middle;
+  flex-shrink: 0;
 }
 .tip-box {
   display: none;
@@ -423,6 +455,8 @@ input[type=range]::-moz-range-thumb {
   position: relative;
   overflow: hidden;
   color: #fff;
+  width: 100%;
+  max-width: 100%;
 }
 @media(min-width:600px) { .hero { padding: 24px; } }
 .hero.green { background: linear-gradient(135deg, #00916e 0%, #00cec9 100%); }
@@ -438,13 +472,15 @@ input[type=range]::-moz-range-thumb {
   pointer-events: none;
 }
 
-.hero-label { font-size: .72rem; font-weight: 600; opacity: .75; margin-bottom: 4px; }
+.hero-label { font-size: .72rem; font-weight: 600; opacity: .75; margin-bottom: 4px; position: relative; z-index: 1; }
 .hero-amount {
-  font-size: clamp(1.7rem, 8vw, 2.8rem);
+  font-size: clamp(1.5rem, 7vw, 2.8rem);
   font-weight: 900;
   letter-spacing: -.04em;
   line-height: 1.05;
   font-family: 'Outfit', sans-serif;
+  position: relative;
+  z-index: 1;
 }
 .hero-sub {
   display: flex;
@@ -453,8 +489,10 @@ input[type=range]::-moz-range-thumb {
   margin-top: 16px;
   flex-wrap: wrap;
   gap: 8px;
+  position: relative;
+  z-index: 1;
 }
-.hero-profit { font-size: 1.1rem; font-weight: 800; }
+.hero-profit { font-size: 1.05rem; font-weight: 800; }
 .hero-profit.pos { color: #a8ffdb; }
 .hero-profit.neg { color: #ffb3a7; }
 .hero-inv { font-size: .68rem; opacity: .7; }
@@ -464,6 +502,8 @@ input[type=range]::-moz-range-thumb {
   gap: 6px;
   margin-top: 10px;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
 }
 .badge {
   display: inline-flex;
@@ -476,6 +516,7 @@ input[type=range]::-moz-range-thumb {
   font-size: .62rem;
   font-weight: 700;
   backdrop-filter: blur(4px);
+  flex-wrap: wrap;
 }
 @media(min-width:600px) { .badge { font-size: .65rem; padding: 4px 10px; } }
 .badge-highlight { color: #ffe066; }
@@ -496,9 +537,9 @@ input[type=range]::-moz-range-thumb {
   border-radius: 12px;
   padding: 10px 8px;
   text-align: center;
+  min-width: 0;
 }
 @media(min-width:600px) { .tile { padding: 12px 10px; } }
-/* スマホ3枚目タイルは全幅に */
 @media(max-width:479px) {
   .tile:last-child { grid-column: 1 / -1; }
 }
@@ -509,7 +550,16 @@ input[type=range]::-moz-range-thumb {
 .tile-value.blue { color: var(--b); }
 
 /* ─── CHART ─── */
-.chart-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--rad); padding: 14px 12px; box-shadow: var(--shadow-sm); }
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  padding: 14px 12px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
 @media(min-width:600px) { .chart-card { padding: 18px 16px; } }
 .chart-title { font-size: .78rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
 .chart-legend {
@@ -519,8 +569,8 @@ input[type=range]::-moz-range-thumb {
   margin-bottom: 10px;
 }
 .legend-item { display: flex; align-items: center; gap: 5px; font-size: .65rem; font-weight: 600; color: var(--soft); }
-.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-.chart-wrap { position: relative; height: 220px; }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.chart-wrap { position: relative; height: 220px; width: 100%; }
 @media(min-width:600px) { .chart-wrap { height: 260px; } }
 
 /* ─── DETAIL TABLE ─── */
@@ -546,9 +596,9 @@ input[type=range]::-moz-range-thumb {
   margin-top: 4px;
   border: 1px solid var(--line);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: auto;
   max-height: 260px;
-  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .detail-wrap.show { display: block; }
 
@@ -558,15 +608,24 @@ table.dt th {
   background: var(--bg);
   font-weight: 700;
   color: var(--soft);
-  padding: 7px 8px;
+  padding: 7px 6px;
   text-align: right;
   position: sticky;
   top: 0;
   border-bottom: 1px solid var(--line);
+  white-space: nowrap;
 }
 @media(min-width:480px) { table.dt th { padding: 8px 10px; } }
 table.dt th:first-child { text-align: left; }
-table.dt td { padding: 6px 8px; text-align: right; border-bottom: 1px solid #f0f4fb; color: var(--ink2); font-family: 'Outfit', sans-serif; font-weight: 500; }
+table.dt td {
+  padding: 6px 6px;
+  text-align: right;
+  border-bottom: 1px solid #f0f4fb;
+  color: var(--ink2);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+}
 @media(min-width:480px) { table.dt td { padding: 7px 10px; } }
 table.dt td:first-child { text-align: left; color: var(--soft); font-weight: 700; }
 table.dt tr:last-child td { border-bottom: none; }
@@ -595,14 +654,14 @@ table.dt tr:hover td { background: var(--g-l); }
 .asset-card:last-of-type { margin-bottom: 0; }
 .asset-card.usa { background: #f0f7ff; border-color: #b3d4ff; }
 .asset-card.world { background: #f0fdf8; border-color: #9de8d0; }
-.asset-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.asset-name { font-size: .88rem; font-weight: 800; }
+.asset-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; flex-wrap: wrap; }
+.asset-name { font-size: .85rem; font-weight: 800; min-width: 0; }
 .asset-card.usa .asset-name { color: #1247a0; }
 .asset-card.world .asset-name { color: var(--g-d); }
 .asset-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
 @media(min-width:400px) { .asset-row { grid-template-columns: 1fr 1fr; } }
 @media(min-width:560px) { .asset-row { grid-template-columns: 1fr 1fr 1fr; } }
-.af { display: flex; flex-direction: column; gap: 4px; }
+.af { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .af label { font-size: .62rem; font-weight: 700; color: var(--soft); }
 .af-in {
   background: #fff;
@@ -613,6 +672,7 @@ table.dt tr:hover td { background: var(--g-l); }
   align-items: center;
   gap: 4px;
   transition: border-color .2s;
+  min-width: 0;
 }
 .asset-card.world .af-in { border-color: #99e0c7; }
 .af-in:focus-within { border-color: var(--g); }
@@ -628,19 +688,20 @@ table.dt tr:hover td { background: var(--g-l); }
   color: var(--ink);
   -moz-appearance: textfield;
   min-width: 0;
+  width: 100%;
 }
 .af-in input::-webkit-inner-spin-button,
 .af-in input::-webkit-outer-spin-button { -webkit-appearance: none; }
-.af-in .u { font-size: .6rem; font-weight: 700; color: var(--soft); white-space: nowrap; }
+.af-in .u { font-size: .6rem; font-weight: 700; color: var(--soft); white-space: nowrap; flex-shrink: 0; }
 
 /* ─── HIERARCHY ─── */
 .pyramid-section { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
 @media(min-width:680px) { .pyramid-section { grid-template-columns: 1fr 1fr; } }
 
-.pyramid-wrap { display: flex; justify-content: center; }
-.pyramid-wrap svg { width: 100%; max-width: 340px; }
+.pyramid-wrap { display: flex; justify-content: center; width: 100%; }
+.pyramid-wrap svg { width: 100%; max-width: 340px; height: auto; }
 
-.h-status { display: flex; flex-direction: column; gap: 12px; }
+.h-status { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .h-row {
   display: flex;
   justify-content: space-between;
@@ -649,13 +710,15 @@ table.dt tr:hover td { background: var(--g-l); }
   background: var(--white);
   border: 1px solid var(--line);
   border-radius: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
-.h-row-label { font-size: .72rem; font-weight: 700; color: var(--soft); }
-.h-row-val { font-size: .9rem; font-weight: 800; color: var(--ink); }
+.h-row-label { font-size: .72rem; font-weight: 700; color: var(--soft); flex-shrink: 0; }
+.h-row-val { font-size: .88rem; font-weight: 800; color: var(--ink); text-align: right; min-width: 0; }
 .h-row-val.green { color: var(--g-d); }
 
 .prog-wrap { margin-top: 4px; }
-.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; }
+.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; gap: 6px; flex-wrap: wrap; }
 .prog-head span { font-size: .65rem; font-weight: 700; color: var(--soft); }
 .prog-head .prog-gap { color: var(--g-d); }
 .prog-bar-bg { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
@@ -663,7 +726,7 @@ table.dt tr:hover td { background: var(--g-l); }
 
 .advice-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
 @media(min-width:480px) { .advice-grid { grid-template-columns: 1fr 1fr; } }
-.advice-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.advice-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-width: 0; }
 .advice-label { font-size: .62rem; font-weight: 700; color: var(--soft); margin-bottom: 6px; }
 .advice-val { font-size: .82rem; color: var(--ink2); line-height: 1.6; }
 .advice-hl { font-size: 1.15rem; font-weight: 900; color: var(--g-d); font-family: 'Outfit', sans-serif; }
@@ -671,9 +734,9 @@ table.dt tr:hover td { background: var(--g-l); }
 /* ─── GUIDE ─── */
 .guide-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
 @media(min-width:600px) { .guide-grid { grid-template-columns: 1fr 1fr; } }
-.guide-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.guide-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
 .guide-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.guide-icon { font-size: 1.3rem; }
+.guide-icon { font-size: 1.3rem; flex-shrink: 0; }
 .guide-title { font-size: .88rem; font-weight: 800; color: var(--ink); }
 .guide-body { font-size: .78rem; color: var(--soft); line-height: 1.75; }
 
@@ -743,14 +806,14 @@ footer {
             <button class="prod-btn active" id="btn-sp" onclick="selectProd('sp500')">
               <div class="prod-check">✓</div>
               <span class="prod-flag">🇺🇸</span>
-              <span class="prod-name">S&P500</span>
+              <span class="prod-name">S&amp;P500</span>
               <span class="prod-desc">米国大型株500社</span>
             </button>
             <button class="prod-btn" id="btn-all" onclick="selectProd('all')">
               <div class="prod-check">✓</div>
               <span class="prod-flag">🌍</span>
               <span class="prod-name">全世界株式</span>
-              <span class="prod-desc">オルカン（先進+新興国）</span>
+              <span class="prod-desc">オルカン</span>
             </button>
           </div>
         </div>
@@ -778,7 +841,7 @@ footer {
               <input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()">
               <span class="iw-unit">%</span>
             </div>
-            <p class="field-hint" id="s-rate-src">※ S&P500の過去30年間（1994〜2024）の年平均リターン</p>
+            <p class="field-hint" id="s-rate-src">※ S&amp;P500の過去30年間（1994〜2024）の年平均リターン</p>
           </div>
 
           <div class="field">
@@ -883,7 +946,6 @@ footer {
         </div>
       </div>
 
-      <!-- 3枚サマリータイル -->
       <div class="tiles">
         <div class="tile">
           <div class="tile-label">投資元本</div>
@@ -941,7 +1003,7 @@ footer {
         <div class="card-body">
           <div class="asset-card usa">
             <div class="asset-head">
-              <span class="asset-name">🇺🇸 S&P500（米国株）</span>
+              <span class="asset-name">🇺🇸 S&amp;P500</span>
               <button class="reset-btn" onclick="resetDualRate('sp500')">↺ 平均値</button>
             </div>
             <div class="asset-row">
@@ -953,7 +1015,7 @@ footer {
 
           <div class="asset-card world">
             <div class="asset-head">
-              <span class="asset-name">🌍 全世界株式（オルカン）</span>
+              <span class="asset-name">🌍 全世界株式</span>
               <button class="reset-btn" onclick="resetDualRate('all')">↺ 平均値</button>
             </div>
             <div class="asset-row">
@@ -1024,7 +1086,7 @@ footer {
 
       <div class="tiles">
         <div class="tile">
-          <div class="tile-label">🇺🇸 S&P500</div>
+          <div class="tile-label">🇺🇸 S&amp;P500</div>
           <div class="tile-value blue" id="t-d-sp">0万円</div>
         </div>
         <div class="tile">
@@ -1041,7 +1103,7 @@ footer {
         <div class="chart-title">資産推移グラフ（2銘柄合計）</div>
         <div class="chart-legend">
           <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>合計</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--b)"></span>S&P500</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--b)"></span>S&amp;P500</span>
           <span class="legend-item"><span class="legend-dot" style="background:#00cec9"></span>全世界</span>
           <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>元本</span>
         </div>
@@ -1054,7 +1116,7 @@ footer {
         </button>
         <div class="detail-wrap" id="d-dtw">
           <table class="dt">
-            <thead><tr><th>年</th><th>元本</th><th>🇺🇸 S&P500</th><th>🌍 全世界</th><th>合計</th></tr></thead>
+            <thead><tr><th>年</th><th>元本</th><th>🇺🇸</th><th>🌍</th><th>合計</th></tr></thead>
             <tbody id="d-tbody"></tbody>
           </table>
         </div>
@@ -1077,7 +1139,7 @@ footer {
     <div class="card-body">
       <div class="pyramid-section">
         <div class="pyramid-wrap">
-          <svg viewBox="0 0 360 310" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 360 310" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
             <defs>
               <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
               <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#fb923c"/></linearGradient>
@@ -1100,12 +1162,10 @@ footer {
             <path id="py-mass" d="M28 242 L332 242 L360 295 H0 Z" fill="url(#g5)" stroke="#fff" stroke-width="2" opacity=".4"/>
             <text x="180" y="273" text-anchor="middle" font-size="8.5" fill="#0f766e" font-weight="700" font-family="Outfit, sans-serif">マス層</text>
             <text x="180" y="283" text-anchor="middle" font-size="6.5" fill="#0f766e" opacity=".7" font-family="Outfit, sans-serif">〜3000万円</text>
-            <!-- 現在マーカー -->
             <g id="a-now" transform="translate(0,250)">
               <text x="22" y="4" text-anchor="end" font-size="11" font-weight="700" fill="#94a3b8" font-family="Outfit, sans-serif">現在</text>
               <path d="M26 0 L38 -5 L38 5 Z" fill="#94a3b8"/>
             </g>
-            <!-- 将来マーカー -->
             <g id="a-fut" transform="translate(0,215)">
               <text x="338" y="4" text-anchor="start" font-size="11" font-weight="700" fill="#00916e" font-family="Outfit, sans-serif">将来</text>
               <path d="M334 0 L322 -5 L322 5 Z" fill="#00916e"/>
@@ -1154,11 +1214,11 @@ footer {
   <div class="guide-grid">
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon">📊</span><span class="guide-title">1銘柄で計算</span></div>
-      <p class="guide-body">S&P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p>
+      <p class="guide-body">S&amp;P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p>
     </div>
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon">⚖️</span><span class="guide-title">2銘柄で比較</span></div>
-      <p class="guide-body">「S&P500に月3万、全世界株式に月2万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p>
+      <p class="guide-body">「S&amp;P500に月3万、全世界株式に月2万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p>
     </div>
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon">🏆</span><span class="guide-title">資産クラス診断</span></div>
@@ -1166,7 +1226,7 @@ footer {
     </div>
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon">💡</span><span class="guide-title">利回りの数字について</span></div>
-      <p class="guide-body">デフォルトの利回りは過去の実績平均です。S&P500は過去30年で年平均約13%のリターンがありましたが、途中で−37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p>
+      <p class="guide-body">デフォルトの利回りは過去の実績平均です。S&amp;P500は過去30年で年平均約13%のリターンがありましたが、途中で−37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p>
     </div>
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon">🏛️</span><span class="guide-title">税金（NISA）について</span></div>
@@ -1178,7 +1238,7 @@ footer {
     </div>
     <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
       <div class="cta-title">🔰 投資初心者へのワンポイント</div>
-      <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
+      <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&amp;P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
     </div>
   </div>
 </section>
@@ -1188,9 +1248,6 @@ footer {
 <footer>本ツールは情報提供のみを目的としており、投資助言ではありません。投資はご自身の判断と責任で行ってください。</footer>
 
 <script>
-// ─────────────────────────────────────
-// 定数・状態
-// ─────────────────────────────────────
 const PRODUCTS = {
   sp500: { name: 'S&P500', rate: 13.25, src: '※ S&P500の過去30年間（1994〜2024）の年平均リターン' },
   all:   { name: '全世界株式', rate: 9.99,  src: '※ MSCI ACWI Indexの過去30年間の年平均リターン' }
@@ -1210,10 +1267,6 @@ let nisaS = true, nisaD = true;
 let chartS = null, chartD = null;
 let lastResult = { initial: 0, final: 0, profit: 0, inputs: { rate: 0, monthly: 0, years: 0, initial: 0 } };
 
-// ─────────────────────────────────────
-// ★ 計算ロジック（正確な複利換算）
-// yearRate: 年利 % → 月利 = (1 + yearRate/100)^(1/12) - 1
-// ─────────────────────────────────────
 function monthlyRate(yearRatePct) {
   return Math.pow(1 + yearRatePct / 100, 1 / 12) - 1;
 }
@@ -1221,7 +1274,7 @@ function monthlyRate(yearRatePct) {
 function simulate(initMan, moMan, yearRatePct, years, wdPct) {
   const init = initMan * 1e4;
   const mo   = moMan  * 1e4;
-  const r    = monthlyRate(yearRatePct);  // ← 厳密な複利換算
+  const r    = monthlyRate(yearRatePct);
   const wd   = wdPct / 100;
 
   let c = init;
@@ -1231,11 +1284,9 @@ function simulate(initMan, moMan, yearRatePct, years, wdPct) {
   const rows   = [];
 
   for (let y = 1; y <= years; y++) {
-    // 月初積立・月次複利（12ヶ月）
     for (let m = 0; m < 12; m++) {
       c = (c + mo) * (1 + r);
     }
-    // 年末一括取り崩し
     let wAmt = 0;
     if (wd > 0) { wAmt = c * wd; c -= wAmt; }
 
@@ -1250,9 +1301,6 @@ function simulate(initMan, moMan, yearRatePct, years, wdPct) {
   return { labels, dAsset, dPrin, rows, finalAsset: c, totalInvested };
 }
 
-// ─────────────────────────────────────
-// 書式
-// ─────────────────────────────────────
 function fmt(n) {
   const a = Math.abs(n), s = n < 0 ? '-' : '';
   if (a < 10000) return s + Math.round(a).toLocaleString() + '円';
@@ -1267,9 +1315,6 @@ function fmtShort(n) {
   return `${s}${man.toLocaleString()}万`;
 }
 
-// ─────────────────────────────────────
-// タブ
-// ─────────────────────────────────────
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
@@ -1279,13 +1324,15 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (pane) pane.classList.add('active');
     if (btn.dataset.tab === 'rank') updateHierarchy();
     if (btn.dataset.tab === 'dual') calcDual();
+    // タブ切替時にチャートを再描画(隠れていたものを正しいサイズで)
+    setTimeout(() => {
+      if (chartS) chartS.resize();
+      if (chartD) chartD.resize();
+    }, 50);
     saveData();
   });
 });
 
-// ─────────────────────────────────────
-// 商品選択
-// ─────────────────────────────────────
 function selectProd(k) {
   curProd = k;
   document.getElementById('btn-sp').classList.toggle('active', k === 'sp500');
@@ -1304,9 +1351,6 @@ function resetDualRate(t) {
   saveAndCalcD();
 }
 
-// ─────────────────────────────────────
-// スライダー・入力の同期
-// ─────────────────────────────────────
 const UNITS = { 's-mo':'万円','s-yr':'年','s-wd':'%','d-yr':'年','d-wd':'%' };
 function syncRange(p) {
   const r = document.getElementById(p+'-r');
@@ -1328,25 +1372,16 @@ function onInitChange(id, wid) {
   document.getElementById(wid).classList.toggle('highlight', val <= 0);
 }
 
-// ─────────────────────────────────────
-// NISA トグル
-// ─────────────────────────────────────
 function toggleNisa(p) {
   if (p === 's') { nisaS = !nisaS; document.getElementById('s-nisa').classList.toggle('on', nisaS); saveAndCalc(); }
   else           { nisaD = !nisaD; document.getElementById('d-nisa').classList.toggle('on', nisaD); saveAndCalcD(); }
 }
 
-// ─────────────────────────────────────
-// 詳細テーブル
-// ─────────────────────────────────────
 function toggleDetail(p) {
   document.getElementById(p+'-dtb').classList.toggle('open');
   document.getElementById(p+'-dtw').classList.toggle('show');
 }
 
-// ─────────────────────────────────────
-// 単銘柄計算
-// ─────────────────────────────────────
 function calcSingle() {
   const initMan = parseFloat(document.getElementById('s-init').value) || 0;
   const moMan   = parseFloat(document.getElementById('s-mo').value)   || 0;
@@ -1356,12 +1391,10 @@ function calcSingle() {
 
   const { labels, dAsset, dPrin, rows, finalAsset, totalInvested } = simulate(initMan, moMan, rPct, yr, wdPct);
 
-  // 税金計算
   let grossProfit = finalAsset - totalInvested;
   let tax = 0, dispFinal = finalAsset;
   if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinal = finalAsset - tax; grossProfit -= tax; }
 
-  // 表示
   document.getElementById('s-final').textContent = fmt(dispFinal);
   document.getElementById('s-inv').textContent   = fmt(totalInvested);
 
@@ -1369,7 +1402,6 @@ function calcSingle() {
   if (grossProfit < 0) { pe.textContent = fmt(grossProfit); pe.className = 'hero-profit neg'; }
   else { pe.textContent = '+' + fmt(grossProfit); pe.className = 'hero-profit pos'; }
 
-  // バッジ
   const taxSaved = Math.max(0, finalAsset - totalInvested) * TAX_RATE;
   const badge = document.getElementById('s-nisa-badge');
   const taxEl = document.getElementById('s-tax');
@@ -1381,7 +1413,6 @@ function calcSingle() {
     taxEl.textContent = '税額 ' + fmt(tax);
   }
 
-  // タイル
   const invM = Math.round(totalInvested / 1e4);
   const gainM = Math.round(grossProfit / 1e4);
   const mult = totalInvested > 0 ? (dispFinal / totalInvested).toFixed(2) : '-';
@@ -1389,7 +1420,6 @@ function calcSingle() {
   document.getElementById('t-s-gain').textContent = gainM.toLocaleString() + '万円';
   document.getElementById('t-s-mult').textContent = mult + '倍';
 
-  // 詳細テーブル
   document.getElementById('s-tbody').innerHTML = rows.map(row => {
     const p = row.profit, pr = p >= 0 ? `color:var(--g-d)` : `color:var(--r)`;
     return `<tr>
@@ -1401,16 +1431,11 @@ function calcSingle() {
     </tr>`;
   }).join('');
 
-  // グラフ
   drawSingleChart(labels, dAsset, dPrin);
 
-  // 資産診断用に記録
   lastResult = { initial: initMan * 1e4, final: finalAsset, profit: grossProfit, inputs: { rate: rPct, monthly: moMan * 1e4, years: yr, initial: initMan * 1e4 } };
 }
 
-// ─────────────────────────────────────
-// 2銘柄計算
-// ─────────────────────────────────────
 function calcDual() {
   const spI = parseFloat(document.getElementById('d-sp-i').value) || 0;
   const spM = parseFloat(document.getElementById('d-sp-m').value) || 0;
@@ -1477,9 +1502,6 @@ function calcDual() {
   lastResult = { initial: (spI+alI)*1e4, final: totalF, profit: grossProfit, inputs: { rate: wR, monthly: (spM+alM)*1e4, years: yr, initial: (spI+alI)*1e4 } };
 }
 
-// ─────────────────────────────────────
-// グラフ描画
-// ─────────────────────────────────────
 function chartOpts() {
   return {
     responsive: true,
@@ -1547,9 +1569,6 @@ function drawDualChart(labels, dTotal, dSP, dAl, dPrin) {
   });
 }
 
-// ─────────────────────────────────────
-// 資産階層診断
-// ─────────────────────────────────────
 function updateHierarchy() {
   const fM = lastResult.final / 1e4;
   const iM = lastResult.initial / 1e4;
@@ -1562,16 +1581,13 @@ function updateHierarchy() {
   document.getElementById('h-now').textContent = nowTier.name + ` (${fmt(lastResult.initial)})`;
   document.getElementById('h-fut').textContent = futTier.name + ` (${fmt(lastResult.final)})`;
 
-  // マーカー位置
   document.getElementById('a-now').setAttribute('transform', `translate(0,${nowTier.y})`);
   document.getElementById('a-fut').setAttribute('transform', `translate(0,${futTier.y})`);
 
-  // ピラミッド透明度
   TIERS.forEach(t => { const e = document.getElementById(t.id); if(e) e.setAttribute('opacity','.4'); });
   const fe = document.getElementById(futTier.id);
   if (fe) fe.setAttribute('opacity','.85');
 
-  // プログレスバー
   if (fM >= 50000 && fi === 0) {
     document.getElementById('h-gap').textContent   = '最高ランク到達！🎉';
     document.getElementById('h-bar').style.width   = '100%';
@@ -1588,7 +1604,6 @@ function updateHierarchy() {
     document.getElementById('h-bar').style.width    = prog + '%';
     document.getElementById('h-target').textContent = '目標: ' + nextTier.name + ' (' + nextTier.min.toLocaleString() + '万円)';
 
-    // 到達年数
     const r = monthlyRate(lastResult.inputs.rate), mo = lastResult.inputs.monthly;
     let tmp = lastResult.initial, reached = false, ytg = 0;
     for (let i = 1; i <= 1200; i++) {
@@ -1599,7 +1614,6 @@ function updateHierarchy() {
       ? `約 <span class="advice-hl">${ytg}年後</span> に到達！`
       : '100年以上かかります。積立増額や初期投資を検討しましょう。';
 
-    // 必要な積立額
     const n = lastResult.inputs.years * 12;
     const cf = Math.pow(1 + r, n);
     const ig = lastResult.initial * cf;
@@ -1610,9 +1624,6 @@ function updateHierarchy() {
   }
 }
 
-// ─────────────────────────────────────
-// LocalStorage
-// ─────────────────────────────────────
 function saveData() {
   const tab = document.querySelector('.tab.active')?.dataset.tab || 'single';
   const data = {
@@ -1677,7 +1688,6 @@ function loadData() {
 
     onInitChange('s-init', 's-init-wrap');
 
-    // アクティブタブを復元
     if (data.tab) {
       const btn = document.querySelector(`.tab[data-tab="${data.tab}"]`);
       if (btn) btn.click();
@@ -1688,9 +1698,6 @@ function loadData() {
 function saveAndCalc()  { calcSingle(); saveData(); }
 function saveAndCalcD() { calcDual();   saveData(); }
 
-// ─────────────────────────────────────
-// 初期化
-// ─────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   loadData();
   calcSingle();
