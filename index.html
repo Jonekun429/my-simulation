@@ -3,31 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#5C8E84">
 <title>つみたて投資ナビ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 :root {
-  --ink: #0a1628;
-  --ink2: #1e3a5f;
-  --mid: #4a6fa5;
-  --soft: #8ba3c7;
-  --line: #dde6f4;
-  --bg: #f5f8ff;
+  /* ─── Subly Brand Colors ───
+     ベースカラー: #5C8E84 (Sublyテーマカラー / セージグリーン)
+     落ち着き・信頼感・自然をイメージしたトーンで統一 */
+
+  /* テキスト系 */
+  --ink:  #2c3e3a;   /* メインテキスト (深いグリーングレー) */
+  --ink2: #4a5f5a;   /* サブテキスト */
+  --mid:  #5C8E84;   /* ★Sublyメインカラー (セージグリーン) */
+  --soft: #94aaa5;   /* 補助テキスト */
+  --line: #dce6e3;   /* 罫線・区切り線 */
+  --bg:   #f4f7f5;   /* 背景 (オフホワイト・グリーンティント) */
   --white: #ffffff;
-  --g: #00b894;
-  --g-d: #00916e;
-  --g-l: #e0faf3;
-  --r: #e17055;
-  --r-l: #fff0eb;
-  --y: #f9ca24;
-  --y-l: #fffae0;
-  --b: #0984e3;
-  --b-l: #e8f4ff;
-  --shadow-sm: 0 1px 3px rgba(10,22,40,.07), 0 1px 2px rgba(10,22,40,.04);
-  --shadow: 0 4px 16px rgba(10,22,40,.08), 0 1px 4px rgba(10,22,40,.04);
-  --shadow-lg: 0 8px 32px rgba(10,22,40,.12), 0 2px 8px rgba(10,22,40,.06);
+
+  /* グリーン系 (メインアクセント) */
+  --g:   #5C8E84;    /* Sublyベース */
+  --g-d: #4a7269;    /* 濃いセージ */
+  --g-l: #e8f0ee;    /* 淡いセージ */
+
+  /* レッド系 (取り崩し・警告) — Subly的なくすみトーン */
+  --r:   #c97b6b;    /* テラコッタ */
+  --r-l: #f7ebe7;
+
+  /* イエロー系 (ハイライト) — マスタード寄り */
+  --y:   #d4a04a;
+  --y-l: #fbf3e3;
+
+  /* ブルー系 (情報・米国株) — グレイッシュブルー */
+  --b:   #6b8aa8;
+  --b-l: #ebf0f4;
+
+  /* 補助カラー */
+  --teal: #7fb0a4;   /* 明るめセージ (グラフ用) */
+  --plum: #8a7191;   /* 紫 (パープルテーマ呼応) */
+
+  --shadow-sm: 0 1px 3px rgba(44,62,58,.07), 0 1px 2px rgba(44,62,58,.04);
+  --shadow:    0 4px 16px rgba(44,62,58,.08), 0 1px 4px rgba(44,62,58,.04);
+  --shadow-lg: 0 8px 32px rgba(44,62,58,.12), 0 2px 8px rgba(44,62,58,.06);
   --rad: 18px;
   --rad-sm: 10px;
   --rad-xs: 6px;
@@ -93,11 +112,11 @@ body {
 }
 .logo-mark {
   width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--g-d) 0%, #00cec9 100%);
+  background: linear-gradient(135deg, #5C8E84 0%, #7fb0a4 100%);
   border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
   font-size: 16px;
-  box-shadow: 0 2px 8px rgba(0,185,148,.3);
+  box-shadow: 0 2px 8px rgba(92,142,132,.3);
   flex-shrink: 0;
 }
 @media(min-width:600px) { .logo-mark { width: 36px; height: 36px; border-radius: 10px; font-size: 18px; } }
@@ -139,8 +158,6 @@ body {
 @media(min-width:480px) { .tab { font-size: .72rem; padding: 10px 8px; gap: 3px; } }
 .tab:hover { color: var(--mid); }
 .tab.active { color: var(--g-d); border-bottom-color: var(--g); }
-.tab-icon { font-size: 1rem; }
-@media(min-width:480px) { .tab-icon { font-size: 1.15rem; } }
 
 /* ─── MAIN ─── */
 .main {
@@ -173,12 +190,9 @@ body {
 .col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 @media(min-width:600px) { .col { gap: 14px; } }
 
-.col-left  { order: 2; }
-.col-right { order: 1; }
-@media(min-width:960px) {
-  .col-left  { order: 1; }
-  .col-right { order: 2; }
-}
+/* 入力(col-left)を先に、結果(col-right)を後に表示 (PC/スマホ共通) */
+.col-left  { order: 1; }
+.col-right { order: 2; }
 
 /* ─── CARD ─── */
 .card {
@@ -235,7 +249,20 @@ body {
   border-color: var(--g);
   background: var(--g-l);
 }
-.prod-flag { font-size: 1.5rem; margin-bottom: 4px; display: block; }
+.prod-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  font-size: .65rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .03em;
+}
+.prod-flag.us { background: #6b8aa8; }
+.prod-flag.world { background: var(--g); }
 .prod-name { font-size: .82rem; font-weight: 800; color: var(--ink); display: block; word-break: keep-all; }
 .prod-desc { font-size: .62rem; color: var(--soft); margin-top: 2px; display: block; }
 .prod-btn.active .prod-name { color: var(--g-d); }
@@ -246,11 +273,11 @@ body {
   border-radius: 50%;
   background: var(--g);
   color: #fff;
-  font-size: .55rem;
   display: none;
   align-items: center;
   justify-content: center;
 }
+.prod-check .ico { width: 10px; height: 10px; color: #fff; }
 .prod-btn.active .prod-check { display: flex; }
 
 /* ─── FORM FIELDS ─── */
@@ -306,9 +333,9 @@ body {
   gap: 6px;
   min-width: 0;
 }
-.iw:focus-within { border-color: var(--g); background: #fff; box-shadow: 0 0 0 3px rgba(0,184,148,.1); }
-.iw.highlight { background: var(--y-l); border-color: #f9ca24aa; }
-.iw.danger:focus-within { border-color: var(--r); box-shadow: 0 0 0 3px rgba(225,112,85,.1); }
+.iw:focus-within { border-color: var(--g); background: #fff; box-shadow: 0 0 0 3px rgba(92,142,132,.12); }
+.iw.highlight { background: var(--y-l); border-color: #d4a04a88; }
+.iw.danger:focus-within { border-color: var(--r); box-shadow: 0 0 0 3px rgba(201,123,107,.12); }
 
 .iw input[type=number] {
   border: none;
@@ -459,8 +486,8 @@ input[type=range]::-moz-range-thumb {
   max-width: 100%;
 }
 @media(min-width:600px) { .hero { padding: 24px; } }
-.hero.green { background: linear-gradient(135deg, #00916e 0%, #00cec9 100%); }
-.hero.dark { background: linear-gradient(135deg, #0a3d62 0%, #1e5799 100%); }
+.hero.green { background: linear-gradient(135deg, #4a7269 0%, #7fb0a4 100%); }
+.hero.dark { background: linear-gradient(135deg, #2c3e3a 0%, #5C8E84 100%); }
 .hero::after {
   content: '';
   position: absolute;
@@ -493,8 +520,8 @@ input[type=range]::-moz-range-thumb {
   z-index: 1;
 }
 .hero-profit { font-size: 1.05rem; font-weight: 800; }
-.hero-profit.pos { color: #a8ffdb; }
-.hero-profit.neg { color: #ffb3a7; }
+.hero-profit.pos { color: #d4ebe5; }
+.hero-profit.neg { color: #f4cdc3; }
 .hero-inv { font-size: .68rem; opacity: .7; }
 
 .hero-badges {
@@ -519,7 +546,7 @@ input[type=range]::-moz-range-thumb {
   flex-wrap: wrap;
 }
 @media(min-width:600px) { .badge { font-size: .65rem; padding: 4px 10px; } }
-.badge-highlight { color: #ffe066; }
+.badge-highlight { color: #f5dca0; }
 
 /* ─── SUMMARY TILES ─── */
 .tiles {
@@ -620,7 +647,7 @@ table.dt th:first-child { text-align: left; }
 table.dt td {
   padding: 6px 6px;
   text-align: right;
-  border-bottom: 1px solid #f0f4fb;
+  border-bottom: 1px solid #ecf2f0;
   color: var(--ink2);
   font-family: 'Outfit', sans-serif;
   font-weight: 500;
@@ -652,11 +679,11 @@ table.dt tr:hover td { background: var(--g-l); }
 }
 @media(min-width:600px) { .asset-card { padding: 16px; } }
 .asset-card:last-of-type { margin-bottom: 0; }
-.asset-card.usa { background: #f0f7ff; border-color: #b3d4ff; }
-.asset-card.world { background: #f0fdf8; border-color: #9de8d0; }
+.asset-card.usa { background: #f1f4f7; border-color: #c4d1de; }
+.asset-card.world { background: #ecf2f0; border-color: #b9d2cb; }
 .asset-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; flex-wrap: wrap; }
 .asset-name { font-size: .85rem; font-weight: 800; min-width: 0; }
-.asset-card.usa .asset-name { color: #1247a0; }
+.asset-card.usa .asset-name { color: #4a6480; }
 .asset-card.world .asset-name { color: var(--g-d); }
 .asset-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
 @media(min-width:400px) { .asset-row { grid-template-columns: 1fr 1fr; } }
@@ -665,7 +692,7 @@ table.dt tr:hover td { background: var(--g-l); }
 .af label { font-size: .62rem; font-weight: 700; color: var(--soft); }
 .af-in {
   background: #fff;
-  border: 1.5px solid #c8d8f0;
+  border: 1.5px solid #c4d1de;
   border-radius: 8px;
   padding: 6px 8px;
   display: flex;
@@ -674,7 +701,7 @@ table.dt tr:hover td { background: var(--g-l); }
   transition: border-color .2s;
   min-width: 0;
 }
-.asset-card.world .af-in { border-color: #99e0c7; }
+.asset-card.world .af-in { border-color: #b9d2cb; }
 .af-in:focus-within { border-color: var(--g); }
 .af-in input {
   border: none;
@@ -722,7 +749,7 @@ table.dt tr:hover td { background: var(--g-l); }
 .prog-head span { font-size: .65rem; font-weight: 700; color: var(--soft); }
 .prog-head .prog-gap { color: var(--g-d); }
 .prog-bar-bg { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.prog-bar { height: 100%; background: linear-gradient(90deg, var(--g), #00cec9); border-radius: 4px; transition: width .8s ease; }
+.prog-bar { height: 100%; background: linear-gradient(90deg, var(--g), var(--teal)); border-radius: 4px; transition: width .8s ease; }
 
 .advice-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
 @media(min-width:480px) { .advice-grid { grid-template-columns: 1fr 1fr; } }
@@ -740,9 +767,9 @@ table.dt tr:hover td { background: var(--g-l); }
 .guide-title { font-size: .88rem; font-weight: 800; color: var(--ink); }
 .guide-body { font-size: .78rem; color: var(--soft); line-height: 1.75; }
 
-.cta-box { background: var(--g-l); border: 1px solid #9de8d0; border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+.cta-box { background: var(--g-l); border: 1px solid #b9d2cb; border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
 .cta-title { font-size: .78rem; font-weight: 800; color: var(--g-d); margin-bottom: 4px; }
-.cta-body { font-size: .72rem; color: #00916ecc; line-height: 1.6; }
+.cta-body { font-size: .72rem; color: #4a7269cc; line-height: 1.6; }
 
 /* ─── FOOTER ─── */
 footer {
@@ -756,15 +783,168 @@ footer {
 
 /* ─── UTILS ─── */
 .sep { height: 1px; background: var(--line); margin: 12px 0; }
+
+/* ─── ICONS (塗りつぶしSVG) ─── */
+.ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.ico-14 { width: 14px; height: 14px; }
+.ico-16 { width: 16px; height: 16px; }
+.ico-18 { width: 18px; height: 18px; }
+.ico-20 { width: 20px; height: 20px; }
+.ico-22 { width: 22px; height: 22px; }
+.ico-24 { width: 24px; height: 24px; }
+
+/* タブ用アイコン */
+.tab .ico { width: 20px; height: 20px; margin-bottom: 2px; }
+@media(min-width:480px) { .tab .ico { width: 22px; height: 22px; } }
+
+/* ガイドアイコン */
+.guide-icon-wrap {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--g-l);
+  color: var(--g-d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.guide-icon-wrap svg { width: 18px; height: 18px; }
+
+/* ロゴマーク内アイコン */
+.logo-mark .ico { color: #fff; }
+.logo-mark svg { width: 18px; height: 18px; }
+
+/* iw-icon コンテナ */
+.iw-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  color: var(--soft);
+  flex-shrink: 0;
+}
+.iw-icon svg { width: 100%; height: 100%; }
+
+/* リージョンドット（国旗代替） */
+.region-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: .58rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+.region-dot.us { background: #6b8aa8; }
+.region-dot.world { background: var(--g); }
+
+/* バッジ内アイコン */
+.badge .ico { width: 12px; height: 12px; }
+
+/* h-row内アイコン */
+.h-row-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; }
+
+/* advice-label内アイコン */
+.advice-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; vertical-align: -2px; }
+
+/* notice-title内アイコン */
+.notice-title .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; vertical-align: -2px; }
+
+/* step-badge SVGアイコン用 */
+.step-badge .ico { width: 13px; height: 13px; color: #fff; }
+
+/* toggle-label内アイコン */
+.toggle-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; }
+
+/* CTA box icon */
+.cta-title .ico { width: 14px; height: 14px; color: var(--g-d); margin-right: 4px; vertical-align: -2px; }
+
+/* 達成アイコン */
+.trophy-big {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  background: var(--g-l);
+  color: var(--g-d);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.trophy-big svg { width: 18px; height: 18px; }
 </style>
 </head>
 <body>
+
+<!-- ─── SVG ICON SPRITE (塗りつぶしスタイル / Subly統一) ─── -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <!-- chart-bar (1銘柄/グラフ) -->
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="currentColor" d="M3 21V9h4v12H3zm7 0V3h4v18h-4zm7 0v-9h4v9h-4z"/></symbol>
+    <!-- balance-scale (2銘柄比較) -->
+    <symbol id="i-scale" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1.5 1.5 0 0 0-1.5 1.5c0 .53.28.99.7 1.27L8 12h8L13.8 5.77c.42-.28.7-.74.7-1.27A1.5 1.5 0 0 0 12 3zm-1 6.5v9.5H7v2h10v-2h-4V9.5h-2zM6 13l-3 6h6l-3-6zm12 0l-3 6h6l-3-6z"/></symbol>
+    <!-- trophy (資産診断) -->
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h14v2h2v3a4 4 0 0 1-4 4h-.27A6 6 0 0 1 13 14.92V18h3v3H8v-3h3v-3.08A6 6 0 0 1 7.27 12H7a4 4 0 0 1-4-4V5h2V3zm0 4v1a2 2 0 0 0 2 2V7H5zm14 0h-2v3a2 2 0 0 0 2-2V7z"/></symbol>
+    <!-- book (使い方) -->
+    <symbol id="i-book" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h6a3 3 0 0 1 2 .76A3 3 0 0 1 14 3h6v16h-6.5a1.5 1.5 0 0 0-1.5 1.5v.5a1.5 1.5 0 0 0-1.5-1.5H4V3z"/></symbol>
+    <!-- trending-up (利回り/グラフ) -->
+    <symbol id="i-trend" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5 18.5l-1-1L9 11l4 4 7.5-7.5L22 9l-9 9-4-4-5.5 4.5z"/><path fill="currentColor" d="M16 7h6v6h-2V9h-4z"/></symbol>
+    <!-- coin (お金/初期投資) -->
+    <symbol id="i-coin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-1.5a3 3 0 0 1-3-3h2a1 1 0 0 0 1 1h2a1 1 0 0 0 0-2h-2a3 3 0 0 1 0-6V5h2v1.5a3 3 0 0 1 3 3h-2a1 1 0 0 0-1-1h-2a1 1 0 0 0 0 2h2a3 3 0 0 1 0 6V17z"/></symbol>
+    <!-- calendar-month (毎月積立) -->
+    <symbol id="i-cal" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3V2h-2v2H9V2H7zm-3 8h16v10H4V10zm2 2v2h2v-2H6zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z"/></symbol>
+    <!-- calendar-range (運用期間) -->
+    <symbol id="i-calrange" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3V2h-2v2H9V2H7zm-3 8h16v10H4V10zm2 3v2h12v-2H6z"/></symbol>
+    <!-- arrow-up-out (取り崩し) -->
+    <symbol id="i-withdraw" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></symbol>
+    <!-- bank/columns (NISA) -->
+    <symbol id="i-bank" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7v2h20V7L12 2zM4 10v8H2v3h20v-3h-2v-8h-2v8h-3v-8h-2v8h-2v-8H9v8H6v-8H4z"/></symbol>
+    <!-- credit-card (課税口座) -->
+    <symbol id="i-card" viewBox="0 0 24 24"><path fill="currentColor" d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2H2V6zm0 4h20v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8zm3 5v2h6v-2H5z"/></symbol>
+    <!-- alert/warning (注意) -->
+    <symbol id="i-alert" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L1 21h22L12 2zm0 6l7.5 13h-15L12 8zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z"/></symbol>
+    <!-- pin (現在の階層) -->
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
+    <!-- target (将来の階層) -->
+    <symbol id="i-target" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></symbol>
+    <!-- clock (到達予測) -->
+    <symbol id="i-clock" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></symbol>
+    <!-- yen (月額アップ目安) -->
+    <symbol id="i-yen" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-3.5 5h2.1L12 9.9 13.4 7h2.1l-2.6 4.6h2v1.5h-2.7v1h2.7v1.5h-2.7V18h-1.6v-2.4H8.5v-1.5h2.7v-1H8.5v-1.5h2L8.5 7z"/></symbol>
+    <!-- lightbulb (ヒント) -->
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path fill="currentColor" d="M9 21h6v-2H9v2zm3-19a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z"/></symbol>
+    <!-- calculator (計算ロジック) -->
+    <symbol id="i-calc" viewBox="0 0 24 24"><path fill="currentColor" d="M5 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H5zm1 3h12v3H6V5zm0 5h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h4v8h-4v-8zm-8 4h2v2H6v-2zm4 0h2v2h-2v-2zm-4 4h6v2H6v-2z"/></symbol>
+    <!-- sprout (初心者) -->
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path fill="currentColor" d="M11 21v-7c0-3.5 2.5-6 6-6h3v3c0 3.5-2.5 6-6 6h-1v4h-2zm-7-13c0-3.5 2.5-6 6-6h1v3c0 3.5-2.5 6-6 6H4V8z"/></symbol>
+    <!-- check (チェック) -->
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></symbol>
+    <!-- party/celebration (達成) -->
+    <symbol id="i-party" viewBox="0 0 24 24"><path fill="currentColor" d="M2 22l4.5-13.5 9 9L2 22zm6.4-15.5L7 4l3 1.5L11.5 4l-1.5 3L11.5 10 10 8.5 7 10l1.4-3.5zm10.6 0L17.5 4 19 5.5 20.5 4 19 7l1.5 3L19 8.5 17.5 10 19 6.5zm-6 7.5L14.5 12l1.5 2 2-1.5-1.5 2 1.5 2-2-1.5-1.5 2v-3z"/></symbol>
+    <!-- piggy bank (応援/初心者ガイド) — 別途必要時 -->
+    <symbol id="i-piggy" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7c-1 0-1 1-1 1V7a4 4 0 0 0-4-4h-3a6 6 0 0 0-6 6v.5L3 11v3l2 .5v.5a6 6 0 0 0 3 5.2V21h3v-1h2v1h3v-1.8a6 6 0 0 0 3-5.2v-2h1V8s0-1-1-1zm-7 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-5 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></symbol>
+  </defs>
+</svg>
 
 <header class="hdr">
   <div class="hdr-inner">
     <div class="hdr-top">
       <div class="logo">
-        <div class="logo-mark">📈</div>
+        <div class="logo-mark"><span class="ico"><svg><use href="#i-trend"/></svg></span></div>
         <div>
           <span class="logo-name">つみたて投資ナビ</span>
           <span class="logo-tag"> 資産運用シミュレーター</span>
@@ -773,16 +953,16 @@ footer {
     </div>
     <nav class="tabs">
       <button class="tab active" data-tab="single">
-        <span class="tab-icon">📊</span>1銘柄
+        <span class="ico"><svg><use href="#i-chart"/></svg></span>1銘柄
       </button>
       <button class="tab" data-tab="dual">
-        <span class="tab-icon">⚖️</span>2銘柄比較
+        <span class="ico"><svg><use href="#i-scale"/></svg></span>2銘柄比較
       </button>
       <button class="tab" data-tab="rank">
-        <span class="tab-icon">🏆</span>資産診断
+        <span class="ico"><svg><use href="#i-trophy"/></svg></span>資産診断
       </button>
       <button class="tab" data-tab="guide">
-        <span class="tab-icon">📖</span>使い方
+        <span class="ico"><svg><use href="#i-book"/></svg></span>使い方
       </button>
     </nav>
   </div>
@@ -804,14 +984,14 @@ footer {
         <div class="card-body">
           <div class="prod-grid">
             <button class="prod-btn active" id="btn-sp" onclick="selectProd('sp500')">
-              <div class="prod-check">✓</div>
-              <span class="prod-flag">🇺🇸</span>
+              <div class="prod-check"><span class="ico"><svg><use href="#i-check"/></svg></span></div>
+              <span class="prod-flag us">US</span>
               <span class="prod-name">S&amp;P500</span>
               <span class="prod-desc">米国大型株500社</span>
             </button>
             <button class="prod-btn" id="btn-all" onclick="selectProd('all')">
-              <div class="prod-check">✓</div>
-              <span class="prod-flag">🌍</span>
+              <div class="prod-check"><span class="ico"><svg><use href="#i-check"/></svg></span></div>
+              <span class="prod-flag world">WLD</span>
               <span class="prod-name">全世界株式</span>
               <span class="prod-desc">オルカン</span>
             </button>
@@ -837,7 +1017,7 @@ footer {
               <button class="reset-btn" onclick="resetRate()">↺ 平均値に戻す</button>
             </div>
             <div class="iw">
-              <span class="iw-icon">📈</span>
+              <span class="iw-icon"><svg><use href="#i-trend"/></svg></span>
               <input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()">
               <span class="iw-unit">%</span>
             </div>
@@ -849,7 +1029,7 @@ footer {
               <span class="field-label">初期投資額（まとまったお金）</span>
             </div>
             <div class="iw highlight" id="s-init-wrap">
-              <span class="iw-icon">💰</span>
+              <span class="iw-icon"><svg><use href="#i-coin"/></svg></span>
               <input type="number" id="s-init" placeholder="0" oninput="onInitChange('s-init','s-init-wrap');saveAndCalc()">
               <span class="iw-unit">万円</span>
             </div>
@@ -863,7 +1043,7 @@ footer {
             </div>
             <input type="range" id="s-mo-r" min="0" max="30" value="3" oninput="syncRange('s-mo')">
             <div class="iw">
-              <span class="iw-icon">📅</span>
+              <span class="iw-icon"><svg><use href="#i-cal"/></svg></span>
               <input type="number" id="s-mo" value="3" oninput="syncInput('s-mo');saveAndCalc()">
               <span class="iw-unit">万円</span>
             </div>
@@ -877,7 +1057,7 @@ footer {
             </div>
             <input type="range" id="s-yr-r" min="1" max="50" value="20" oninput="syncRange('s-yr')">
             <div class="iw">
-              <span class="iw-icon">🗓️</span>
+              <span class="iw-icon"><svg><use href="#i-calrange"/></svg></span>
               <input type="number" id="s-yr" value="20" oninput="syncInput('s-yr');saveAndCalc()">
               <span class="iw-unit">年</span>
             </div>
@@ -904,7 +1084,7 @@ footer {
             </div>
             <input type="range" id="s-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('s-wd')">
             <div class="iw danger">
-              <span class="iw-icon">📤</span>
+              <span class="iw-icon"><svg><use href="#i-withdraw"/></svg></span>
               <input type="number" id="s-wd" value="0" step="0.1" oninput="syncInput('s-wd');saveAndCalc()" onfocus="this.select()">
               <span class="iw-unit">%</span>
             </div>
@@ -912,7 +1092,8 @@ footer {
           </div>
           <div class="toggle-row">
             <span class="toggle-label">
-              🏛️ NISA枠で非課税と仮定
+              <span class="ico"><svg><use href="#i-bank"/></svg></span>
+              NISA枠で非課税と仮定
               <span class="tip" tabindex="0">?
                 <span class="tip-box">OFFにすると運用益に20.315%の税金がかかります（特定口座）。</span>
               </span>
@@ -940,12 +1121,13 @@ footer {
         </div>
         <div class="hero-badges">
           <span class="badge" id="s-nisa-badge">
-            <span>🏛️ NISA非課税</span>
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
             <span class="badge-highlight" id="s-tax">節税 0円</span>
           </span>
         </div>
       </div>
 
+      <!-- 3枚サマリータイル -->
       <div class="tiles">
         <div class="tile">
           <div class="tile-label">投資元本</div>
@@ -983,7 +1165,7 @@ footer {
       </div>
 
       <div class="notice">
-        <div class="notice-title">⚠️ 重要な注意事項</div>
+        <div class="notice-title"><span class="ico"><svg><use href="#i-alert"/></svg></span>重要な注意事項</div>
         <p>本シミュレーションは過去データに基づく仮想計算であり、将来の成果を保証しません。市場変動により元本割れのリスクがあります。投資判断はご自身の責任で行ってください。</p>
       </div>
 
@@ -1003,7 +1185,7 @@ footer {
         <div class="card-body">
           <div class="asset-card usa">
             <div class="asset-head">
-              <span class="asset-name">🇺🇸 S&amp;P500</span>
+              <span class="asset-name"><span class="region-dot us">US</span> S&amp;P500</span>
               <button class="reset-btn" onclick="resetDualRate('sp500')">↺ 平均値</button>
             </div>
             <div class="asset-row">
@@ -1015,7 +1197,7 @@ footer {
 
           <div class="asset-card world">
             <div class="asset-head">
-              <span class="asset-name">🌍 全世界株式</span>
+              <span class="asset-name"><span class="region-dot world">WLD</span> 全世界株式</span>
               <button class="reset-btn" onclick="resetDualRate('all')">↺ 平均値</button>
             </div>
             <div class="asset-row">
@@ -1040,7 +1222,7 @@ footer {
             </div>
             <input type="range" id="d-yr-r" min="1" max="50" value="20" oninput="syncRange('d-yr')">
             <div class="iw">
-              <span class="iw-icon">🗓️</span>
+              <span class="iw-icon"><svg><use href="#i-calrange"/></svg></span>
               <input type="number" id="d-yr" value="20" oninput="syncInput('d-yr');saveAndCalcD()">
               <span class="iw-unit">年</span>
             </div>
@@ -1052,13 +1234,13 @@ footer {
             </div>
             <input type="range" id="d-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('d-wd')">
             <div class="iw danger">
-              <span class="iw-icon">📤</span>
+              <span class="iw-icon"><svg><use href="#i-withdraw"/></svg></span>
               <input type="number" id="d-wd" value="0" step="0.1" oninput="syncInput('d-wd');saveAndCalcD()" onfocus="this.select()">
               <span class="iw-unit">%</span>
             </div>
           </div>
           <div class="toggle-row">
-            <span class="toggle-label">🏛️ NISA枠で非課税と仮定</span>
+            <span class="toggle-label"><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA枠で非課税と仮定</span>
             <div class="sw on" id="d-nisa" onclick="toggleNisa('d')"><div class="sw-knob"></div></div>
           </div>
         </div>
@@ -1078,7 +1260,7 @@ footer {
         </div>
         <div class="hero-badges">
           <span class="badge" id="d-nisa-badge">
-            <span>🏛️ NISA非課税</span>
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
             <span class="badge-highlight" id="d-tax">節税 0円</span>
           </span>
         </div>
@@ -1086,11 +1268,11 @@ footer {
 
       <div class="tiles">
         <div class="tile">
-          <div class="tile-label">🇺🇸 S&amp;P500</div>
+          <div class="tile-label"><span class="region-dot us" style="width:14px;height:14px;font-size:.5rem;display:inline-flex;vertical-align:-2px;margin-right:3px">US</span>S&amp;P500</div>
           <div class="tile-value blue" id="t-d-sp">0万円</div>
         </div>
         <div class="tile">
-          <div class="tile-label">🌍 全世界株式</div>
+          <div class="tile-label"><span class="region-dot world" style="width:14px;height:14px;font-size:.45rem;display:inline-flex;vertical-align:-2px;margin-right:3px">WL</span>全世界株式</div>
           <div class="tile-value green" id="t-d-al">0万円</div>
         </div>
         <div class="tile">
@@ -1103,8 +1285,8 @@ footer {
         <div class="chart-title">資産推移グラフ（2銘柄合計）</div>
         <div class="chart-legend">
           <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>合計</span>
-          <span class="legend-item"><span class="legend-dot" style="background:var(--b)"></span>S&amp;P500</span>
-          <span class="legend-item"><span class="legend-dot" style="background:#00cec9"></span>全世界</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#6b8aa8"></span>S&amp;P500</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#7fb0a4"></span>全世界</span>
           <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>元本</span>
         </div>
         <div class="chart-wrap"><canvas id="d-chart"></canvas></div>
@@ -1116,13 +1298,13 @@ footer {
         </button>
         <div class="detail-wrap" id="d-dtw">
           <table class="dt">
-            <thead><tr><th>年</th><th>元本</th><th>🇺🇸</th><th>🌍</th><th>合計</th></tr></thead>
+            <thead><tr><th>年</th><th>元本</th><th>US</th><th>WLD</th><th>合計</th></tr></thead>
             <tbody id="d-tbody"></tbody>
           </table>
         </div>
       </div>
       <div class="notice">
-        <div class="notice-title">⚠️ 重要な注意事項</div>
+        <div class="notice-title"><span class="ico"><svg><use href="#i-alert"/></svg></span>重要な注意事項</div>
         <p>仮想計算であり将来の成果を保証しません。元本割れリスクがあります。投資判断はご自身の責任で。</p>
       </div>
     </div>
@@ -1133,7 +1315,7 @@ footer {
 <section class="pane" id="pane-rank">
   <div class="card" style="margin-bottom:16px">
     <div class="card-head">
-      <div class="step-badge">🏆</div>
+      <div class="step-badge"><span class="ico"><svg><use href="#i-trophy"/></svg></span></div>
       <span class="card-title">資産クラス診断（野村総研分類）</span>
     </div>
     <div class="card-body">
@@ -1141,45 +1323,45 @@ footer {
         <div class="pyramid-wrap">
           <svg viewBox="0 0 360 310" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
             <defs>
-              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fca5a5"/><stop offset="100%" stop-color="#f87171"/></linearGradient>
-              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fed7aa"/><stop offset="100%" stop-color="#fb923c"/></linearGradient>
-              <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef08a"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
-              <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bbf7d0"/><stop offset="100%" stop-color="#4ade80"/></linearGradient>
-              <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#99f6e4"/><stop offset="100%" stop-color="#2dd4bf"/></linearGradient>
+              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d4a08e"/><stop offset="100%" stop-color="#c97b6b"/></linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e3bd8a"/><stop offset="100%" stop-color="#d4a04a"/></linearGradient>
+              <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c9b89a"/><stop offset="100%" stop-color="#a89878"/></linearGradient>
+              <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#a8c4b8"/><stop offset="100%" stop-color="#7fb0a4"/></linearGradient>
+              <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#92ada6"/><stop offset="100%" stop-color="#5C8E84"/></linearGradient>
             </defs>
             <path id="py-super" d="M180 18 L218 66 H142 Z" fill="url(#g1)" stroke="#fff" stroke-width="2" opacity=".4"/>
-            <text x="180" y="48" text-anchor="middle" font-size="8.5" fill="#b91c1c" font-weight="700" font-family="Outfit, sans-serif">超富裕層</text>
-            <text x="180" y="58" text-anchor="middle" font-size="6.5" fill="#b91c1c" opacity=".7" font-family="Outfit, sans-serif">5億円〜</text>
+            <text x="180" y="48" text-anchor="middle" font-size="8.5" fill="#8a4a3c" font-weight="700" font-family="Outfit, sans-serif">超富裕層</text>
+            <text x="180" y="58" text-anchor="middle" font-size="6.5" fill="#8a4a3c" opacity=".7" font-family="Outfit, sans-serif">5億円〜</text>
             <path id="py-rich" d="M142 68 L218 68 L254 120 H106 Z" fill="url(#g2)" stroke="#fff" stroke-width="2" opacity=".4"/>
-            <text x="180" y="99" text-anchor="middle" font-size="8.5" fill="#c2410c" font-weight="700" font-family="Outfit, sans-serif">富裕層</text>
-            <text x="180" y="109" text-anchor="middle" font-size="6.5" fill="#c2410c" opacity=".7" font-family="Outfit, sans-serif">1億〜5億円</text>
+            <text x="180" y="99" text-anchor="middle" font-size="8.5" fill="#8a6224" font-weight="700" font-family="Outfit, sans-serif">富裕層</text>
+            <text x="180" y="109" text-anchor="middle" font-size="6.5" fill="#8a6224" opacity=".7" font-family="Outfit, sans-serif">1億〜5億円</text>
             <path id="py-semi" d="M106 122 L254 122 L292 178 H68 Z" fill="url(#g3)" stroke="#fff" stroke-width="2" opacity=".4"/>
-            <text x="180" y="155" text-anchor="middle" font-size="8.5" fill="#b45309" font-weight="700" font-family="Outfit, sans-serif">準富裕層</text>
-            <text x="180" y="165" text-anchor="middle" font-size="6.5" fill="#b45309" opacity=".7" font-family="Outfit, sans-serif">5000万〜1億円</text>
+            <text x="180" y="155" text-anchor="middle" font-size="8.5" fill="#6b5a3a" font-weight="700" font-family="Outfit, sans-serif">準富裕層</text>
+            <text x="180" y="165" text-anchor="middle" font-size="6.5" fill="#6b5a3a" opacity=".7" font-family="Outfit, sans-serif">5000万〜1億円</text>
             <path id="py-upper" d="M68 180 L292 180 L332 240 H28 Z" fill="url(#g4)" stroke="#fff" stroke-width="2" opacity=".4"/>
-            <text x="180" y="215" text-anchor="middle" font-size="8.5" fill="#15803d" font-weight="700" font-family="Outfit, sans-serif">アッパーマス層</text>
-            <text x="180" y="225" text-anchor="middle" font-size="6.5" fill="#15803d" opacity=".7" font-family="Outfit, sans-serif">3000万〜5000万円</text>
+            <text x="180" y="215" text-anchor="middle" font-size="8.5" fill="#3d6359" font-weight="700" font-family="Outfit, sans-serif">アッパーマス層</text>
+            <text x="180" y="225" text-anchor="middle" font-size="6.5" fill="#3d6359" opacity=".7" font-family="Outfit, sans-serif">3000万〜5000万円</text>
             <path id="py-mass" d="M28 242 L332 242 L360 295 H0 Z" fill="url(#g5)" stroke="#fff" stroke-width="2" opacity=".4"/>
-            <text x="180" y="273" text-anchor="middle" font-size="8.5" fill="#0f766e" font-weight="700" font-family="Outfit, sans-serif">マス層</text>
-            <text x="180" y="283" text-anchor="middle" font-size="6.5" fill="#0f766e" opacity=".7" font-family="Outfit, sans-serif">〜3000万円</text>
+            <text x="180" y="273" text-anchor="middle" font-size="8.5" fill="#2c3e3a" font-weight="700" font-family="Outfit, sans-serif">マス層</text>
+            <text x="180" y="283" text-anchor="middle" font-size="6.5" fill="#2c3e3a" opacity=".7" font-family="Outfit, sans-serif">〜3000万円</text>
             <g id="a-now" transform="translate(0,250)">
-              <text x="22" y="4" text-anchor="end" font-size="11" font-weight="700" fill="#94a3b8" font-family="Outfit, sans-serif">現在</text>
-              <path d="M26 0 L38 -5 L38 5 Z" fill="#94a3b8"/>
+              <text x="22" y="4" text-anchor="end" font-size="11" font-weight="700" fill="#94aaa5" font-family="Outfit, sans-serif">現在</text>
+              <path d="M26 0 L38 -5 L38 5 Z" fill="#94aaa5"/>
             </g>
             <g id="a-fut" transform="translate(0,215)">
-              <text x="338" y="4" text-anchor="start" font-size="11" font-weight="700" fill="#00916e" font-family="Outfit, sans-serif">将来</text>
-              <path d="M334 0 L322 -5 L322 5 Z" fill="#00916e"/>
+              <text x="338" y="4" text-anchor="start" font-size="11" font-weight="700" fill="#4a7269" font-family="Outfit, sans-serif">将来</text>
+              <path d="M334 0 L322 -5 L322 5 Z" fill="#4a7269"/>
             </g>
           </svg>
         </div>
 
         <div class="h-status">
           <div class="h-row">
-            <span class="h-row-label">📍 現在の資産階層</span>
+            <span class="h-row-label"><span class="ico"><svg><use href="#i-pin"/></svg></span>現在の資産階層</span>
             <span class="h-row-val" id="h-now">--</span>
           </div>
           <div class="h-row">
-            <span class="h-row-label">🎯 将来の資産階層</span>
+            <span class="h-row-label"><span class="ico"><svg><use href="#i-target"/></svg></span>将来の資産階層</span>
             <span class="h-row-val green" id="h-fut">--</span>
           </div>
           <div class="prog-wrap">
@@ -1197,11 +1379,11 @@ footer {
 
       <div class="advice-grid">
         <div class="advice-card">
-          <div class="advice-label">⏱️ 到達予測</div>
+          <div class="advice-label"><span class="ico"><svg><use href="#i-clock"/></svg></span>到達予測</div>
           <div class="advice-val" id="adv-time">--</div>
         </div>
         <div class="advice-card">
-          <div class="advice-label">💰 月額アップ目安</div>
+          <div class="advice-label"><span class="ico"><svg><use href="#i-yen"/></svg></span>月額アップ目安</div>
           <div class="advice-val" id="adv-money">--</div>
         </div>
       </div>
@@ -1213,31 +1395,31 @@ footer {
 <section class="pane" id="pane-guide">
   <div class="guide-grid">
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">📊</span><span class="guide-title">1銘柄で計算</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-chart"/></svg></span><span class="guide-title">1銘柄で計算</span></div>
       <p class="guide-body">S&amp;P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p>
     </div>
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">⚖️</span><span class="guide-title">2銘柄で比較</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-scale"/></svg></span><span class="guide-title">2銘柄で比較</span></div>
       <p class="guide-body">「S&amp;P500に月3万、全世界株式に月2万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p>
     </div>
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">🏆</span><span class="guide-title">資産クラス診断</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-trophy"/></svg></span><span class="guide-title">資産クラス診断</span></div>
       <p class="guide-body">野村総合研究所の定義に基づく「資産階層ピラミッド」で現在と将来の位置を診断。ランクアップのためのアドバイスも表示されます。</p>
     </div>
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">💡</span><span class="guide-title">利回りの数字について</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-bulb"/></svg></span><span class="guide-title">利回りの数字について</span></div>
       <p class="guide-body">デフォルトの利回りは過去の実績平均です。S&amp;P500は過去30年で年平均約13%のリターンがありましたが、途中で−37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p>
     </div>
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">🏛️</span><span class="guide-title">税金（NISA）について</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-bank"/></svg></span><span class="guide-title">税金（NISA）について</span></div>
       <p class="guide-body">新NISAでは年間360万円（つみたて投資枠120万+成長投資枠240万）、生涯投資枠1800万円まで非課税で運用できます。本シミュレーターでは「NISA非課税」をON/OFFで切り替え、課税口座（20.315%）との差を確認できます。</p>
     </div>
     <div class="guide-card">
-      <div class="guide-head"><span class="guide-icon">🔢</span><span class="guide-title">計算ロジックについて</span></div>
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-calc"/></svg></span><span class="guide-title">計算ロジックについて</span></div>
       <p class="guide-body">月初積立・月次複利で計算しています。年利は厳密な複利換算（(1+年利)^(1/12)−1）で月利に変換しており、精度の高いシミュレーションを実現しています。取り崩しは年末一括方式です。</p>
     </div>
     <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
-      <div class="cta-title">🔰 投資初心者へのワンポイント</div>
+      <div class="cta-title"><span class="ico"><svg><use href="#i-sprout"/></svg></span>投資初心者へのワンポイント</div>
       <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&amp;P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
     </div>
   </div>
@@ -1406,10 +1588,10 @@ function calcSingle() {
   const badge = document.getElementById('s-nisa-badge');
   const taxEl = document.getElementById('s-tax');
   if (nisaS) {
-    badge.querySelector('span').textContent = '🏛️ NISA非課税';
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税';
     taxEl.textContent = '節税 ' + fmt(taxSaved);
   } else {
-    badge.querySelector('span').textContent = '💰 課税口座（税引後）';
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-card"/></svg></span> 課税口座（税引後）';
     taxEl.textContent = '税額 ' + fmt(tax);
   }
 
@@ -1470,10 +1652,10 @@ function calcDual() {
   const badge = document.getElementById('d-nisa-badge');
   const taxEl = document.getElementById('d-tax');
   if (nisaD) {
-    badge.querySelector('span').textContent = '🏛️ NISA非課税';
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税';
     taxEl.textContent = '節税 ' + fmt(taxSaved);
   } else {
-    badge.querySelector('span').textContent = '💰 課税口座（税引後）';
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-card"/></svg></span> 課税口座（税引後）';
     taxEl.textContent = '税額 ' + fmt(tax);
   }
 
@@ -1510,7 +1692,7 @@ function chartOpts() {
     plugins: {
       legend: { display: false },
       tooltip: {
-        backgroundColor: 'rgba(10,22,40,.92)',
+        backgroundColor: 'rgba(44,62,58,.92)',
         titleFont: { size: 11, weight: 'bold', family: 'Outfit, sans-serif' },
         bodyFont: { size: 11, family: 'Outfit, sans-serif' },
         cornerRadius: 10,
@@ -1522,14 +1704,14 @@ function chartOpts() {
       x: {
         display: true,
         grid: { display: false },
-        ticks: { font: { size: 9 }, color: '#8ba3c7', maxTicksLimit: 11 }
+        ticks: { font: { size: 9 }, color: '#94aaa5', maxTicksLimit: 11 }
       },
       y: {
         display: true,
         grid: { color: 'rgba(0,0,0,.03)' },
         ticks: {
           font: { size: 9 },
-          color: '#8ba3c7',
+          color: '#94aaa5',
           callback: v => {
             if (v >= 1e8) return (v/1e8).toFixed(1) + '億';
             if (v >= 1e4) return (v/1e4).toLocaleString() + '万';
@@ -1547,8 +1729,8 @@ function drawSingleChart(labels, dAsset, dPrin) {
   chartS = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: [
-      { label:'資産残高', data:dAsset, borderColor:'#00b894', backgroundColor:'rgba(0,184,148,.08)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
-      { label:'投資元本', data:dPrin, borderColor:'#dde6f4', backgroundColor:'rgba(221,230,244,.15)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[5,4], order:2 }
+      { label:'資産残高', data:dAsset, borderColor:'#5C8E84', backgroundColor:'rgba(92,142,132,.10)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'投資元本', data:dPrin, borderColor:'#c4d3ce', backgroundColor:'rgba(196,211,206,.18)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[5,4], order:2 }
     ]},
     options: chartOpts()
   });
@@ -1560,10 +1742,10 @@ function drawDualChart(labels, dTotal, dSP, dAl, dPrin) {
   chartD = new Chart(ctx, {
     type: 'line',
     data: { labels, datasets: [
-      { label:'合計資産',  data:dTotal, borderColor:'#00b894', backgroundColor:'rgba(0,184,148,.06)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
-      { label:'S&P500',   data:dSP,    borderColor:'#0984e3', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:2 },
-      { label:'全世界株式', data:dAl,   borderColor:'#00cec9', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:3 },
-      { label:'投資元本',  data:dPrin,  borderColor:'#dde6f4', backgroundColor:'rgba(221,230,244,.1)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[4,4], order:4 }
+      { label:'合計資産',  data:dTotal, borderColor:'#5C8E84', backgroundColor:'rgba(92,142,132,.08)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'S&P500',   data:dSP,    borderColor:'#6b8aa8', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:2 },
+      { label:'全世界株式', data:dAl,   borderColor:'#7fb0a4', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:3 },
+      { label:'投資元本',  data:dPrin,  borderColor:'#c4d3ce', backgroundColor:'rgba(196,211,206,.12)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[4,4], order:4 }
     ]},
     options: chartOpts()
   });
@@ -1589,10 +1771,10 @@ function updateHierarchy() {
   if (fe) fe.setAttribute('opacity','.85');
 
   if (fM >= 50000 && fi === 0) {
-    document.getElementById('h-gap').textContent   = '最高ランク到達！🎉';
+    document.getElementById('h-gap').textContent   = '最高ランク到達!';
     document.getElementById('h-bar').style.width   = '100%';
     document.getElementById('h-target').textContent = 'Goal!';
-    document.getElementById('adv-time').innerHTML  = '<div class="advice-hl">🎊 最高ランク達成！</div>';
+    document.getElementById('adv-time').innerHTML  = '<span class="trophy-big"><svg><use href="#i-trophy"/></svg></span><span class="advice-hl">最高ランク達成!</span>';
     document.getElementById('adv-money').innerHTML = '資産保全・分散に注力しましょう。';
   } else {
     const nextTier = fi > 0 ? TIERS[fi - 1] : TIERS[0];
