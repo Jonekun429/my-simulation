@@ -793,6 +793,34 @@ footer {
 /* ─── UTILS ─── */
 .sep { height: 1px; background: var(--line); margin: 12px 0; }
 
+/* ─── 既保有資産カード(山吹色アクセント) ─── */
+.card-dividend {
+  border-color: #e3bd8a;
+  background: #fffdf7;
+}
+.card-head-dividend {
+  background: #fbf3e3;
+  border-bottom-color: #e3bd8a;
+}
+.step-badge-dividend {
+  background: #d4a04a !important;
+}
+.card-dividend .card-title {
+  color: #8a6224;
+}
+.iw-dividend {
+  background: #fbf3e3;
+  border-color: #e3bd8a;
+}
+.iw-dividend:focus-within {
+  border-color: #d4a04a;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212,160,74,.15);
+}
+.iw-dividend .iw-icon {
+  color: #8a6224;
+}
+
 /* ─── ICONS (塗りつぶしSVG) ─── */
 .ico {
   display: inline-flex;
@@ -1083,9 +1111,34 @@ footer {
         </div>
       </div>
 
+      <div class="card card-dividend">
+        <div class="card-head card-head-dividend">
+          <div class="step-badge step-badge-dividend">3</div>
+          <span class="card-title">既に保有している資産（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。値上がり計算はせず、保有額のまま総資産に加算します。</p>
+          <div class="field" style="margin-bottom: 0;">
+            <div class="field-head">
+              <span class="field-label">高配当株の保有額
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">保有額をそのまま総資産に加算します。値上がり益は計算しません。</span>
+                </span>
+              </span>
+            </div>
+            <div class="iw iw-dividend">
+              <span class="iw-icon"><svg><use href="#i-yen"/></svg></span>
+              <input type="number" id="s-div" placeholder="0" oninput="saveAndCalc()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 年間配当目安(4%換算)は結果画面に表示されます</p>
+          </div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-head">
-          <div class="step-badge opt">3</div>
+          <div class="step-badge opt">4</div>
           <span class="card-title" style="color:var(--soft)">オプション設定</span>
         </div>
         <div class="card-body">
@@ -1127,7 +1180,7 @@ footer {
     <div class="col col-right">
 
       <div class="hero green" id="s-hero">
-        <p class="hero-label">最終資産残高</p>
+        <p class="hero-label">総資産（積立 + 高配当株）</p>
         <div class="hero-amount" id="s-final">0円</div>
         <div class="hero-sub">
           <div>
@@ -1140,6 +1193,10 @@ footer {
           <span class="badge" id="s-nisa-badge">
             <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
             <span class="badge-highlight" id="s-tax">節税 0円</span>
+          </span>
+          <span class="badge" id="s-div-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
+            <span class="badge-highlight" id="s-div-info">+0円</span>
           </span>
         </div>
       </div>
@@ -1262,11 +1319,36 @@ footer {
           </div>
         </div>
       </div>
+
+      <div class="card card-dividend">
+        <div class="card-head card-head-dividend">
+          <div class="step-badge step-badge-dividend">3</div>
+          <span class="card-title">既に保有している資産（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。値上がり計算はせず、保有額のまま総資産に加算します。</p>
+          <div class="field" style="margin-bottom: 0;">
+            <div class="field-head">
+              <span class="field-label">高配当株の保有額
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">保有額をそのまま総資産に加算します。値上がり益は計算しません。</span>
+                </span>
+              </span>
+            </div>
+            <div class="iw iw-dividend">
+              <span class="iw-icon"><svg><use href="#i-yen"/></svg></span>
+              <input type="number" id="d-div" placeholder="0" oninput="saveAndCalcD()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 年間配当目安(4%換算)は結果画面に表示されます</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="col col-right">
       <div class="hero dark">
-        <p class="hero-label">最終資産残高（2銘柄合計）</p>
+        <p class="hero-label">総資産（積立 + 高配当株）</p>
         <div class="hero-amount" id="d-final">0円</div>
         <div class="hero-sub">
           <div>
@@ -1279,6 +1361,10 @@ footer {
           <span class="badge" id="d-nisa-badge">
             <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
             <span class="badge-highlight" id="d-tax">節税 0円</span>
+          </span>
+          <span class="badge" id="d-div-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
+            <span class="badge-highlight" id="d-div-info">+0円</span>
           </span>
         </div>
       </div>
@@ -1435,6 +1521,10 @@ footer {
       <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-calc"/></svg></span><span class="guide-title">計算ロジックについて</span></div>
       <p class="guide-body">月初積立・月次複利で計算しています。年利は厳密な複利換算（(1+年利)^(1/12)−1）で月利に変換しており、精度の高いシミュレーションを実現しています。取り崩しは年末一括方式です。</p>
     </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-yen"/></svg></span><span class="guide-title">既に保有している資産</span></div>
+      <p class="guide-body">日本の高配当株などすでに保有している資産は「STEP 3 既に保有している資産」カードに保有額を入力してください。値上がり益は計算せず、保有額をそのまま総資産に加算します。年間配当目安(4%換算)は結果画面のバッジに表示されます。</p>
+    </div>
     <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
       <div class="cta-title"><span class="ico"><svg><use href="#i-sprout"/></svg></span>投資初心者へのワンポイント</div>
       <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&amp;P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
@@ -1587,12 +1677,18 @@ function calcSingle() {
   const yr      = parseInt(document.getElementById('s-yr').value)     || 20;
   const rPct    = parseFloat(document.getElementById('s-rate').value) || 0;
   const wdPct   = parseFloat(document.getElementById('s-wd').value)   || 0;
+  const divMan  = parseFloat(document.getElementById('s-div').value)  || 0;  // 高配当株(保有額)
+  const divYen  = divMan * 1e4;
 
   const { labels, dAsset, dPrin, rows, finalAsset, totalInvested } = simulate(initMan, moMan, rPct, yr, wdPct);
 
+  // 運用部分にかかる税金(高配当株は含めない)
   let grossProfit = finalAsset - totalInvested;
-  let tax = 0, dispFinal = finalAsset;
-  if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinal = finalAsset - tax; grossProfit -= tax; }
+  let tax = 0, dispFinalIdx = finalAsset;
+  if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = finalAsset - tax; grossProfit -= tax; }
+
+  // 高配当株を加算した総資産
+  const dispFinal = dispFinalIdx + divYen;
 
   document.getElementById('s-final').textContent = fmt(dispFinal);
   document.getElementById('s-inv').textContent   = fmt(totalInvested);
@@ -1612,9 +1708,22 @@ function calcSingle() {
     taxEl.textContent = '税額 ' + fmt(tax);
   }
 
-  const invM = Math.round(totalInvested / 1e4);
+  // 高配当株バッジ(年間配当目安: 4%換算)
+  const divBadge = document.getElementById('s-div-badge');
+  const divInfo  = document.getElementById('s-div-info');
+  if (divYen > 0) {
+    divBadge.style.display = '';
+    const annual = Math.round(divYen * 0.04);
+    divInfo.textContent = '+' + fmt(divYen) + ' / 年配当 約' + fmt(annual);
+  } else {
+    divBadge.style.display = 'none';
+  }
+
+  // タイル(投資元本に高配当株を含める)
+  const totalAssetBase = totalInvested + divYen;
+  const invM = Math.round(totalAssetBase / 1e4);
   const gainM = Math.round(grossProfit / 1e4);
-  const mult = totalInvested > 0 ? (dispFinal / totalInvested).toFixed(2) : '-';
+  const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
   document.getElementById('t-s-inv').textContent  = invM.toLocaleString() + '万円';
   document.getElementById('t-s-gain').textContent = gainM.toLocaleString() + '万円';
   document.getElementById('t-s-mult').textContent = mult + '倍';
@@ -1630,9 +1739,13 @@ function calcSingle() {
     </tr>`;
   }).join('');
 
-  drawSingleChart(labels, dAsset, dPrin);
+  // チャートに高配当株を加算(各時点で固定加算)
+  const dAssetTotal = dAsset.map(v => v + divYen);
+  const dPrinTotal  = dPrin.map(v => v + divYen);
+  drawSingleChart(labels, dAssetTotal, dPrinTotal);
 
-  lastResult = { initial: initMan * 1e4, final: finalAsset, profit: grossProfit, inputs: { rate: rPct, monthly: moMan * 1e4, years: yr, initial: initMan * 1e4 } };
+  // 資産診断にも高配当株を含める
+  lastResult = { initial: (initMan + divMan) * 1e4, final: finalAsset + divYen, profit: grossProfit, inputs: { rate: rPct, monthly: moMan * 1e4, years: yr, initial: (initMan + divMan) * 1e4 } };
 }
 
 function calcDual() {
@@ -1644,19 +1757,23 @@ function calcDual() {
   const alR = parseFloat(document.getElementById('d-al-r').value) || 0;
   const yr  = parseInt(document.getElementById('d-yr').value)     || 20;
   const wdPct = parseFloat(document.getElementById('d-wd').value) || 0;
+  const divMan = parseFloat(document.getElementById('d-div').value) || 0;
+  const divYen = divMan * 1e4;
 
   const sp = simulate(spI, spM, spR, yr, wdPct);
   const al = simulate(alI, alM, alR, yr, wdPct);
 
   const labels = sp.labels;
-  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i]);
-  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i]);
+  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i] + divYen);
+  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i] + divYen);
 
   const totalF  = sp.finalAsset + al.finalAsset;
   const totalI  = sp.totalInvested + al.totalInvested;
   let grossProfit = totalF - totalI;
-  let tax = 0, dispFinal = totalF;
-  if (!nisaD && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinal = totalF - tax; grossProfit -= tax; }
+  let tax = 0, dispFinalIdx = totalF;
+  if (!nisaD && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = totalF - tax; grossProfit -= tax; }
+
+  const dispFinal = dispFinalIdx + divYen;
 
   document.getElementById('d-final').textContent = fmt(dispFinal);
   document.getElementById('d-inv').textContent   = fmt(totalI);
@@ -1676,15 +1793,27 @@ function calcDual() {
     taxEl.textContent = '税額 ' + fmt(tax);
   }
 
+  // 高配当株バッジ
+  const divBadge = document.getElementById('d-div-badge');
+  const divInfo  = document.getElementById('d-div-info');
+  if (divYen > 0) {
+    divBadge.style.display = '';
+    const annual = Math.round(divYen * 0.04);
+    divInfo.textContent = '+' + fmt(divYen) + ' / 年配当 約' + fmt(annual);
+  } else {
+    divBadge.style.display = 'none';
+  }
+
   document.getElementById('t-d-sp').textContent   = Math.round(sp.finalAsset/1e4).toLocaleString() + '万円';
   document.getElementById('t-d-al').textContent   = Math.round(al.finalAsset/1e4).toLocaleString() + '万円';
-  const mult = totalI > 0 ? (dispFinal / totalI).toFixed(2) : '-';
+  const totalAssetBase = totalI + divYen;
+  const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
   document.getElementById('t-d-mult').textContent = mult + '倍';
 
   document.getElementById('d-tbody').innerHTML = sp.rows.map((row, i) => {
     const aRow = al.rows[i];
-    const t = row.asset + aRow.asset;
-    const pTotal = (row.principal + aRow.principal);
+    const t = row.asset + aRow.asset + divYen;
+    const pTotal = row.principal + aRow.principal + divYen;
     return `<tr>
       <td>${row.y}年</td>
       <td>${fmtShort(pTotal)}円</td>
@@ -1698,7 +1827,7 @@ function calcDual() {
 
   const totM = spM + alM;
   const wR = totM > 0 ? (spR * spM + alR * alM) / totM : spR;
-  lastResult = { initial: (spI+alI)*1e4, final: totalF, profit: grossProfit, inputs: { rate: wR, monthly: (spM+alM)*1e4, years: yr, initial: (spI+alI)*1e4 } };
+  lastResult = { initial: (spI+alI+divMan)*1e4, final: totalF + divYen, profit: grossProfit, inputs: { rate: wR, monthly: (spM+alM)*1e4, years: yr, initial: (spI+alI+divMan)*1e4 } };
 }
 
 function chartOpts() {
@@ -1831,6 +1960,7 @@ function saveData() {
     s: {
       rate: document.getElementById('s-rate').value,
       init: document.getElementById('s-init').value,
+      div: document.getElementById('s-div').value,
       mo: document.getElementById('s-mo').value,
       yr: document.getElementById('s-yr').value,
       wd: document.getElementById('s-wd').value,
@@ -1843,6 +1973,7 @@ function saveData() {
       alR: document.getElementById('d-al-r').value,
       alI: document.getElementById('d-al-i').value,
       alM: document.getElementById('d-al-m').value,
+      div: document.getElementById('d-div').value,
       yr: document.getElementById('d-yr').value,
       wd: document.getElementById('d-wd').value,
       nisa: nisaD
@@ -1869,6 +2000,7 @@ function loadData() {
     const s = data.s || {};
     if (s.rate !== undefined) document.getElementById('s-rate').value = s.rate;
     if (s.init !== undefined) document.getElementById('s-init').value = s.init;
+    if (s.div  !== undefined) document.getElementById('s-div').value  = s.div;
     if (s.mo   !== undefined) { document.getElementById('s-mo').value = s.mo; syncInput('s-mo'); }
     if (s.yr   !== undefined) { document.getElementById('s-yr').value = s.yr; syncInput('s-yr'); }
     if (s.wd   !== undefined) { document.getElementById('s-wd').value = s.wd; syncInput('s-wd'); }
@@ -1881,6 +2013,7 @@ function loadData() {
     if (d.alR !== undefined) document.getElementById('d-al-r').value = d.alR;
     if (d.alI !== undefined) document.getElementById('d-al-i').value = d.alI;
     if (d.alM !== undefined) document.getElementById('d-al-m').value = d.alM;
+    if (d.div !== undefined) document.getElementById('d-div').value  = d.div;
     if (d.yr  !== undefined) { document.getElementById('d-yr').value = d.yr; syncInput('d-yr'); }
     if (d.wd  !== undefined) { document.getElementById('d-wd').value = d.wd; syncInput('d-wd'); }
     if (d.nisa !== undefined) { nisaD = d.nisa; document.getElementById('d-nisa').classList.toggle('on', nisaD); }
