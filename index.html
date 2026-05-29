@@ -341,19 +341,20 @@ body {
   background: var(--white);
   color: var(--soft);
   cursor: pointer;
-  width: 28px;
-  height: 17px;
+  width: 34px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .5rem;
+  font-size: .7rem;
   line-height: 1;
   padding: 0;
-  border-radius: 5px;
+  border-radius: 6px;
   transition: color .15s, border-color .15s, background .15s, transform .1s;
   font-family: inherit;
   -webkit-user-select: none;
   user-select: none;
+  touch-action: manipulation;
 }
 .stepper button:hover { color: var(--g-d); border-color: var(--g); background: var(--g-l); }
 .stepper button:active { transform: scale(.92); }
