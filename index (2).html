@@ -1,0 +1,2437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0052A5">
+<title>積立投資ナビ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --ink:  #1A2A3A;
+  --ink2: #5A6A7A;
+  --mid:  #0052A5;
+  --soft: #8A9AAA;
+  --line: #D0DAE4;
+  --line2:#E8EEF4;
+  --bg:   #F0F4F8;
+  --white: #FFFFFF;
+  --g:   #0052A5;
+  --g-d: #003D7A;
+  --g-dd:#002B57;
+  --g-l: #E8F2FC;
+  --g-bg:#F4F8FC;
+  --ok:  #00A86B;
+  --acc: #FF8C00;
+  --r:   #DC2626;
+  --r-l: #FDECEC;
+  --y:   #D97706;
+  --y-l: #FCF3E6;
+  --b:   #0284C7;
+  --b-l: #E8F4FC;
+  --teal: #1A6FCC;
+  --plum: #4D9AE6;
+  --shadow-sm: 0 1px 3px rgba(26,42,58,.07), 0 1px 2px rgba(26,42,58,.04);
+  --shadow:    0 4px 16px rgba(26,42,58,.08), 0 1px 4px rgba(26,42,58,.04);
+  --shadow-lg: 0 8px 32px rgba(26,42,58,.12), 0 2px 8px rgba(26,42,58,.06);
+  --rad: 18px;
+  --rad-sm: 10px;
+  --rad-xs: 6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; min-width: 0; }
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  width: 100%;
+}
+
+.card-title, .asset-name, .h-row-val, .hero-amount, .hero-profit,
+.tile-value, .field-label, .toggle-label {
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.hdr {
+  background: var(--white);
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+}
+.hdr-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 16px;
+  width: 100%;
+}
+@media(min-width:600px) { .hdr-inner { padding: 0 20px; } }
+.hdr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0 8px;
+}
+@media(min-width:600px) { .hdr-top { padding: 14px 0 10px; } }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  min-width: 0;
+}
+.logo-mark {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #0052A5 0%, #4D9AE6 100%);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(0,82,165,.3);
+  flex-shrink: 0;
+}
+@media(min-width:600px) { .logo-mark { width: 36px; height: 36px; border-radius: 10px; font-size: 18px; } }
+.logo-name { font-size: 1rem; font-weight: 800; color: var(--ink); letter-spacing: -.02em; }
+@media(min-width:600px) { .logo-name { font-size: 1.1rem; } }
+.logo-tag { font-size: .55rem; font-weight: 500; color: var(--soft); margin-left: 2px; display: none; }
+@media(min-width:420px) { .logo-tag { display: inline; font-size: .6rem; } }
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--soft);
+  font-family: inherit;
+  font-weight: 700;
+  font-size: .65rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border-bottom: 3px solid transparent;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+  position: relative;
+}
+@media(min-width:480px) { .tab { font-size: .72rem; padding: 10px 8px; gap: 3px; } }
+.tab:hover { color: var(--mid); }
+.tab.active { color: var(--g-d); border-bottom-color: var(--g); }
+
+.main {
+  flex: 1;
+  max-width: 1120px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 12px 60px;
+}
+@media(min-width:600px) {
+  .main { padding: 20px 16px 60px; }
+}
+@media(min-width:960px) {
+  .main { padding: 24px 20px 60px; }
+}
+.pane { display: none; animation: slideUp .3s ease-out; }
+.pane.active { display: block; }
+@keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  width: 100%;
+}
+@media(min-width:960px) {
+  .grid { grid-template-columns: 400px minmax(0, 1fr); gap: 20px; align-items: start; }
+}
+.col { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+@media(min-width:600px) { .col { gap: 14px; } }
+
+.col-left  { order: 1; }
+.col-right { order: 2; }
+
+.card {
+  background: var(--white);
+  border-radius: var(--rad);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  width: 100%;
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--line);
+}
+@media(min-width:600px) { .card-head { padding: 16px 20px 12px; } }
+.step-badge {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--g);
+  color: #fff;
+  font-size: .65rem;
+  font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.step-badge.opt { background: var(--soft); }
+.card-title { font-size: .85rem; font-weight: 800; color: var(--ink); }
+.card-body { padding: 14px; }
+@media(min-width:600px) { .card-body { padding: 18px 20px; } }
+
+.prod-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.prod-btn {
+  border: 2px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 8px;
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+  transition: all .2s;
+  position: relative;
+  min-width: 0;
+}
+@media(min-width:600px) { .prod-btn { padding: 14px 10px; } }
+.prod-btn:hover { border-color: var(--soft); }
+.prod-btn.active {
+  border-color: var(--g);
+  background: var(--g-l);
+}
+.prod-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  margin: 0 auto 6px;
+  font-size: .65rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .03em;
+}
+.prod-flag.us { background: #0284C7; }
+.prod-flag.world { background: var(--g); }
+.prod-name { font-size: .82rem; font-weight: 800; color: var(--ink); display: block; word-break: keep-all; }
+.prod-desc { font-size: .62rem; color: var(--soft); margin-top: 2px; display: block; }
+.prod-btn.active .prod-name { color: var(--g-d); }
+.prod-check {
+  position: absolute;
+  top: 6px; right: 8px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--g);
+  color: #fff;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.prod-check .ico { width: 10px; height: 10px; color: #fff; }
+.prod-btn.active .prod-check { display: flex; }
+
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+
+.field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.field-label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+.field-val { font-size: .75rem; font-weight: 800; color: var(--g-d); flex-shrink: 0; }
+.field-val.danger { color: var(--r); }
+.field-hint { font-size: .62rem; color: var(--soft); margin-top: 4px; line-height: 1.5; }
+
+.reset-btn {
+  font-size: .65rem;
+  font-weight: 700;
+  color: var(--mid);
+  background: var(--b-l);
+  border: none;
+  border-radius: 5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  transition: all .15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.reset-btn:hover { background: var(--b); color: #fff; }
+
+.iw {
+  display: flex;
+  align-items: center;
+  background: var(--bg);
+  border: 2px solid var(--line);
+  border-radius: var(--rad-sm);
+  padding: 8px 12px;
+  transition: all .2s;
+  gap: 6px;
+  min-width: 0;
+}
+.iw:focus-within { border-color: var(--g); background: #fff; box-shadow: 0 0 0 3px rgba(0,82,165,.12); }
+.iw.highlight { background: var(--y-l); border-color: #D9770688; }
+.iw.danger:focus-within { border-color: var(--r); box-shadow: 0 0 0 3px rgba(201,123,107,.12); }
+
+.iw input[type=number] {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  text-align: right;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+  -moz-appearance: textfield;
+  min-width: 0;
+  width: 100%;
+}
+.iw input::-webkit-inner-spin-button,
+.iw input::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+input::placeholder {
+  color: #A8B6C4;
+  font-weight: 500;
+  opacity: 1;
+}
+.iw-unit { font-size: .75rem; font-weight: 700; color: var(--soft); white-space: nowrap; flex-shrink: 0; }
+.iw-icon { font-size: .85rem; flex-shrink: 0; }
+
+.stepper {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  margin-left: 6px;
+  gap: 2px;
+}
+.stepper button {
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--soft);
+  cursor: pointer;
+  width: 34px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+  line-height: 1;
+  padding: 0;
+  border-radius: 6px;
+  transition: color .15s, border-color .15s, background .15s, transform .1s;
+  font-family: inherit;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+.stepper button:hover { color: var(--g-d); border-color: var(--g); background: var(--g-l); }
+.stepper button:active { transform: scale(.92); }
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  outline: none;
+  margin: 6px 0 8px;
+  cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--g);
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: transform .15s;
+}
+input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type=range].danger::-webkit-slider-thumb { border-color: var(--r); }
+input[type=range]::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  border: 3px solid var(--g);
+  cursor: pointer;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  gap: 10px;
+}
+.toggle-label {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+.sw {
+  width: 44px; height: 24px;
+  background: var(--line);
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background .2s;
+}
+.sw.on { background: var(--g); }
+.sw-knob {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+  transition: transform .2s;
+}
+.sw.on .sw-knob { transform: translateX(20px); }
+
+.tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px; height: 15px;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--soft);
+  font-size: .52rem;
+  font-weight: 800;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.tip-box {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--ink);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: .63rem;
+  font-weight: 400;
+  width: 200px;
+  max-width: 220px;
+  line-height: 1.55;
+  z-index: 200;
+  white-space: normal;
+  box-shadow: var(--shadow-lg);
+  font-family: 'Noto Sans JP', sans-serif;
+}
+.tip-box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+}
+.tip:hover .tip-box,
+.tip:focus .tip-box { display: block; }
+
+.hero {
+  border-radius: var(--rad);
+  padding: 18px 16px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  width: 100%;
+  max-width: 100%;
+}
+@media(min-width:600px) { .hero { padding: 24px; } }
+.hero.green { background: linear-gradient(135deg, #003D7A 0%, #1A6FCC 100%); }
+.hero.dark { background: linear-gradient(135deg, #002B57 0%, #0052A5 100%); }
+.hero::after {
+  content: '';
+  position: absolute;
+  top: -60%;
+  right: -20%;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.06);
+  pointer-events: none;
+}
+
+.hero-label { font-size: .72rem; font-weight: 600; opacity: .75; margin-bottom: 4px; position: relative; z-index: 1; }
+.hero-amount {
+  font-size: clamp(1.5rem, 7vw, 2.8rem);
+  font-weight: 900;
+  letter-spacing: -.04em;
+  line-height: 1.05;
+  font-family: 'Outfit', sans-serif;
+  position: relative;
+  z-index: 1;
+}
+.hero-sub {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+.hero-profit { font-size: 1.05rem; font-weight: 800; }
+.hero-profit.pos { color: #B9F0D9; }
+.hero-profit.neg { color: #f4cdc3; }
+.hero-inv { font-size: .68rem; opacity: .7; }
+
+.hero-badges {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 20px;
+  padding: 3px 9px;
+  font-size: .62rem;
+  font-weight: 700;
+  backdrop-filter: blur(4px);
+  flex-wrap: wrap;
+}
+@media(min-width:600px) { .badge { font-size: .65rem; padding: 4px 10px; } }
+.badge-highlight { color: #FFD9A0; }
+
+.tiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+@media(min-width:480px) {
+  .tiles { grid-template-columns: repeat(3, 1fr); }
+}
+.tile {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 8px;
+  text-align: center;
+  min-width: 0;
+}
+@media(min-width:600px) { .tile { padding: 12px 10px; } }
+@media(max-width:479px) {
+  .tile:last-child { grid-column: 1 / -1; }
+}
+.tile-label { font-size: .58rem; font-weight: 700; color: var(--soft); margin-bottom: 4px; }
+.tile-value { font-size: .88rem; font-weight: 800; color: var(--ink); font-family: 'Outfit', sans-serif; }
+.tile-value.green { color: var(--ok); }
+.tile-value.red { color: var(--r); }
+.tile-value.blue { color: var(--b); }
+
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: var(--rad);
+  padding: 14px 12px;
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+@media(min-width:600px) { .chart-card { padding: 18px 16px; } }
+.chart-title { font-size: .78rem; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+.chart-legend {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: .65rem; font-weight: 600; color: var(--soft); }
+.legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.chart-wrap { position: relative; height: 220px; width: 100%; }
+@media(min-width:600px) { .chart-wrap { height: 260px; } }
+
+.detail-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--mid);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-family: inherit;
+  width: 100%;
+}
+.detail-arrow { font-size: .6rem; transition: transform .2s; }
+.detail-toggle.open .detail-arrow { transform: rotate(90deg); }
+
+.detail-wrap {
+  display: none;
+  margin-top: 4px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: auto;
+  max-height: 260px;
+  -webkit-overflow-scrolling: touch;
+}
+.detail-wrap.show { display: block; }
+
+table.dt { width: 100%; border-collapse: collapse; font-size: .63rem; }
+@media(min-width:480px) { table.dt { font-size: .68rem; } }
+table.dt th {
+  background: var(--bg);
+  font-weight: 700;
+  color: var(--soft);
+  padding: 7px 6px;
+  text-align: right;
+  position: sticky;
+  top: 0;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+@media(min-width:480px) { table.dt th { padding: 8px 10px; } }
+table.dt th:first-child { text-align: left; }
+table.dt td {
+  padding: 6px 6px;
+  text-align: right;
+  border-bottom: 1px solid #E8EEF4;
+  color: var(--ink2);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+}
+@media(min-width:480px) { table.dt td { padding: 7px 10px; } }
+table.dt td:first-child { text-align: left; color: var(--soft); font-weight: 700; }
+table.dt tr:last-child td { border-bottom: none; }
+table.dt tr:hover td { background: var(--g-l); }
+
+.notice {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--soft);
+  border-radius: var(--rad-sm);
+  padding: 10px 14px;
+}
+.notice-title { font-size: .68rem; font-weight: 800; color: var(--mid); margin-bottom: 2px; }
+.notice p { font-size: .62rem; color: var(--soft); line-height: 1.6; }
+
+.asset-card {
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+@media(min-width:600px) { .asset-card { padding: 16px; } }
+.asset-card:last-of-type { margin-bottom: 0; }
+.asset-card.usa { background: #E8F4FC; border-color: #B9DEF5; }
+.asset-card.world { background: #E8F2FC; border-color: #B8D4F0; }
+.asset-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 6px; flex-wrap: wrap; }
+.asset-name { font-size: .85rem; font-weight: 800; min-width: 0; }
+.asset-card.usa .asset-name { color: #0369A1; }
+.asset-card.world .asset-name { color: var(--g-d); }
+.asset-row { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media(min-width:400px) { .asset-row { grid-template-columns: 1fr 1fr; } }
+@media(min-width:560px) { .asset-row { grid-template-columns: 1fr 1fr 1fr; } }
+.af { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.af label { font-size: .62rem; font-weight: 700; color: var(--soft); }
+.af-in {
+  background: #fff;
+  border: 1.5px solid #B9DEF5;
+  border-radius: 8px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: border-color .2s;
+  min-width: 0;
+}
+.asset-card.world .af-in { border-color: #B8D4F0; }
+.af-in:focus-within { border-color: var(--g); }
+.af-in input {
+  border: none;
+  outline: none;
+  background: transparent;
+  flex: 1;
+  text-align: right;
+  font-family: 'Outfit', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--ink);
+  -moz-appearance: textfield;
+  min-width: 0;
+  width: 100%;
+}
+.af-in input::-webkit-inner-spin-button,
+.af-in input::-webkit-outer-spin-button { -webkit-appearance: none; }
+.af-in .u { font-size: .6rem; font-weight: 700; color: var(--soft); white-space: nowrap; flex-shrink: 0; }
+
+.pyramid-section { display: grid; grid-template-columns: 1fr; gap: 20px; align-items: start; }
+@media(min-width:680px) { .pyramid-section { grid-template-columns: 1fr 1fr; } }
+
+.pyramid-wrap { display: flex; justify-content: center; width: 100%; }
+.pyramid-wrap svg { width: 100%; max-width: 340px; height: auto; }
+
+.h-status { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.h-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.h-row-label { font-size: .72rem; font-weight: 700; color: var(--soft); flex-shrink: 0; }
+.h-row-val { font-size: .88rem; font-weight: 800; color: var(--ink); text-align: right; min-width: 0; }
+.h-row-val.green { color: var(--ok); }
+
+.prog-wrap { margin-top: 4px; }
+.prog-head { display: flex; justify-content: space-between; margin-bottom: 5px; gap: 6px; flex-wrap: wrap; }
+.prog-head span { font-size: .65rem; font-weight: 700; color: var(--soft); }
+.prog-head .prog-gap { color: var(--g-d); }
+.prog-bar-bg { width: 100%; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.prog-bar { height: 100%; background: linear-gradient(90deg, var(--g), var(--teal)); border-radius: 4px; transition: width .8s ease; }
+
+.advice-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 16px; }
+@media(min-width:480px) { .advice-grid { grid-template-columns: 1fr 1fr; } }
+.advice-card { background: var(--white); border: 1px solid var(--line); border-radius: 12px; padding: 14px; min-width: 0; }
+.advice-label { font-size: .62rem; font-weight: 700; color: var(--soft); margin-bottom: 6px; }
+.advice-val { font-size: .82rem; color: var(--ink2); line-height: 1.6; }
+.advice-hl { font-size: 1.15rem; font-weight: 900; color: var(--g-d); font-family: 'Outfit', sans-serif; }
+
+.guide-grid { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media(min-width:600px) { .guide-grid { grid-template-columns: 1fr 1fr; } }
+.guide-card { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 18px; min-width: 0; }
+.guide-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.guide-icon { font-size: 1.3rem; flex-shrink: 0; }
+.guide-title { font-size: .88rem; font-weight: 800; color: var(--ink); }
+.guide-body { font-size: .78rem; color: var(--soft); line-height: 1.75; }
+
+.cta-box { background: var(--g-l); border: 1px solid #B8D4F0; border-radius: 12px; padding: 14px 16px; margin-top: 12px; }
+.cta-title { font-size: .78rem; font-weight: 800; color: var(--g-d); margin-bottom: 4px; }
+.cta-body { font-size: .72rem; color: #003D7Acc; line-height: 1.6; }
+
+footer {
+  text-align: center;
+  padding: 14px;
+  font-size: .6rem;
+  color: var(--soft);
+  border-top: 1px solid var(--line);
+  background: var(--white);
+}
+
+.sep { height: 1px; background: var(--line); margin: 12px 0; }
+
+.card-dividend {
+  border-color: #FFCF99;
+  background: #FFFDF8;
+}
+.card-head-dividend {
+  background: #FFF1DF;
+  border-bottom-color: #FFCF99;
+}
+.step-badge-dividend {
+  background: var(--acc) !important;
+}
+.card-dividend .card-title {
+  color: #B45309;
+}
+.iw-dividend {
+  background: #FFF1DF;
+  border-color: #FFCF99;
+}
+.iw-dividend:focus-within {
+  border-color: var(--acc);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255,140,0,.15);
+}
+.iw-dividend .iw-icon {
+  color: #8a6224;
+}
+
+.ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+.ico svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.ico-14 { width: 14px; height: 14px; }
+.ico-16 { width: 16px; height: 16px; }
+.ico-18 { width: 18px; height: 18px; }
+.ico-20 { width: 20px; height: 20px; }
+.ico-22 { width: 22px; height: 22px; }
+.ico-24 { width: 24px; height: 24px; }
+
+.tab .ico { width: 20px; height: 20px; margin-bottom: 2px; }
+@media(min-width:480px) { .tab .ico { width: 22px; height: 22px; } }
+
+.guide-icon-wrap {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--g-l);
+  color: var(--g-d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.guide-icon-wrap svg { width: 18px; height: 18px; }
+
+.logo-mark .ico { color: #fff; }
+.logo-mark svg { width: 18px; height: 18px; }
+
+.iw-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px; height: 16px;
+  color: var(--soft);
+  flex-shrink: 0;
+}
+.iw-icon svg { width: 100%; height: 100%; }
+
+.region-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  font-size: .58rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: .02em;
+  flex-shrink: 0;
+}
+.region-dot.us { background: #0284C7; }
+.region-dot.world { background: var(--g); }
+
+.badge .ico { width: 12px; height: 12px; }
+
+.h-row-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; }
+
+.advice-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; vertical-align: -2px; }
+
+.notice-title .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; vertical-align: -2px; }
+
+.step-badge .ico { width: 13px; height: 13px; color: #fff; }
+
+.toggle-label .ico { width: 14px; height: 14px; color: var(--mid); margin-right: 4px; }
+
+.cta-title .ico { width: 14px; height: 14px; color: var(--g-d); margin-right: 4px; vertical-align: -2px; }
+
+.trophy-big {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  background: var(--g-l);
+  color: var(--g-d);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.trophy-big svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="currentColor" d="M3 21V9h4v12H3zm7 0V3h4v18h-4zm7 0v-9h4v9h-4z"/></symbol>
+    <symbol id="i-scale" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3a1.5 1.5 0 0 0-1.5 1.5c0 .53.28.99.7 1.27L8 12h8L13.8 5.77c.42-.28.7-.74.7-1.27A1.5 1.5 0 0 0 12 3zm-1 6.5v9.5H7v2h10v-2h-4V9.5h-2zM6 13l-3 6h6l-3-6zm12 0l-3 6h6l-3-6z"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path fill="currentColor" d="M5 3h14v2h2v3a4 4 0 0 1-4 4h-.27A6 6 0 0 1 13 14.92V18h3v3H8v-3h3v-3.08A6 6 0 0 1 7.27 12H7a4 4 0 0 1-4-4V5h2V3zm0 4v1a2 2 0 0 0 2 2V7H5zm14 0h-2v3a2 2 0 0 0 2-2V7z"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path fill="currentColor" d="M4 3h6a3 3 0 0 1 2 .76A3 3 0 0 1 14 3h6v16h-6.5a1.5 1.5 0 0 0-1.5 1.5v.5a1.5 1.5 0 0 0-1.5-1.5H4V3z"/></symbol>
+    <symbol id="i-trend" viewBox="0 0 24 24"><path fill="currentColor" d="M3.5 18.5l-1-1L9 11l4 4 7.5-7.5L22 9l-9 9-4-4-5.5 4.5z"/><path fill="currentColor" d="M16 7h6v6h-2V9h-4z"/></symbol>
+    <symbol id="i-coin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-1.5a3 3 0 0 1-3-3h2a1 1 0 0 0 1 1h2a1 1 0 0 0 0-2h-2a3 3 0 0 1 0-6V5h2v1.5a3 3 0 0 1 3 3h-2a1 1 0 0 0-1-1h-2a1 1 0 0 0 0 2h2a3 3 0 0 1 0 6V17z"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3V2h-2v2H9V2H7zm-3 8h16v10H4V10zm2 2v2h2v-2H6zm4 0v2h2v-2h-2zm4 0v2h2v-2h-2z"/></symbol>
+    <symbol id="i-calrange" viewBox="0 0 24 24"><path fill="currentColor" d="M7 2v2H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3V2h-2v2H9V2H7zm-3 8h16v10H4V10zm2 3v2h12v-2H6z"/></symbol>
+    <symbol id="i-withdraw" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21h14v-2H5v2zm7-18l-7 7h4v6h6v-6h4l-7-7z"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L2 7v2h20V7L12 2zM4 10v8H2v3h20v-3h-2v-8h-2v8h-3v-8h-2v8h-2v-8H9v8H6v-8H4z"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24"><path fill="currentColor" d="M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2H2V6zm0 4h20v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-8zm3 5v2h6v-2H5z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2L1 21h22L12 2zm0 6l7.5 13h-15L12 8zm-1 4v4h2v-4h-2zm0 6v2h2v-2h-2z"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5z"/></symbol>
+    <symbol id="i-yen" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-3.5 5h2.1L12 9.9 13.4 7h2.1l-2.6 4.6h2v1.5h-2.7v1h2.7v1.5h-2.7V18h-1.6v-2.4H8.5v-1.5h2.7v-1H8.5v-1.5h2L8.5 7z"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path fill="currentColor" d="M9 21h6v-2H9v2zm3-19a7 7 0 0 0-4 12.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26A7 7 0 0 0 12 2z"/></symbol>
+    <symbol id="i-calc" viewBox="0 0 24 24"><path fill="currentColor" d="M5 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H5zm1 3h12v3H6V5zm0 5h2v2H6v-2zm4 0h2v2h-2v-2zm4 0h4v8h-4v-8zm-8 4h2v2H6v-2zm4 0h2v2h-2v-2zm-4 4h6v2H6v-2z"/></symbol>
+    <symbol id="i-sprout" viewBox="0 0 24 24"><path fill="currentColor" d="M11 21v-7c0-3.5 2.5-6 6-6h3v3c0 3.5-2.5 6-6 6h-1v4h-2zm-7-13c0-3.5 2.5-6 6-6h1v3c0 3.5-2.5 6-6 6H4V8z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="currentColor" d="M9 16.2L4.8 12l-1.4 1.4L9 19l12-12-1.4-1.4z"/></symbol>
+    <symbol id="i-party" viewBox="0 0 24 24"><path fill="currentColor" d="M2 22l4.5-13.5 9 9L2 22zm6.4-15.5L7 4l3 1.5L11.5 4l-1.5 3L11.5 10 10 8.5 7 10l1.4-3.5zm10.6 0L17.5 4 19 5.5 20.5 4 19 7l1.5 3L19 8.5 17.5 10 19 6.5zm-6 7.5L14.5 12l1.5 2 2-1.5-1.5 2 1.5 2-2-1.5-1.5 2v-3z"/></symbol>
+    <symbol id="i-piggy" viewBox="0 0 24 24"><path fill="currentColor" d="M19 7c-1 0-1 1-1 1V7a4 4 0 0 0-4-4h-3a6 6 0 0 0-6 6v.5L3 11v3l2 .5v.5a6 6 0 0 0 3 5.2V21h3v-1h2v1h3v-1.8a6 6 0 0 0 3-5.2v-2h1V8s0-1-1-1zm-7 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-5 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></symbol>
+    <symbol id="i-app" viewBox="0 0 24 24">
+      <rect x="3" y="14" width="4" height="7" rx="1" fill="currentColor" opacity="0.55"/>
+      <rect x="10" y="11" width="4" height="10" rx="1" fill="currentColor" opacity="0.75"/>
+      <rect x="17" y="7" width="4" height="14" rx="1" fill="currentColor"/>
+      <path d="M3 13 L12 9 L21 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M21 5 L17 4 L19 8 Z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-top">
+      <div class="logo">
+        <div class="logo-mark"><span class="ico"><svg><use href="#i-app"/></svg></span></div>
+        <div>
+          <span class="logo-name">積立投資ナビ</span>
+          <span class="logo-tag"> 資産運用シミュレーター</span>
+        </div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="single">
+        <span class="ico"><svg><use href="#i-chart"/></svg></span>1銘柄
+      </button>
+      <button class="tab" data-tab="dual">
+        <span class="ico"><svg><use href="#i-scale"/></svg></span>2銘柄比較
+      </button>
+      <button class="tab" data-tab="rank">
+        <span class="ico"><svg><use href="#i-trophy"/></svg></span>資産診断
+      </button>
+      <button class="tab" data-tab="guide">
+        <span class="ico"><svg><use href="#i-book"/></svg></span>使い方
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="main">
+
+<!-- ═══════════════ 1銘柄 ═══════════════ -->
+<section class="pane active" id="pane-single">
+  <div class="grid">
+
+    <!-- LEFT: INPUTS -->
+    <div class="col col-left">
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">1</div>
+          <span class="card-title">運用商品を選ぶ</span>
+        </div>
+        <div class="card-body">
+          <div class="prod-grid">
+            <button class="prod-btn active" id="btn-sp" onclick="selectProd('sp500')">
+              <div class="prod-check"><span class="ico"><svg><use href="#i-check"/></svg></span></div>
+              <span class="prod-flag us">US</span>
+              <span class="prod-name">S&amp;P500</span>
+              <span class="prod-desc">米国大型株500社</span>
+            </button>
+            <button class="prod-btn" id="btn-all" onclick="selectProd('all')">
+              <div class="prod-check"><span class="ico"><svg><use href="#i-check"/></svg></span></div>
+              <span class="prod-flag world">WLD</span>
+              <span class="prod-name">全世界株式</span>
+              <span class="prod-desc">オルカン</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">2</div>
+          <span class="card-title">金額・期間を入力する</span>
+        </div>
+        <div class="card-body">
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">
+                想定利回り（年率）
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">過去の平均リターンをデフォルト表示。将来の利回りを保証するものではありません。</span>
+                </span>
+              </span>
+              <button class="reset-btn" onclick="resetRate()">↺ 平均値に戻す</button>
+            </div>
+            <div class="iw">
+              <span class="iw-icon"><svg><use href="#i-trend"/></svg></span>
+              <input type="number" id="s-rate" value="13.25" step="0.01" oninput="saveAndCalc()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
+            </div>
+            <p class="field-hint" id="s-rate-src">※ S&amp;P500の過去30年間（1994〜2024）の年平均リターン</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">初期投資額（まとまったお金）</span>
+            </div>
+            <div class="iw highlight" id="s-init-wrap">
+              <span class="iw-icon"><svg><use href="#i-coin"/></svg></span>
+              <input type="number" id="s-init" placeholder="例: 100" oninput="onInitChange('s-init','s-init-wrap');saveAndCalc()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 0円でも計算できます（積立のみ）</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">毎月の積立額</span>
+              <span class="field-val" id="s-mo-v">0万円</span>
+            </div>
+            <input type="range" id="s-mo-r" min="0" max="30" value="0" oninput="syncRange('s-mo')">
+            <div class="iw">
+              <span class="iw-icon"><svg><use href="#i-cal"/></svg></span>
+              <input type="number" id="s-mo" placeholder="例: 3" oninput="syncInput('s-mo');saveAndCalc()">
+              <span class="iw-unit">万円</span>
+            </div>
+            <p class="field-hint">※ 新NISAつみたて投資枠: 月10万円まで非課税</p>
+          </div>
+
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">運用期間</span>
+              <span class="field-val" id="s-yr-v">20年</span>
+            </div>
+            <input type="range" id="s-yr-r" min="1" max="50" value="20" oninput="syncRange('s-yr')">
+            <div class="iw">
+              <span class="iw-icon"><svg><use href="#i-calrange"/></svg></span>
+              <input type="number" id="s-yr" value="20" oninput="syncInput('s-yr');saveAndCalc()">
+              <span class="iw-unit">年</span>
+              <span class="stepper">
+                <button type="button" onclick="stepField('s-yr',1)" aria-label="1年増やす">▲</button>
+                <button type="button" onclick="stepField('s-yr',-1)" aria-label="1年減らす">▼</button>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="card card-dividend">
+        <div class="card-head card-head-dividend">
+          <div class="step-badge step-badge-dividend">3</div>
+          <span class="card-title">高配当株（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。保有額を入れると配当金の目安がすぐに表示されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>高配当株の保有額
+              <span class="tip" tabindex="0">?<span class="tip-box">保有額をそのまま総資産に加算します。値上がり益は計算しません。</span></span>
+            </label><div class="af-in"><input type="number" id="s-div" placeholder="例: 500" oninput="saveAndCalc()"><span class="u">万円</span></div></div>
+            <div class="af"><label>配当利回り(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">毎年この利回りで配当金を受け取る前提で計算します。NISAをOFFにすると配当にも20.315%の税金がかかります。</span></span>
+            </label><div class="af-in"><input type="number" id="s-div-rate" value="4" step="0.1" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:8px;font-weight:700;color:var(--ok)" id="s-div-hint">保有額を入力すると配当金の目安が表示されます</p>
+          <div class="field-head" style="margin-top:12px">
+            <span class="field-label">配当金からの積立（再投資）
+              <span class="tip" tabindex="0">?<span class="tip-box">受け取った配当のうち、毎月いくらを投資信託の積立に回すかを指定します。年間配当額が上限です。残りは現金受取として積み上がります。</span></span>
+            </span>
+          </div>
+          <div class="asset-row">
+            <div class="af"><label>毎月の積立額</label><div class="af-in"><input type="number" id="s-div-re" placeholder="例: 1" step="0.1" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">万円/月</span></div></div>
+          </div>
+          <div class="field-head" style="margin-top:10px">
+            <span class="field-label">積立先の商品</span>
+          </div>
+          <div class="prod-grid">
+            <button class="prod-btn" id="s-div-t-all" onclick="setDivTargetS('all')"><span style="font-weight:800;font-size:.75rem">全世界株式</span><br><span style="font-size:.6rem;color:var(--soft)">オルカン</span></button>
+            <button class="prod-btn active" id="s-div-t-sp" onclick="setDivTargetS('sp500')"><span style="font-weight:800;font-size:.75rem">S&amp;P500</span><br><span style="font-size:.6rem;color:var(--soft)">米国株式</span></button>
+          </div>
+          <p class="field-hint" style="margin-top:8px">※ 配当からの積立分はSTEP2の積立とは別枠で複利運用され、総資産・グラフに反映されます。残りの配当は現金として累計されます</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt"><span class="ico"><svg><use href="#i-bank"/></svg></span></div>
+          <span class="card-title" style="color:var(--soft)">普通預金（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin:0 0 10px;font-size:.68rem;color:var(--soft);line-height:1.55;">投資とは別軸の安全資産として計算します。元本保証のまま設定金利で毎年複利され、総資産と資産診断に加算されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>普通預金の残高
+              <span class="tip" tabindex="0">?<span class="tip-box">預金残高は元本保証のまま、設定した金利で毎年複利計算します。利息には源泉分離課税20.315%がかかります（NISA対象外）。</span></span>
+            </label><div class="af-in"><input type="number" id="s-cash" placeholder="例: 300" oninput="saveAndCalc()"><span class="u">万円</span></div></div>
+            <div class="af"><label>預金金利(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">楽天銀行×楽天証券のマネーブリッジ設定で、普通預金残高1,000万円以下は年0.38%（税引前）の優遇金利が適用されます。</span></span>
+            </label><div class="af-in"><input type="number" id="s-cash-r" value="0.38" step="0.01" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:6px">※ 金利はマネーブリッジ優遇金利（年0.38%・残高1,000万円以下）が初期値。利息は税引後で毎年複利</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt">4</div>
+          <span class="card-title" style="color:var(--soft)">オプション設定</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">
+                毎年の取り崩し率
+                <span class="tip" tabindex="0">?
+                  <span class="tip-box">年末に資産の一定割合を引き出す設定。「4%ルール」は有名なリタイア戦略です。</span>
+                </span>
+              </span>
+              <span class="field-val danger" id="s-wd-v">0%</span>
+            </div>
+            <input type="range" id="s-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('s-wd')">
+            <div class="iw danger">
+              <span class="iw-icon"><svg><use href="#i-withdraw"/></svg></span>
+              <input type="number" id="s-wd" value="0" step="0.1" oninput="syncInput('s-wd');saveAndCalc()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
+            </div>
+            <p class="field-hint">※ 年末に一括で取り崩す計算です</p>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label">
+              <span class="ico"><svg><use href="#i-bank"/></svg></span>
+              NISA枠で非課税と仮定
+              <span class="tip" tabindex="0">?
+                <span class="tip-box">OFFにすると運用益に20.315%の税金がかかります（特定口座）。</span>
+              </span>
+            </span>
+            <div class="sw on" id="s-nisa" onclick="toggleNisa('s')">
+              <div class="sw-knob"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt">5</div>
+          <span class="card-title" style="color:var(--soft)">コスト・手数料（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin:0 0 10px;font-size:.68rem;color:var(--soft);line-height:1.55;">購入手数料や信託報酬を含めた「トータルコスト込み」の資産推移を計算します。初期値は楽天証券の実際の手数料です。</p>
+          <div class="asset-row">
+            <div class="af"><label>購入時手数料
+              <span class="tip" tabindex="0">?<span class="tip-box">買付のたびに購入額へかかる手数料。楽天証券は全ての投資信託で購入時手数料0%（ノーロード）です。</span></span>
+            </label><div class="af-in"><input type="number" id="s-fee-buy" value="0" step="0.1" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+            <div class="af"><label>信託報酬(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">保有中ずっとかかる運用管理費用。楽天・プラス・S&P500は年0.077%、楽天・プラス・オールカントリーは年0.0561%（税込）。投信残高ポイント還元（S&P500: 年0.028% / オルカン: 年0.017%）を考慮した実質負担はさらに低くなります。</span></span>
+            </label><div class="af-in"><input type="number" id="s-fee-tr" value="0.077" step="0.001" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+            <div class="af"><label>売却時コスト
+              <span class="tip" tabindex="0">?<span class="tip-box">売却時にかかるコスト（信託財産留保額など）。楽天・プラスシリーズは0%です。</span></span>
+            </label><div class="af-in"><input type="number" id="s-fee-sell" value="0" step="0.1" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:8px" id="s-fee-src">※ 楽天証券: 購入時手数料は全投信0%。信託報酬 年0.077%は楽天・プラス・S&amp;P500インデックス・ファンドの実際の値（税込）</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: RESULTS -->
+    <div class="col col-right">
+
+      <div class="hero green" id="s-hero">
+        <p class="hero-label">総資産（積立 + 高配当株 + 配当 + 預金）</p>
+        <div class="hero-amount" id="s-final">0円</div>
+        <div class="hero-sub">
+          <div>
+            <p style="font-size:.62rem;opacity:.65;margin-bottom:2px">運用収益（利益）</p>
+            <p class="hero-profit pos" id="s-profit">+0円</p>
+          </div>
+          <p class="hero-inv">元本: <span id="s-inv">0円</span></p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge" id="s-nisa-badge">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
+            <span class="badge-highlight" id="s-tax">節税 0円</span>
+          </span>
+          <span class="badge" id="s-div-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
+            <span class="badge-highlight" id="s-div-info">+0円</span>
+          </span>
+          <span class="badge" id="s-cash-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> 普通預金</span>
+            <span class="badge-highlight" id="s-cash-info">+0円</span>
+          </span>
+          <span class="badge" id="s-cost-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-card"/></svg></span> コスト合計</span>
+            <span class="badge-highlight" id="s-cost-info">−0円</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 3枚サマリータイル -->
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile-label">投資元本</div>
+          <div class="tile-value" id="t-s-inv">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">運用益</div>
+          <div class="tile-value green" id="t-s-gain">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">倍率</div>
+          <div class="tile-value blue" id="t-s-mult">-倍</div>
+        </div>
+      </div>
+
+      <div class="card card-dividend" id="s-divd-card" style="display:none">
+        <div class="card-head card-head-dividend">
+          <span class="card-title">高配当株の配当金</span>
+        </div>
+        <div class="card-body" style="padding:12px 18px 14px">
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">高配当株の保有額</span><span id="s-divd-hold" style="font-weight:700">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)" id="s-divd-annual-label">年間配当（4%）</span><span id="s-divd-annual" style="font-weight:800;color:var(--ok)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">毎月に換算すると</span><span id="s-divd-monthly" style="font-weight:700">0円</span></div>
+          <div style="display:none;justify-content:space-between;font-size:.74rem;padding:4px 0" id="s-divd-re-row"><span style="color:var(--b)" id="s-divd-re-label">うち再投資</span><span id="s-divd-re" style="font-weight:700;color:var(--b)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;padding:8px 0 2px;margin-top:4px;border-top:1px solid var(--line)"><span style="font-weight:800" id="s-divd-cum-label">運用期間の累計配当</span><span id="s-divd-cum" style="font-weight:800;color:var(--ok)">0円</span></div>
+          <p class="field-hint" style="margin-top:6px" id="s-divd-note">※ 配当は再投資せず受取（累計は総資産に加算）。株価は一定と仮定</p>
+        </div>
+      </div>
+
+      <div class="card" id="s-cost-card" style="display:none">
+        <div class="card-head">
+          <span class="card-title">トータルコスト内訳</span>
+        </div>
+        <div class="card-body" style="padding:12px 18px 14px">
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">購入時手数料（累計）</span><span id="s-cost-buy" style="font-weight:700">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">信託報酬（累計・概算）</span><span id="s-cost-tr" style="font-weight:700">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">売却時コスト</span><span id="s-cost-sell" style="font-weight:700">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;padding:8px 0 2px;margin-top:4px;border-top:1px solid var(--line)"><span style="font-weight:800">支払コスト合計</span><span id="s-cost-total" style="font-weight:800;color:var(--r)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">コスト0%の場合との最終資産差
+            <span class="tip" tabindex="0">?<span class="tip-box">コストで運用に回らなかったお金の複利分も含めた、最終資産への実質的な影響額です。</span></span>
+          </span><span id="s-cost-impact" style="font-weight:700;color:var(--r)">0円</span></div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">資産推移グラフ</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>資産残高</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>投資元本</span>
+        </div>
+        <div class="chart-wrap"><canvas id="s-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <button class="detail-toggle" id="s-dtb" onclick="toggleDetail('s')">
+          <span class="detail-arrow">▶</span> 年別の詳細データを見る
+        </button>
+        <div class="detail-wrap" id="s-dtw">
+          <table class="dt">
+            <thead><tr><th>年</th><th>投資元本</th><th>資産残高</th><th>運用益</th><th>取崩額</th></tr></thead>
+            <tbody id="s-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="notice">
+        <div class="notice-title"><span class="ico"><svg><use href="#i-alert"/></svg></span>重要な注意事項</div>
+        <p>本シミュレーションは過去データに基づく仮想計算であり、将来の成果を保証しません。市場変動により元本割れのリスクがあります。投資判断はご自身の責任で行ってください。</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 2銘柄 ═══════════════ -->
+<section class="pane" id="pane-dual">
+  <div class="grid">
+    <div class="col col-left">
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">1</div>
+          <span class="card-title">銘柄ごとの設定</span>
+        </div>
+        <div class="card-body">
+          <div class="asset-card world">
+            <div class="asset-head">
+              <span class="asset-name"><span class="region-dot world">WLD</span> 全世界株式</span>
+              <button class="reset-btn" onclick="resetDualRate('all')">↺ 平均値</button>
+            </div>
+            <div class="asset-row">
+              <div class="af"><label>利回り</label><div class="af-in"><input type="number" id="d-al-r" value="9.99" step="0.01" oninput="saveAndCalcD()"><span class="u">%</span></div></div>
+              <div class="af"><label>初期投資</label><div class="af-in"><input type="number" id="d-al-i" placeholder="例: 50" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>毎月積立</label><div class="af-in"><input type="number" id="d-al-m" placeholder="例: 2" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>信託報酬(年率)</label><div class="af-in"><input type="number" id="d-al-tr" value="0.0561" step="0.001" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">%</span></div></div>
+            </div>
+            <p class="field-hint" style="margin-top:6px">※ 信託報酬は楽天・プラス・オールカントリーの実際の値（年0.0561%・税込）</p>
+          </div>
+
+          <div class="asset-card usa">
+            <div class="asset-head">
+              <span class="asset-name"><span class="region-dot us">US</span> S&amp;P500</span>
+              <button class="reset-btn" onclick="resetDualRate('sp500')">↺ 平均値</button>
+            </div>
+            <div class="asset-row">
+              <div class="af"><label>利回り</label><div class="af-in"><input type="number" id="d-sp-r" value="13.25" step="0.01" oninput="saveAndCalcD()"><span class="u">%</span></div></div>
+              <div class="af"><label>初期投資</label><div class="af-in"><input type="number" id="d-sp-i" placeholder="例: 50" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>毎月積立</label><div class="af-in"><input type="number" id="d-sp-m" placeholder="例: 3" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+              <div class="af"><label>信託報酬(年率)</label><div class="af-in"><input type="number" id="d-sp-tr" value="0.077" step="0.001" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">%</span></div></div>
+            </div>
+            <p class="field-hint" style="margin-top:6px">※ 信託報酬は楽天・プラス・S&amp;P500の実際の値（年0.077%・税込）</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge">2</div>
+          <span class="card-title">共通設定</span>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">運用期間</span>
+              <span class="field-val" id="d-yr-v">20年</span>
+            </div>
+            <input type="range" id="d-yr-r" min="1" max="50" value="20" oninput="syncRange('d-yr')">
+            <div class="iw">
+              <span class="iw-icon"><svg><use href="#i-calrange"/></svg></span>
+              <input type="number" id="d-yr" value="20" oninput="syncInput('d-yr');saveAndCalcD()">
+              <span class="iw-unit">年</span>
+              <span class="stepper">
+                <button type="button" onclick="stepField('d-yr',1)" aria-label="1年増やす">▲</button>
+                <button type="button" onclick="stepField('d-yr',-1)" aria-label="1年減らす">▼</button>
+              </span>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-head">
+              <span class="field-label">毎年の取り崩し率</span>
+              <span class="field-val danger" id="d-wd-v">0%</span>
+            </div>
+            <input type="range" id="d-wd-r" min="0" max="20" value="0" step="0.1" class="danger" oninput="syncRange('d-wd')">
+            <div class="iw danger">
+              <span class="iw-icon"><svg><use href="#i-withdraw"/></svg></span>
+              <input type="number" id="d-wd" value="0" step="0.1" oninput="syncInput('d-wd');saveAndCalcD()" onfocus="this.select()">
+              <span class="iw-unit">%</span>
+            </div>
+          </div>
+          <div class="toggle-row">
+            <span class="toggle-label"><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA枠で非課税と仮定</span>
+            <div class="sw on" id="d-nisa" onclick="toggleNisa('d')"><div class="sw-knob"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-dividend">
+        <div class="card-head card-head-dividend">
+          <div class="step-badge step-badge-dividend">3</div>
+          <span class="card-title">高配当株（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。保有額を入れると配当金の目安がすぐに表示されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>高配当株の保有額
+              <span class="tip" tabindex="0">?<span class="tip-box">保有額をそのまま総資産に加算します。値上がり益は計算しません。</span></span>
+            </label><div class="af-in"><input type="number" id="d-div" placeholder="例: 500" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+            <div class="af"><label>配当利回り(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">毎年この利回りで配当金を受け取る前提で計算します。NISAをOFFにすると配当にも20.315%の税金がかかります。</span></span>
+            </label><div class="af-in"><input type="number" id="d-div-rate" value="4" step="0.1" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:8px;font-weight:700;color:var(--ok)" id="d-div-hint">保有額を入力すると配当金の目安が表示されます</p>
+          <div class="field-head" style="margin-top:12px">
+            <span class="field-label">配当金からの積立（再投資）
+              <span class="tip" tabindex="0">?<span class="tip-box">受け取った配当のうち、毎月いくらを積立に回すかを指定します。年間配当額が上限です。残りは現金受取として積み上がります。</span></span>
+            </span>
+          </div>
+          <div class="asset-row">
+            <div class="af"><label>毎月の積立額</label><div class="af-in"><input type="number" id="d-div-re" placeholder="例: 1" step="0.1" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">万円/月</span></div></div>
+          </div>
+          <div class="field-head" style="margin-top:10px">
+            <span class="field-label">積立先の商品</span>
+          </div>
+          <div class="prod-grid">
+            <button class="prod-btn active" id="d-div-t-all" onclick="setDivTarget('all')"><span style="font-weight:800;font-size:.75rem">全世界株式</span><br><span style="font-size:.6rem;color:var(--soft)">オルカン</span></button>
+            <button class="prod-btn" id="d-div-t-sp" onclick="setDivTarget('sp500')"><span style="font-weight:800;font-size:.75rem">S&amp;P500</span><br><span style="font-size:.6rem;color:var(--soft)">米国株式</span></button>
+          </div>
+          <p class="field-hint" style="margin-top:8px">※ 配当からの積立分は選択した銘柄の積立に毎月上乗せされ、複利で総資産に反映されます。残りの配当は現金として累計されます</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt"><span class="ico"><svg><use href="#i-bank"/></svg></span></div>
+          <span class="card-title" style="color:var(--soft)">普通預金（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin:0 0 10px;font-size:.68rem;color:var(--soft);line-height:1.55;">投資とは別軸の安全資産として計算します。元本保証のまま設定金利で毎年複利され、総資産と資産診断に加算されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>普通預金の残高
+              <span class="tip" tabindex="0">?<span class="tip-box">預金残高は元本保証のまま、設定した金利で毎年複利計算します。利息には源泉分離課税20.315%がかかります（NISA対象外）。</span></span>
+            </label><div class="af-in"><input type="number" id="d-cash" placeholder="例: 300" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+            <div class="af"><label>預金金利(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">楽天銀行×楽天証券のマネーブリッジ設定で、普通預金残高1,000万円以下は年0.38%（税引前）の優遇金利が適用されます。</span></span>
+            </label><div class="af-in"><input type="number" id="d-cash-r" value="0.38" step="0.01" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:6px">※ 金利はマネーブリッジ優遇金利（年0.38%・残高1,000万円以下）が初期値。利息は税引後で毎年複利</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col col-right">
+      <div class="hero dark">
+        <p class="hero-label">総資産（積立 + 高配当株 + 配当 + 預金）</p>
+        <div class="hero-amount" id="d-final">0円</div>
+        <div class="hero-sub">
+          <div>
+            <p style="font-size:.62rem;opacity:.65;margin-bottom:2px">運用収益（利益）</p>
+            <p class="hero-profit pos" id="d-profit">+0円</p>
+          </div>
+          <p class="hero-inv">元本合計: <span id="d-inv">0円</span></p>
+        </div>
+        <div class="hero-badges">
+          <span class="badge" id="d-nisa-badge">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税</span>
+            <span class="badge-highlight" id="d-tax">節税 0円</span>
+          </span>
+          <span class="badge" id="d-div-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
+            <span class="badge-highlight" id="d-div-info">+0円</span>
+          </span>
+          <span class="badge" id="d-cash-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> 普通預金</span>
+            <span class="badge-highlight" id="d-cash-info">+0円</span>
+          </span>
+          <span class="badge" id="d-cost-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-card"/></svg></span> コスト合計</span>
+            <span class="badge-highlight" id="d-cost-info">−0円</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="card card-dividend" id="d-divd-card" style="display:none">
+        <div class="card-head card-head-dividend">
+          <span class="card-title">高配当株の配当金</span>
+        </div>
+        <div class="card-body" style="padding:12px 18px 14px">
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">高配当株の保有額</span><span id="d-divd-hold" style="font-weight:700">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)" id="d-divd-annual-label">年間配当（4%）</span><span id="d-divd-annual" style="font-weight:800;color:var(--ok)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">毎月に換算すると</span><span id="d-divd-monthly" style="font-weight:700">0円</span></div>
+          <div style="display:none;justify-content:space-between;font-size:.74rem;padding:4px 0" id="d-divd-re-row"><span style="color:var(--b)" id="d-divd-re-label">うち再投資</span><span id="d-divd-re" style="font-weight:700;color:var(--b)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;padding:8px 0 2px;margin-top:4px;border-top:1px solid var(--line)"><span style="font-weight:800" id="d-divd-cum-label">運用期間の累計配当</span><span id="d-divd-cum" style="font-weight:800;color:var(--ok)">0円</span></div>
+          <p class="field-hint" style="margin-top:6px" id="d-divd-note">※ 配当は再投資せず受取（累計は総資産に加算）。株価は一定と仮定</p>
+        </div>
+      </div>
+
+      <div class="card" id="d-cost-card" style="display:none">
+        <div class="card-head">
+          <span class="card-title">運用コスト（信託報酬・2銘柄合計）</span>
+        </div>
+        <div class="card-body" style="padding:12px 18px 14px">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;padding:4px 0"><span style="font-weight:800">信託報酬（累計・概算）</span><span id="d-cost-tr" style="font-weight:800;color:var(--r)">0円</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:.74rem;padding:4px 0"><span style="color:var(--ink2)">コスト0%の場合との最終資産差
+            <span class="tip" tabindex="0">?<span class="tip-box">信託報酬で運用に回らなかったお金の複利分も含めた、最終資産への実質的な影響額です。</span></span>
+          </span><span id="d-cost-impact" style="font-weight:700;color:var(--r)">0円</span></div>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <div class="tile-label"><span class="region-dot world" style="width:14px;height:14px;font-size:.45rem;display:inline-flex;vertical-align:-2px;margin-right:3px">WL</span>全世界株式</div>
+          <div class="tile-value green" id="t-d-al">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label"><span class="region-dot us" style="width:14px;height:14px;font-size:.5rem;display:inline-flex;vertical-align:-2px;margin-right:3px">US</span>S&amp;P500</div>
+          <div class="tile-value blue" id="t-d-sp">0万円</div>
+        </div>
+        <div class="tile">
+          <div class="tile-label">合計倍率</div>
+          <div class="tile-value" id="t-d-mult">-倍</div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">資産推移グラフ（2銘柄合計）</div>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--g)"></span>合計</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#1A6FCC"></span>全世界</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#0284C7"></span>S&amp;P500</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--line)"></span>元本</span>
+        </div>
+        <div class="chart-wrap"><canvas id="d-chart"></canvas></div>
+      </div>
+
+      <div class="chart-card">
+        <button class="detail-toggle" id="d-dtb" onclick="toggleDetail('d')">
+          <span class="detail-arrow">▶</span> 年別の詳細データを見る
+        </button>
+        <div class="detail-wrap" id="d-dtw">
+          <table class="dt">
+            <thead><tr><th>年</th><th>元本</th><th>WLD</th><th>US</th><th>合計</th></tr></thead>
+            <tbody id="d-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="notice">
+        <div class="notice-title"><span class="ico"><svg><use href="#i-alert"/></svg></span>重要な注意事項</div>
+        <p>仮想計算であり将来の成果を保証しません。元本割れリスクがあります。投資判断はご自身の責任で。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 資産診断 ═══════════════ -->
+<section class="pane" id="pane-rank">
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-head">
+      <div class="step-badge"><span class="ico"><svg><use href="#i-trophy"/></svg></span></div>
+      <span class="card-title">資産クラス診断（野村総研分類）</span>
+    </div>
+    <div class="card-body">
+      <div class="pyramid-section">
+        <div class="pyramid-wrap">
+          <svg viewBox="-28 0 416 320" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#d4a08e"/><stop offset="100%" stop-color="#c97b6b"/></linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#e3bd8a"/><stop offset="100%" stop-color="#d4a04a"/></linearGradient>
+              <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#c9b89a"/><stop offset="100%" stop-color="#a89878"/></linearGradient>
+              <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8FBFEA"/><stop offset="100%" stop-color="#4D9AE6"/></linearGradient>
+              <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4D82B8"/><stop offset="100%" stop-color="#0052A5"/></linearGradient>
+            </defs>
+            <path id="py-super" d="M180 10 L222 64 H138 Z" fill="url(#g1)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="42" text-anchor="middle" font-size="12" fill="#8a4a3c" font-weight="700" font-family="Outfit, sans-serif">超富裕層</text>
+            <text x="180" y="55" text-anchor="middle" font-size="9" fill="#8a4a3c" opacity=".75" font-family="Outfit, sans-serif">5億円〜</text>
+            <path id="py-rich" d="M138 66 L222 66 L256 116 H104 Z" fill="url(#g2)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="93" text-anchor="middle" font-size="14" fill="#8a6224" font-weight="700" font-family="Outfit, sans-serif">富裕層</text>
+            <text x="180" y="107" text-anchor="middle" font-size="10" fill="#8a6224" opacity=".75" font-family="Outfit, sans-serif">1億〜5億円</text>
+            <path id="py-semi" d="M104 118 L256 118 L292 174 H68 Z" fill="url(#g3)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="148" text-anchor="middle" font-size="15" fill="#6b5a3a" font-weight="700" font-family="Outfit, sans-serif">準富裕層</text>
+            <text x="180" y="163" text-anchor="middle" font-size="10.5" fill="#6b5a3a" opacity=".75" font-family="Outfit, sans-serif">5,000万〜1億円</text>
+            <path id="py-upper" d="M68 176 L292 176 L332 238 H28 Z" fill="url(#g4)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="206" text-anchor="middle" font-size="15" fill="#1D4E7E" font-weight="700" font-family="Outfit, sans-serif">アッパーマス層</text>
+            <text x="180" y="221" text-anchor="middle" font-size="10.5" fill="#1D4E7E" opacity=".75" font-family="Outfit, sans-serif">3,000万〜5,000万円</text>
+            <path id="py-mass" d="M28 240 L332 240 L360 300 H0 Z" fill="url(#g5)" stroke="#fff" stroke-width="2" opacity=".4"/>
+            <text x="180" y="270" text-anchor="middle" font-size="15" fill="#FFFFFF" font-weight="700" font-family="Outfit, sans-serif">マス層</text>
+            <text x="180" y="285" text-anchor="middle" font-size="10.5" fill="#FFFFFF" opacity=".75" font-family="Outfit, sans-serif">〜3,000万円</text>
+            <g id="a-now" transform="translate(0,265)">
+              <rect x="-27" y="-10" width="50" height="20" rx="10" fill="#5A6A7A"/>
+              <text x="-2" y="4" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF" font-family="Outfit, sans-serif">現在</text>
+              <path d="M25 0 L40 -7 L40 7 Z" fill="#5A6A7A"/>
+            </g>
+            <g id="a-fut" transform="translate(0,200)">
+              <rect x="337" y="-10" width="50" height="20" rx="10" fill="#0052A5"/>
+              <text x="362" y="4" text-anchor="middle" font-size="12" font-weight="700" fill="#FFFFFF" font-family="Outfit, sans-serif">将来</text>
+              <path d="M335 0 L320 -7 L320 7 Z" fill="#0052A5"/>
+            </g>
+          </svg>
+          <p style="font-size:.68rem;color:var(--ink2);text-align:center;margin-top:8px;line-height:1.6">
+            <span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#0052A5;vertical-align:-1px;margin-right:4px"></span>塗りつぶし＝将来到達する階層
+            <span style="display:inline-block;width:11px;height:11px;border-radius:3px;background:#E8EEF4;border:1px solid #D0DAE4;vertical-align:-1px;margin:0 4px 0 12px"></span>グレー＝未到達の階層
+          </p>
+        </div>
+
+        <div class="h-status">
+          <div class="h-row">
+            <span class="h-row-label"><span class="ico"><svg><use href="#i-pin"/></svg></span>現在の資産階層</span>
+            <span class="h-row-val" id="h-now">--</span>
+          </div>
+          <div class="h-row">
+            <span class="h-row-label"><span class="ico"><svg><use href="#i-target"/></svg></span>将来の資産階層</span>
+            <span class="h-row-val green" id="h-fut">--</span>
+          </div>
+          <div class="prog-wrap">
+            <div class="prog-head">
+              <span>NEXT RANKまで</span>
+              <span class="prog-gap" id="h-gap">あと --万円</span>
+            </div>
+            <div class="prog-bar-bg">
+              <div class="prog-bar" id="h-bar" style="width:0%"></div>
+            </div>
+            <p style="font-size:.62rem;color:var(--soft);text-align:right;margin-top:3px" id="h-target">目標: --万円</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="advice-grid">
+        <div class="advice-card">
+          <div class="advice-label"><span class="ico"><svg><use href="#i-clock"/></svg></span>到達予測</div>
+          <div class="advice-val" id="adv-time">--</div>
+        </div>
+        <div class="advice-card">
+          <div class="advice-label"><span class="ico"><svg><use href="#i-yen"/></svg></span>月額アップ目安</div>
+          <div class="advice-val" id="adv-money">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ ガイド ═══════════════ -->
+<section class="pane" id="pane-guide">
+  <div class="guide-grid">
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-chart"/></svg></span><span class="guide-title">1銘柄で計算</span></div>
+      <p class="guide-body">S&amp;P500または全世界株式を選んで、初期投資額・毎月の積立額・運用期間を入力するだけ。すぐに資産推移をグラフで確認できます。投資初心者の方はまずここから。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-scale"/></svg></span><span class="guide-title">2銘柄で比較</span></div>
+      <p class="guide-body">「全世界株式に月2万、S&amp;P500に月3万」のように、2商品を組み合わせたシミュレーション。分散投資の効果を確認したい方に。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-trophy"/></svg></span><span class="guide-title">資産クラス診断</span></div>
+      <p class="guide-body">野村総合研究所の定義に基づく「資産階層ピラミッド」で現在と将来の位置を診断。ランクアップのためのアドバイスも表示されます。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-bulb"/></svg></span><span class="guide-title">利回りの数字について</span></div>
+      <p class="guide-body">デフォルトの利回りは過去の実績平均です。S&amp;P500は過去30年で年平均約13%のリターンがありましたが、途中で−37%（2008年リーマンショック）のような大暴落も経験しています。長期投資だからこそ、一時的な下落に耐えられる余裕資金で運用することが大切です。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-bank"/></svg></span><span class="guide-title">税金（NISA）について</span></div>
+      <p class="guide-body">新NISAでは年間360万円（つみたて投資枠120万+成長投資枠240万）、生涯投資枠1800万円まで非課税で運用できます。本シミュレーターでは「NISA非課税」をON/OFFで切り替え、課税口座（20.315%）との差を確認できます。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-calc"/></svg></span><span class="guide-title">計算ロジックについて</span></div>
+      <p class="guide-body">月初積立・月次複利で計算しています。年利は厳密な複利換算（(1+年利)^(1/12)−1）で月利に変換しており、精度の高いシミュレーションを実現しています。取り崩しは年末一括方式です。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-card"/></svg></span><span class="guide-title">コスト・手数料の計算</span></div>
+      <p class="guide-body">購入時手数料は毎回の買付額から差し引き、信託報酬は毎月末に資産残高へ月割（年率÷12）で課金、売却時コストは最終資産額から差し引きます。初期値は楽天証券の実際の手数料（購入時手数料0%、信託報酬は楽天・プラス・S&amp;P500が年0.077%／楽天・プラス・オールカントリーが年0.0561%・税込）です。結果画面の「トータルコスト内訳」では支払コスト合計に加え、コスト0%の場合との最終資産差（複利で失われた分を含む実質的な影響額）も確認できます。</p>
+    </div>
+    <div class="guide-card">
+      <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-yen"/></svg></span><span class="guide-title">既に保有している資産</span></div>
+      <p class="guide-body">普通預金や日本の高配当株などすでに保有している資産は「STEP 3 既に保有している資産」カードに入力してください。普通預金は元本保証のまま設定金利（初期値は楽天銀行マネーブリッジの優遇金利 年0.38%・残高1,000万円以下）で毎年複利計算し、利息は源泉分離課税20.315%の税引後で総資産に加算します。高配当株は保有額と配当利回り（初期値4%）を入力してください。値上がり益は計算せず、保有額をそのまま総資産に加算します。毎年の配当金は「配当の再投資(年額)」で指定した分をオルカン/S&amp;P500の積立に毎月上乗せして複利運用し、残りは現金受取として累計されます（NISAがOFFの場合は配当から20.315%を控除）。再投資分は元本には含めず運用益として扱います。</p>
+    </div>
+    <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
+      <div class="cta-title"><span class="ico"><svg><use href="#i-sprout"/></svg></span>投資初心者へのワンポイント</div>
+      <p class="cta-body">「いくら増えるか」より大切なのは「暴落時にも続けられるか」です。無理のない金額を設定し、最低15年以上の長期目線で。過去のデータでは、S&amp;P500に15年以上投資した場合、どの時期に始めても元本割れしたことはありません。</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>本ツールは情報提供のみを目的としており、投資助言ではありません。投資はご自身の判断と責任で行ってください。</footer>
+
+<script>
+const PRODUCTS = {
+  sp500: { name: 'S&P500', rate: 13.25, fee: 0.077,  feeSrc: '楽天・プラス・S&P500インデックス・ファンド', src: '※ S&P500の過去30年間（1994〜2024）の年平均リターン' },
+  all:   { name: '全世界株式', rate: 9.99, fee: 0.0561, feeSrc: '楽天・プラス・オールカントリー', src: '※ MSCI ACWI Indexの過去30年間の年平均リターン' }
+};
+const TIERS = [
+  { id: 'py-super', name: '超富裕層',      min: 50000, y: 37  },
+  { id: 'py-rich',  name: '富裕層',        min: 10000, y: 91  },
+  { id: 'py-semi',  name: '準富裕層',      min: 5000,  y: 146 },
+  { id: 'py-upper', name: 'アッパーマス層', min: 3000,  y: 207 },
+  { id: 'py-mass',  name: 'マス層',        min: 0,     y: 270 }
+];
+const TAX_RATE = 0.20315;
+const STORAGE_KEY = 'investNaviV2';
+
+let curProd = 'sp500';
+let nisaS = true, nisaD = true;
+let divTargetD = 'all';
+let divTargetS = 'sp500';
+let chartS = null, chartD = null;
+let lastResult = { initial: 0, final: 0, profit: 0, inputs: { rate: 0, monthly: 0, years: 0, initial: 0 } };
+
+function monthlyRate(yearRatePct) {
+  return Math.pow(1 + yearRatePct / 100, 1 / 12) - 1;
+}
+
+function simulate(initMan, moMan, yearRatePct, years, wdPct, buyFeePct = 0, trustPct = 0, extraMoYen = 0) {
+  const init = initMan * 1e4;
+  const mo   = moMan  * 1e4;
+  const r    = monthlyRate(yearRatePct);
+  const wd   = wdPct / 100;
+  const buyFee = Math.max(0, buyFeePct) / 100;
+  const trustM = Math.max(0, trustPct) / 100 / 12;
+  const ex   = Math.max(0, extraMoYen);
+
+  let buyFeeTotal = init * buyFee;
+  let trustFeeTotal = 0;
+
+  let c = init * (1 - buyFee);
+  const labels = ['開始'];
+  const dAsset = [Math.round(c)];
+  const dPrin  = [Math.round(init)];
+  const rows   = [];
+
+  for (let y = 1; y <= years; y++) {
+    for (let m = 0; m < 12; m++) {
+      buyFeeTotal += (mo + ex) * buyFee;
+      c = (c + (mo + ex) * (1 - buyFee)) * (1 + r);
+      if (trustM > 0) {
+        const tf = c * trustM;
+        trustFeeTotal += tf;
+        c -= tf;
+      }
+    }
+    let wAmt = 0;
+    if (wd > 0) { wAmt = c * wd; c -= wAmt; }
+
+    const principal = init + mo * 12 * y;
+    labels.push(y + '年');
+    dAsset.push(Math.round(c));
+    dPrin.push(Math.round(principal));
+    rows.push({ y, principal, asset: c, profit: c - principal, withdraw: wAmt });
+  }
+
+  const totalInvested = init + mo * 12 * years;
+  return { labels, dAsset, dPrin, rows, finalAsset: c, totalInvested, buyFeeTotal, trustFeeTotal };
+}
+
+function fmt(n) {
+  const a = Math.abs(n), s = n < 0 ? '-' : '';
+  if (a < 10000) return s + Math.round(a).toLocaleString() + '円';
+  const oku = Math.floor(a / 1e8), man = Math.floor((a % 1e8) / 1e4);
+  if (oku > 0) return `${s}${oku}億${man > 0 ? man.toLocaleString() + '万' : ''}円`;
+  return `${s}${man.toLocaleString()}万円`;
+}
+function fmtShort(n) {
+  const a = Math.abs(n), s = n < 0 ? '-' : '';
+  const oku = Math.floor(a / 1e8), man = Math.floor((a % 1e8) / 1e4);
+  if (oku > 0) return `${s}${oku}億${man > 0 ? man.toLocaleString() + '万' : ''}`;
+  return `${s}${man.toLocaleString()}万`;
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const pane = document.getElementById('pane-' + btn.dataset.tab);
+    if (pane) pane.classList.add('active');
+    if (btn.dataset.tab === 'rank') updateHierarchy();
+    if (btn.dataset.tab === 'dual') calcDual();
+    setTimeout(() => {
+      if (chartS) chartS.resize();
+      if (chartD) chartD.resize();
+    }, 50);
+    saveData();
+  });
+});
+
+function selectProd(k) {
+  curProd = k;
+  document.getElementById('btn-sp').classList.toggle('active', k === 'sp500');
+  document.getElementById('btn-all').classList.toggle('active', k === 'all');
+  document.getElementById('s-rate').value = PRODUCTS[k].rate;
+  document.getElementById('s-rate-src').textContent = PRODUCTS[k].src;
+  document.getElementById('s-fee-tr').value = PRODUCTS[k].fee;
+  document.getElementById('s-fee-src').textContent = '※ 楽天証券: 購入時手数料は全投信0%。信託報酬 年' + PRODUCTS[k].fee + '%は' + PRODUCTS[k].feeSrc + 'の実際の値（税込）';
+  saveAndCalc();
+}
+function resetRate() {
+  document.getElementById('s-rate').value = PRODUCTS[curProd].rate;
+  document.getElementById('s-fee-tr').value = PRODUCTS[curProd].fee;
+  saveAndCalc();
+}
+function resetDualRate(t) {
+  if (t === 'sp500') {
+    document.getElementById('d-sp-r').value = PRODUCTS.sp500.rate;
+    document.getElementById('d-sp-tr').value = PRODUCTS.sp500.fee;
+  } else {
+    document.getElementById('d-al-r').value = PRODUCTS.all.rate;
+    document.getElementById('d-al-tr').value = PRODUCTS.all.fee;
+  }
+  saveAndCalcD();
+}
+
+const UNITS = { 's-mo':'万円','s-yr':'年','s-wd':'%','d-yr':'年','d-wd':'%' };
+function syncRange(p) {
+  const r = document.getElementById(p+'-r');
+  const i = document.getElementById(p);
+  const v = document.getElementById(p+'-v');
+  i.value = r.value;
+  if (v) v.textContent = r.value + (UNITS[p] || '');
+  if (p.startsWith('s-')) saveAndCalc(); else saveAndCalcD();
+}
+function syncInput(p) {
+  const i = document.getElementById(p);
+  const r = document.getElementById(p+'-r');
+  const v = document.getElementById(p+'-v');
+  if (r) r.value = i.value || 0;
+  if (v) v.textContent = (i.value || 0) + (UNITS[p] || '');
+}
+function stepField(id, dir) {
+  const i = document.getElementById(id);
+  const r = document.getElementById(id + '-r');
+  const step = r && r.step ? parseFloat(r.step) : 1;
+  const min  = r && r.min !== '' ? parseFloat(r.min) : -Infinity;
+  const max  = r && r.max !== '' ? parseFloat(r.max) :  Infinity;
+  let v = (parseFloat(i.value) || 0) + dir * step;
+  v = Math.round(v / step) * step;
+  v = Math.max(min, Math.min(max, v));
+  i.value = Number.isInteger(step) ? Math.round(v) : parseFloat(v.toFixed(2));
+  syncInput(id);
+  if (id.charAt(0) === 's') saveAndCalc(); else saveAndCalcD();
+}
+function onInitChange(id, wid) {
+  const val = parseFloat(document.getElementById(id).value) || 0;
+  document.getElementById(wid).classList.toggle('highlight', val <= 0);
+}
+
+function toggleNisa(p) {
+  if (p === 's') { nisaS = !nisaS; document.getElementById('s-nisa').classList.toggle('on', nisaS); saveAndCalc(); }
+  else           { nisaD = !nisaD; document.getElementById('d-nisa').classList.toggle('on', nisaD); saveAndCalcD(); }
+}
+
+function setDivTarget(k) {
+  divTargetD = k;
+  document.getElementById('d-div-t-all').classList.toggle('active', k === 'all');
+  document.getElementById('d-div-t-sp').classList.toggle('active', k === 'sp500');
+  saveAndCalcD();
+}
+
+function setDivTargetS(k) {
+  divTargetS = k;
+  document.getElementById('s-div-t-all').classList.toggle('active', k === 'all');
+  document.getElementById('s-div-t-sp').classList.toggle('active', k === 'sp500');
+  saveAndCalc();
+}
+
+function toggleDetail(p) {
+  document.getElementById(p+'-dtb').classList.toggle('open');
+  document.getElementById(p+'-dtw').classList.toggle('show');
+}
+
+function calcSingle() {
+  const initMan = parseFloat(document.getElementById('s-init').value) || 0;
+  const moMan   = parseFloat(document.getElementById('s-mo').value)   || 0;
+  const yr      = parseInt(document.getElementById('s-yr').value)     || 20;
+  const rPct    = parseFloat(document.getElementById('s-rate').value) || 0;
+  const wdPct   = parseFloat(document.getElementById('s-wd').value)   || 0;
+  const cashMan = parseFloat(document.getElementById('s-cash').value) || 0;
+  const cashYen = cashMan * 1e4;
+  const cashRate = parseFloat(document.getElementById('s-cash-r').value) || 0;
+  const cashNetR = cashRate / 100 * (1 - TAX_RATE); // 利息は源泉分離課税後で複利
+  const cashSeries = Array.from({length: yr + 1}, (_, i) => cashYen * Math.pow(1 + cashNetR, i));
+  const cashFinal = cashSeries[yr];
+  const cashInterest = cashFinal - cashYen;
+
+  const divMan  = parseFloat(document.getElementById('s-div').value)  || 0;
+  const divYen  = divMan * 1e4;
+  const divRate = parseFloat(document.getElementById('s-div-rate').value) || 0;
+  const annualDivGross = divYen * divRate / 100;
+  const annualDivNet   = nisaS ? annualDivGross : annualDivGross * (1 - TAX_RATE);
+
+  // 配当目安をカード内に即時表示
+  const hintEl = document.getElementById('s-div-hint');
+  if (divYen > 0 && annualDivNet > 0) {
+    hintEl.textContent = `配当金の目安（${divRate}%${nisaS ? '' : '・税引後'}）: 年 約${fmt(annualDivNet)}（月 約${fmt(annualDivNet/12)}）`;
+  } else {
+    hintEl.textContent = '保有額を入力すると配当金の目安が表示されます';
+  }
+
+  const reMoMan = parseFloat(document.getElementById('s-div-re').value) || 0;
+  const reinvestYen = Math.min(Math.max(0, reMoMan) * 12 * 1e4, annualDivNet);
+  const cashDivAnnual = annualDivNet - reinvestYen;
+  const cumDivCash = cashDivAnnual * yr;
+  const extraMo = reinvestYen / 12;
+
+  const feeBuy  = parseFloat(document.getElementById('s-fee-buy').value)  || 0;
+  const feeTr   = parseFloat(document.getElementById('s-fee-tr').value)   || 0;
+  const feeSell = parseFloat(document.getElementById('s-fee-sell').value) || 0;
+
+  // 配当からの積立は選択した商品の利回り・信託報酬で常に運用（メイン銘柄の設定とは独立）
+  const reRate = PRODUCTS[divTargetS].rate;
+  const reFee  = PRODUCTS[divTargetS].fee;
+  const hasCost = feeBuy > 0 || feeTr > 0 || feeSell > 0 || (extraMo > 0 && reFee > 0);
+
+  const { labels, dAsset, dPrin, rows, finalAsset: mainRaw, totalInvested, buyFeeTotal: mainBuyFee, trustFeeTotal: mainTrFee } = simulate(initMan, moMan, rPct, yr, wdPct, feeBuy, feeTr);
+  const reSim = extraMo > 0
+    ? simulate(0, 0, reRate, yr, wdPct, feeBuy, reFee, extraMo)
+    : { dAsset: dAsset.map(() => 0), finalAsset: 0, buyFeeTotal: 0, trustFeeTotal: 0 };
+
+  const rawFinal = mainRaw + reSim.finalAsset;
+  const buyFeeTotal   = mainBuyFee + reSim.buyFeeTotal;
+  const trustFeeTotal = mainTrFee + reSim.trustFeeTotal;
+  const sellFee = Math.max(0, rawFinal) * Math.max(0, feeSell) / 100;
+  const finalAsset = rawFinal - sellFee;
+  const costTotal = buyFeeTotal + trustFeeTotal + sellFee;
+  const noCostFinal = hasCost
+    ? simulate(initMan, moMan, rPct, yr, wdPct).finalAsset + (extraMo > 0 ? simulate(0, 0, reRate, yr, wdPct, 0, 0, extraMo).finalAsset : 0)
+    : rawFinal;
+  const costImpact = Math.max(0, noCostFinal - finalAsset);
+
+  let grossProfit = finalAsset - totalInvested;
+  let tax = 0, dispFinalIdx = finalAsset;
+  if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = finalAsset - tax; grossProfit -= tax; }
+
+  const dispFinal = dispFinalIdx + divYen + cumDivCash + cashFinal;
+
+  const cashBadge = document.getElementById('s-cash-badge');
+  if (cashYen > 0) {
+    cashBadge.style.display = '';
+    document.getElementById('s-cash-info').textContent = fmt(cashFinal) + '（利息 +' + fmt(cashInterest) + '）';
+  } else {
+    cashBadge.style.display = 'none';
+  }
+
+  const costBadge = document.getElementById('s-cost-badge');
+  const costCard  = document.getElementById('s-cost-card');
+  if (hasCost) {
+    costBadge.style.display = '';
+    costCard.style.display = '';
+    document.getElementById('s-cost-info').textContent  = '−' + fmt(costTotal);
+    document.getElementById('s-cost-buy').textContent   = fmt(buyFeeTotal);
+    document.getElementById('s-cost-tr').textContent    = fmt(trustFeeTotal);
+    document.getElementById('s-cost-sell').textContent  = fmt(sellFee);
+    document.getElementById('s-cost-total').textContent = '−' + fmt(costTotal);
+    document.getElementById('s-cost-impact').textContent = '−' + fmt(costImpact);
+  } else {
+    costBadge.style.display = 'none';
+    costCard.style.display = 'none';
+  }
+
+  document.getElementById('s-final').textContent = fmt(dispFinal);
+  document.getElementById('s-inv').textContent   = fmt(totalInvested);
+
+  const pe = document.getElementById('s-profit');
+  if (grossProfit < 0) { pe.textContent = fmt(grossProfit); pe.className = 'hero-profit neg'; }
+  else { pe.textContent = '+' + fmt(grossProfit); pe.className = 'hero-profit pos'; }
+
+  const taxSaved = Math.max(0, finalAsset - totalInvested) * TAX_RATE;
+  const badge = document.getElementById('s-nisa-badge');
+  const taxEl = document.getElementById('s-tax');
+  if (nisaS) {
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税';
+    taxEl.textContent = '節税 ' + fmt(taxSaved);
+  } else {
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-card"/></svg></span> 課税口座（税引後）';
+    taxEl.textContent = '税額 ' + fmt(tax);
+  }
+
+  const divBadge = document.getElementById('s-div-badge');
+  const divInfo  = document.getElementById('s-div-info');
+  const divdCard = document.getElementById('s-divd-card');
+  if (divYen > 0) {
+    divBadge.style.display = '';
+    divdCard.style.display = '';
+    divInfo.textContent = reinvestYen > 0
+      ? '年配当 約' + fmt(annualDivNet) + ' / 積立 ' + fmt(extraMo) + '/月'
+      : '年配当 約' + fmt(annualDivNet) + ' / 累計 +' + fmt(cumDivCash);
+    document.getElementById('s-divd-hold').textContent = fmt(divYen);
+    document.getElementById('s-divd-annual-label').textContent = nisaS ? `年間配当（${divRate}%）` : `年間配当（${divRate}%・税引後）`;
+    document.getElementById('s-divd-annual').textContent  = '+' + fmt(annualDivNet);
+    document.getElementById('s-divd-monthly').textContent = '約' + fmt(annualDivNet / 12);
+    const reRow = document.getElementById('s-divd-re-row');
+    if (reinvestYen > 0) {
+      reRow.style.display = 'flex';
+      const tName = divTargetS === 'sp500' ? 'S&P500' : '全世界株式';
+      document.getElementById('s-divd-re-label').textContent = `うち積立（→ ${tName}）`;
+      document.getElementById('s-divd-re').textContent = fmt(extraMo) + '/月';
+    } else {
+      reRow.style.display = 'none';
+    }
+    document.getElementById('s-divd-cum-label').textContent = `${yr}年間の現金受取（累計）`;
+    document.getElementById('s-divd-cum').textContent = '+' + fmt(cumDivCash);
+    document.getElementById('s-divd-note').textContent = (nisaS
+      ? '※ 株価は一定と仮定。NISA枠なら配当も非課税。'
+      : '※ 株価は一定と仮定。課税口座のため配当から20.315%控除済。')
+      + (reinvestYen > 0 ? '再投資分は積立に毎月上乗せされ、複利で総資産に反映されます' : '現金受取の累計は総資産に加算されます');
+  } else {
+    divBadge.style.display = 'none';
+    divdCard.style.display = 'none';
+  }
+
+  const totalAssetBase = totalInvested + divYen + cashYen;
+  const invM = Math.round(totalAssetBase / 1e4);
+  const gainM = Math.round(grossProfit / 1e4);
+  const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
+  document.getElementById('t-s-inv').textContent  = invM.toLocaleString() + '万円';
+  document.getElementById('t-s-gain').textContent = gainM.toLocaleString() + '万円';
+  document.getElementById('t-s-mult').textContent = mult + '倍';
+
+  document.getElementById('s-tbody').innerHTML = rows.map(row => {
+    const reA = reSim.dAsset[row.y] || 0;
+    const a = row.asset + reA;
+    const p = row.profit + reA, pr = p >= 0 ? `color:var(--ok)` : `color:var(--r)`;
+    return `<tr>
+      <td>${row.y}年</td>
+      <td>${fmtShort(row.principal)}円</td>
+      <td>${fmtShort(a)}円</td>
+      <td style="${pr}">${p >= 0 ? '+' : ''}${fmtShort(p)}円</td>
+      <td>${row.withdraw > 0 ? fmtShort(row.withdraw) + '円' : '—'}</td>
+    </tr>`;
+  }).join('');
+
+  const dAssetTotal = dAsset.map((v, i) => v + reSim.dAsset[i] + divYen + cashDivAnnual * i + cashSeries[i]);
+  const dPrinTotal  = dPrin.map(v => v + divYen + cashYen);
+  drawSingleChart(labels, dAssetTotal, dPrinTotal);
+
+  lastResult = { initial: (initMan + divMan + cashMan) * 1e4, final: finalAsset + divYen + cumDivCash + cashFinal, profit: grossProfit + cumDivCash + cashInterest, inputs: { rate: rPct, monthly: moMan * 1e4 + extraMo, years: yr, initial: (initMan + divMan + cashMan) * 1e4 } };
+}
+
+function calcDual() {
+  const spI = parseFloat(document.getElementById('d-sp-i').value) || 0;
+  const spM = parseFloat(document.getElementById('d-sp-m').value) || 0;
+  const spR = parseFloat(document.getElementById('d-sp-r').value) || 0;
+  const alI = parseFloat(document.getElementById('d-al-i').value) || 0;
+  const alM = parseFloat(document.getElementById('d-al-m').value) || 0;
+  const alR = parseFloat(document.getElementById('d-al-r').value) || 0;
+  const yr  = parseInt(document.getElementById('d-yr').value)     || 20;
+  const wdPct = parseFloat(document.getElementById('d-wd').value) || 0;
+  const cashMan = parseFloat(document.getElementById('d-cash').value) || 0;
+  const cashYen = cashMan * 1e4;
+  const cashRate = parseFloat(document.getElementById('d-cash-r').value) || 0;
+  const cashNetR = cashRate / 100 * (1 - TAX_RATE);
+  const cashSeries = Array.from({length: yr + 1}, (_, i) => cashYen * Math.pow(1 + cashNetR, i));
+  const cashFinal = cashSeries[yr];
+  const cashInterest = cashFinal - cashYen;
+
+  const divMan = parseFloat(document.getElementById('d-div').value) || 0;
+  const divYen = divMan * 1e4;
+  const divRate = parseFloat(document.getElementById('d-div-rate').value) || 0;
+  const annualDivGross = divYen * divRate / 100;
+  const annualDivNet   = nisaD ? annualDivGross : annualDivGross * (1 - TAX_RATE);
+
+  const dHintEl = document.getElementById('d-div-hint');
+  if (divYen > 0 && annualDivNet > 0) {
+    dHintEl.textContent = `配当金の目安（${divRate}%${nisaD ? '' : '・税引後'}）: 年 約${fmt(annualDivNet)}（月 約${fmt(annualDivNet/12)}）`;
+  } else {
+    dHintEl.textContent = '保有額を入力すると配当金の目安が表示されます';
+  }
+
+  const reMoMan = parseFloat(document.getElementById('d-div-re').value) || 0;
+  const reinvestYen = Math.min(Math.max(0, reMoMan) * 12 * 1e4, annualDivNet);
+  const cashDivAnnual = annualDivNet - reinvestYen;
+  const cumDivCash = cashDivAnnual * yr;
+  const extraMo = reinvestYen / 12;
+  const spEx = divTargetD === 'sp500' ? extraMo : 0;
+  const alEx = divTargetD === 'all'   ? extraMo : 0;
+  const feeBuy  = 0;
+  const feeSell = 0;
+  const spTr    = parseFloat(document.getElementById('d-sp-tr').value)    || 0;
+  const alTr    = parseFloat(document.getElementById('d-al-tr').value)    || 0;
+  const hasCost = spTr > 0 || alTr > 0;
+
+  const sp = simulate(spI, spM, spR, yr, wdPct, feeBuy, spTr, spEx);
+  const al = simulate(alI, alM, alR, yr, wdPct, feeBuy, alTr, alEx);
+
+  const labels = sp.labels;
+  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i] + divYen + cashDivAnnual * i + cashSeries[i]);
+  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i] + divYen + cashYen);
+
+  const rawTotalF = sp.finalAsset + al.finalAsset;
+  const sellFee = Math.max(0, rawTotalF) * Math.max(0, feeSell) / 100;
+  const totalF  = rawTotalF - sellFee;
+  const buyFeeTotal   = sp.buyFeeTotal + al.buyFeeTotal;
+  const trustFeeTotal = sp.trustFeeTotal + al.trustFeeTotal;
+  const costTotal = buyFeeTotal + trustFeeTotal + sellFee;
+  const noCostFinal = hasCost
+    ? simulate(spI, spM, spR, yr, wdPct, 0, 0, spEx).finalAsset + simulate(alI, alM, alR, yr, wdPct, 0, 0, alEx).finalAsset
+    : rawTotalF;
+  const costImpact = Math.max(0, noCostFinal - totalF);
+
+  const totalI  = sp.totalInvested + al.totalInvested;
+  let grossProfit = totalF - totalI;
+  let tax = 0, dispFinalIdx = totalF;
+  if (!nisaD && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = totalF - tax; grossProfit -= tax; }
+
+  const dispFinal = dispFinalIdx + divYen + cumDivCash + cashFinal;
+
+  const cashBadge = document.getElementById('d-cash-badge');
+  if (cashYen > 0) {
+    cashBadge.style.display = '';
+    document.getElementById('d-cash-info').textContent = fmt(cashFinal) + '（利息 +' + fmt(cashInterest) + '）';
+  } else {
+    cashBadge.style.display = 'none';
+  }
+
+  const costBadge = document.getElementById('d-cost-badge');
+  const costCard  = document.getElementById('d-cost-card');
+  if (hasCost) {
+    costBadge.style.display = '';
+    costCard.style.display = '';
+    document.getElementById('d-cost-info').textContent  = '−' + fmt(costTotal);
+    document.getElementById('d-cost-tr').textContent    = '−' + fmt(trustFeeTotal);
+    document.getElementById('d-cost-impact').textContent = '−' + fmt(costImpact);
+  } else {
+    costBadge.style.display = 'none';
+    costCard.style.display = 'none';
+  }
+
+  document.getElementById('d-final').textContent = fmt(dispFinal);
+  document.getElementById('d-inv').textContent   = fmt(totalI);
+
+  const pe = document.getElementById('d-profit');
+  if (grossProfit < 0) { pe.textContent = fmt(grossProfit); pe.className = 'hero-profit neg'; }
+  else { pe.textContent = '+' + fmt(grossProfit); pe.className = 'hero-profit pos'; }
+
+  const taxSaved = Math.max(0, totalF - totalI) * TAX_RATE;
+  const badge = document.getElementById('d-nisa-badge');
+  const taxEl = document.getElementById('d-tax');
+  if (nisaD) {
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-bank"/></svg></span> NISA非課税';
+    taxEl.textContent = '節税 ' + fmt(taxSaved);
+  } else {
+    badge.querySelector('span').innerHTML = '<span class="ico"><svg><use href="#i-card"/></svg></span> 課税口座（税引後）';
+    taxEl.textContent = '税額 ' + fmt(tax);
+  }
+
+  const divBadge = document.getElementById('d-div-badge');
+  const divInfo  = document.getElementById('d-div-info');
+  const divdCard = document.getElementById('d-divd-card');
+  if (divYen > 0) {
+    divBadge.style.display = '';
+    divdCard.style.display = '';
+    const targetName = divTargetD === 'sp500' ? 'S&P500' : '全世界株式';
+    divInfo.textContent = reinvestYen > 0
+      ? '年配当 約' + fmt(annualDivNet) + ' / 積立 ' + fmt(extraMo) + '/月'
+      : '年配当 約' + fmt(annualDivNet) + ' / 累計 +' + fmt(cumDivCash);
+    document.getElementById('d-divd-hold').textContent = fmt(divYen);
+    document.getElementById('d-divd-annual-label').textContent = nisaD ? `年間配当（${divRate}%）` : `年間配当（${divRate}%・税引後）`;
+    document.getElementById('d-divd-annual').textContent  = '+' + fmt(annualDivNet);
+    document.getElementById('d-divd-monthly').textContent = '約' + fmt(annualDivNet / 12);
+    const reRow = document.getElementById('d-divd-re-row');
+    if (reinvestYen > 0) {
+      reRow.style.display = 'flex';
+      document.getElementById('d-divd-re-label').textContent = `うち積立（→ ${targetName}）`;
+      document.getElementById('d-divd-re').textContent = fmt(extraMo) + '/月';
+    } else {
+      reRow.style.display = 'none';
+    }
+    document.getElementById('d-divd-cum-label').textContent = `${yr}年間の現金受取（累計）`;
+    document.getElementById('d-divd-cum').textContent = '+' + fmt(cumDivCash);
+    document.getElementById('d-divd-note').textContent = (nisaD
+      ? '※ 株価は一定と仮定。NISA枠なら配当も非課税。'
+      : '※ 株価は一定と仮定。課税口座のため配当から20.315%控除済。')
+      + (reinvestYen > 0 ? '再投資分は積立に毎月上乗せされ、複利で総資産に反映されます' : '現金受取の累計は総資産に加算されます');
+  } else {
+    divBadge.style.display = 'none';
+    divdCard.style.display = 'none';
+  }
+
+  document.getElementById('t-d-sp').textContent   = Math.round(sp.finalAsset/1e4).toLocaleString() + '万円';
+  document.getElementById('t-d-al').textContent   = Math.round(al.finalAsset/1e4).toLocaleString() + '万円';
+  const totalAssetBase = totalI + divYen + cashYen;
+  const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
+  document.getElementById('t-d-mult').textContent = mult + '倍';
+
+  document.getElementById('d-tbody').innerHTML = sp.rows.map((row, i) => {
+    const aRow = al.rows[i];
+    const t = row.asset + aRow.asset + divYen + cashDivAnnual * row.y + cashSeries[row.y];
+    const pTotal = row.principal + aRow.principal + divYen + cashYen;
+    return `<tr>
+      <td>${row.y}年</td>
+      <td>${fmtShort(pTotal)}円</td>
+      <td>${fmtShort(aRow.asset)}円</td>
+      <td>${fmtShort(row.asset)}円</td>
+      <td style="font-weight:700">${fmtShort(t)}円</td>
+    </tr>`;
+  }).join('');
+
+  drawDualChart(labels, dTotal, sp.dAsset, al.dAsset, dPrin);
+
+  const totM = spM + alM;
+  const wR = totM > 0 ? (spR * spM + alR * alM) / totM : spR;
+  lastResult = { initial: (spI+alI+divMan+cashMan)*1e4, final: totalF + divYen + cumDivCash + cashFinal, profit: grossProfit + cumDivCash + cashInterest, inputs: { rate: wR, monthly: (spM+alM)*1e4 + extraMo, years: yr, initial: (spI+alI+divMan+cashMan)*1e4 } };
+}
+
+function chartOpts() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: 'index' },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(26,42,58,.92)',
+        titleFont: { size: 11, weight: 'bold', family: 'Outfit, sans-serif' },
+        bodyFont: { size: 11, family: 'Outfit, sans-serif' },
+        cornerRadius: 10,
+        padding: 12,
+        callbacks: { label: c => c.dataset.label + ': ' + fmt(c.raw) }
+      }
+    },
+    scales: {
+      x: {
+        display: true,
+        grid: { display: false },
+        ticks: { font: { size: 9 }, color: '#8A9AAA', maxTicksLimit: 11 }
+      },
+      y: {
+        display: true,
+        grid: { color: 'rgba(0,0,0,.03)' },
+        ticks: {
+          font: { size: 9 },
+          color: '#8A9AAA',
+          callback: v => {
+            if (v >= 1e8) return (v/1e8).toFixed(1) + '億';
+            if (v >= 1e4) return (v/1e4).toLocaleString() + '万';
+            return v;
+          }
+        }
+      }
+    }
+  };
+}
+
+function drawSingleChart(labels, dAsset, dPrin) {
+  const ctx = document.getElementById('s-chart').getContext('2d');
+  if (chartS) chartS.destroy();
+  chartS = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'資産残高', data:dAsset, borderColor:'#0052A5', backgroundColor:'rgba(0,82,165,.10)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'投資元本', data:dPrin, borderColor:'#C5D3E2', backgroundColor:'rgba(197,211,226,.18)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[5,4], order:2 }
+    ]},
+    options: chartOpts()
+  });
+}
+
+function drawDualChart(labels, dTotal, dSP, dAl, dPrin) {
+  const ctx = document.getElementById('d-chart').getContext('2d');
+  if (chartD) chartD.destroy();
+  chartD = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [
+      { label:'合計資産',  data:dTotal, borderColor:'#0052A5', backgroundColor:'rgba(0,82,165,.08)', fill:true, tension:.35, pointRadius:1.5, pointHoverRadius:5, borderWidth:2.5, order:1 },
+      { label:'全世界株式', data:dAl,   borderColor:'#1A6FCC', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:2 },
+      { label:'S&P500',   data:dSP,    borderColor:'#0284C7', backgroundColor:'transparent', fill:false, tension:.35, pointRadius:0, borderWidth:1.5, borderDash:[6,3], order:3 },
+      { label:'投資元本',  data:dPrin,  borderColor:'#C5D3E2', backgroundColor:'rgba(197,211,226,.12)', fill:true, tension:0, pointRadius:0, borderWidth:1.5, borderDash:[4,4], order:4 }
+    ]},
+    options: chartOpts()
+  });
+}
+
+function updateHierarchy() {
+  const fM = lastResult.final / 1e4;
+  const iM = lastResult.initial / 1e4;
+
+  const ci = TIERS.findIndex(t => iM >= t.min);
+  const fi = TIERS.findIndex(t => fM >= t.min);
+  const nowTier = TIERS[ci !== -1 ? ci : 4];
+  const futTier = TIERS[fi !== -1 ? fi : 4];
+
+  document.getElementById('h-now').textContent = nowTier.name + ` (${fmt(lastResult.initial)})`;
+  document.getElementById('h-fut').textContent = futTier.name + ` (${fmt(lastResult.final)})`;
+
+  document.getElementById('a-now').setAttribute('transform', `translate(0,${nowTier.y})`);
+  document.getElementById('a-fut').setAttribute('transform', `translate(0,${futTier.y})`);
+
+  // 将来到達している階層から下をすべて塗りつぶし、未到達は薄いグレー表示
+  const fiIdx = fi !== -1 ? fi : 4;
+  TIERS.forEach((t, idx) => {
+    const e = document.getElementById(t.id);
+    if (!e) return;
+    if (idx >= fiIdx) {
+      e.setAttribute('opacity', '1');
+      e.setAttribute('stroke', '#fff');
+    } else {
+      e.setAttribute('opacity', '.18');
+      e.setAttribute('stroke', '#D0DAE4');
+    }
+  });
+
+  if (fM >= 50000 && fi === 0) {
+    document.getElementById('h-gap').textContent   = '最高ランク到達!';
+    document.getElementById('h-bar').style.width   = '100%';
+    document.getElementById('h-target').textContent = 'Goal!';
+    document.getElementById('adv-time').innerHTML  = '<span class="trophy-big"><svg><use href="#i-trophy"/></svg></span><span class="advice-hl">最高ランク達成!</span>';
+    document.getElementById('adv-money').innerHTML = '資産保全・分散に注力しましょう。';
+  } else {
+    const nextTier = fi > 0 ? TIERS[fi - 1] : TIERS[0];
+    const targetWen = nextTier.min * 1e4;
+    const gap = targetWen - lastResult.final;
+    const prog = Math.min(100, (lastResult.final / targetWen) * 100);
+
+    document.getElementById('h-gap').textContent    = 'あと ' + fmt(Math.max(0, gap));
+    document.getElementById('h-bar').style.width    = prog + '%';
+    document.getElementById('h-target').textContent = '目標: ' + nextTier.name + ' (' + nextTier.min.toLocaleString() + '万円)';
+
+    const r = monthlyRate(lastResult.inputs.rate), mo = lastResult.inputs.monthly;
+    let tmp = lastResult.initial, reached = false, ytg = 0;
+    for (let i = 1; i <= 1200; i++) {
+      tmp = (tmp + mo) * (1 + r);
+      if (tmp >= targetWen) { ytg = (i / 12).toFixed(1); reached = true; break; }
+    }
+    document.getElementById('adv-time').innerHTML = reached
+      ? `約 <span class="advice-hl">${ytg}年後</span> に到達！`
+      : '100年以上かかります。積立増額や初期投資を検討しましょう。';
+
+    const n = lastResult.inputs.years * 12;
+    const cf = Math.pow(1 + r, n);
+    const ig = lastResult.initial * cf;
+    let rm = 0;
+    if (targetWen > ig) rm = ((targetWen - ig) * r) / (cf - 1);
+    const addM = Math.max(0, (rm - mo) / 1e4).toFixed(1);
+    document.getElementById('adv-money').innerHTML = `毎月あと<br><span class="advice-hl">+${addM}万円</span> 増やそう！`;
+  }
+}
+
+function saveData() {
+  const tab = document.querySelector('.tab.active')?.dataset.tab || 'single';
+  const data = {
+    tab,
+    curProd,
+    s: {
+      rate: document.getElementById('s-rate').value,
+      init: document.getElementById('s-init').value,
+      cash: document.getElementById('s-cash').value,
+      cashR: document.getElementById('s-cash-r').value,
+      div: document.getElementById('s-div').value,
+      divRate: document.getElementById('s-div-rate').value,
+      divRe: document.getElementById('s-div-re').value,
+      divTarget: divTargetS,
+      mo: document.getElementById('s-mo').value,
+      yr: document.getElementById('s-yr').value,
+      wd: document.getElementById('s-wd').value,
+      feeBuy: document.getElementById('s-fee-buy').value,
+      feeTr: document.getElementById('s-fee-tr').value,
+      feeSell: document.getElementById('s-fee-sell').value,
+      nisa: nisaS
+    },
+    d: {
+      spR: document.getElementById('d-sp-r').value,
+      spI: document.getElementById('d-sp-i').value,
+      spM: document.getElementById('d-sp-m').value,
+      spTr: document.getElementById('d-sp-tr').value,
+      alR: document.getElementById('d-al-r').value,
+      alI: document.getElementById('d-al-i').value,
+      alM: document.getElementById('d-al-m').value,
+      alTr: document.getElementById('d-al-tr').value,
+      cash: document.getElementById('d-cash').value,
+      cashR: document.getElementById('d-cash-r').value,
+      div: document.getElementById('d-div').value,
+      divRate: document.getElementById('d-div-rate').value,
+      divRe: document.getElementById('d-div-re').value,
+      divTarget: divTargetD,
+      yr: document.getElementById('d-yr').value,
+      wd: document.getElementById('d-wd').value,
+      nisa: nisaD
+    }
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    if (data.curProd) {
+      curProd = data.curProd;
+      document.getElementById('btn-sp').classList.toggle('active', curProd === 'sp500');
+      document.getElementById('btn-all').classList.toggle('active', curProd === 'all');
+      if (PRODUCTS[curProd]) {
+        document.getElementById('s-rate-src').textContent = PRODUCTS[curProd].src;
+      }
+    }
+
+    const s = data.s || {};
+    if (s.rate !== undefined) document.getElementById('s-rate').value = s.rate;
+    if (s.init !== undefined) document.getElementById('s-init').value = s.init;
+    if (s.cash !== undefined) document.getElementById('s-cash').value = s.cash;
+    if (s.cashR !== undefined) document.getElementById('s-cash-r').value = s.cashR;
+    if (s.div  !== undefined) document.getElementById('s-div').value  = s.div;
+    if (s.divRate !== undefined) document.getElementById('s-div-rate').value = s.divRate;
+    if (s.divRe !== undefined) document.getElementById('s-div-re').value = s.divRe;
+    if (s.divTarget !== undefined) {
+      divTargetS = s.divTarget;
+      document.getElementById('s-div-t-all').classList.toggle('active', divTargetS === 'all');
+      document.getElementById('s-div-t-sp').classList.toggle('active', divTargetS === 'sp500');
+    }
+    if (s.mo   !== undefined) { document.getElementById('s-mo').value = s.mo; syncInput('s-mo'); }
+    if (s.yr   !== undefined) { document.getElementById('s-yr').value = s.yr; syncInput('s-yr'); }
+    if (s.wd   !== undefined) { document.getElementById('s-wd').value = s.wd; syncInput('s-wd'); }
+    if (s.feeBuy  !== undefined) document.getElementById('s-fee-buy').value  = s.feeBuy;
+    if (s.feeTr   !== undefined) document.getElementById('s-fee-tr').value   = s.feeTr;
+    if (s.feeSell !== undefined) document.getElementById('s-fee-sell').value = s.feeSell;
+    if (s.nisa !== undefined) { nisaS = s.nisa; document.getElementById('s-nisa').classList.toggle('on', nisaS); }
+
+    const d = data.d || {};
+    if (d.spR !== undefined) document.getElementById('d-sp-r').value = d.spR;
+    if (d.spI !== undefined) document.getElementById('d-sp-i').value = d.spI;
+    if (d.spM !== undefined) document.getElementById('d-sp-m').value = d.spM;
+    if (d.alR !== undefined) document.getElementById('d-al-r').value = d.alR;
+    if (d.alI !== undefined) document.getElementById('d-al-i').value = d.alI;
+    if (d.alM !== undefined) document.getElementById('d-al-m').value = d.alM;
+    if (d.spTr !== undefined) document.getElementById('d-sp-tr').value = d.spTr;
+    else if (d.feeTr !== undefined) document.getElementById('d-sp-tr').value = d.feeTr;
+    if (d.alTr !== undefined) document.getElementById('d-al-tr').value = d.alTr;
+    else if (d.feeTr !== undefined) document.getElementById('d-al-tr').value = d.feeTr;
+    if (d.cash !== undefined) document.getElementById('d-cash').value = d.cash;
+    if (d.cashR !== undefined) document.getElementById('d-cash-r').value = d.cashR;
+    if (d.div !== undefined) document.getElementById('d-div').value  = d.div;
+    if (d.divRate !== undefined) document.getElementById('d-div-rate').value = d.divRate;
+    if (d.divRe !== undefined) document.getElementById('d-div-re').value = d.divRe;
+    if (d.divTarget !== undefined) {
+      divTargetD = d.divTarget;
+      document.getElementById('d-div-t-all').classList.toggle('active', divTargetD === 'all');
+      document.getElementById('d-div-t-sp').classList.toggle('active', divTargetD === 'sp500');
+    }
+    if (d.yr  !== undefined) { document.getElementById('d-yr').value = d.yr; syncInput('d-yr'); }
+    if (d.wd  !== undefined) { document.getElementById('d-wd').value = d.wd; syncInput('d-wd'); }
+    if (d.nisa !== undefined) { nisaD = d.nisa; document.getElementById('d-nisa').classList.toggle('on', nisaD); }
+
+    onInitChange('s-init', 's-init-wrap');
+
+    if (data.tab) {
+      const btn = document.querySelector(`.tab[data-tab="${data.tab}"]`);
+      if (btn) btn.click();
+    }
+  } catch(e) {}
+}
+
+function saveAndCalc()  { calcSingle(); saveData(); }
+function saveAndCalcD() { calcDual();   saveData(); }
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  calcSingle();
+  calcDual();
+});
+</script>
+</body>
+</html>
