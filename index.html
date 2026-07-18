@@ -1071,7 +1071,7 @@ footer {
       <div class="card card-dividend">
         <div class="card-head card-head-dividend">
           <div class="step-badge step-badge-dividend">3</div>
-          <span class="card-title">既に保有している資産（任意）</span>
+          <span class="card-title">高配当株（任意）</span>
         </div>
         <div class="card-body">
           <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。保有額を入れると配当金の目安がすぐに表示されます。</p>
@@ -1100,6 +1100,24 @@ footer {
             <button class="prod-btn active" id="s-div-t-sp" onclick="setDivTargetS('sp500')"><span style="font-weight:800;font-size:.75rem">S&amp;P500</span><br><span style="font-size:.6rem;color:var(--soft)">米国株式</span></button>
           </div>
           <p class="field-hint" style="margin-top:8px">※ 配当からの積立分はSTEP2の積立とは別枠で複利運用され、総資産・グラフに反映されます。残りの配当は現金として累計されます</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt"><span class="ico"><svg><use href="#i-bank"/></svg></span></div>
+          <span class="card-title" style="color:var(--soft)">普通預金（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin:0 0 10px;font-size:.68rem;color:var(--soft);line-height:1.55;">投資とは別軸の安全資産として計算します。元本保証のまま設定金利で毎年複利され、総資産と資産診断に加算されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>普通預金の残高
+              <span class="tip" tabindex="0">?<span class="tip-box">預金残高は元本保証のまま、設定した金利で毎年複利計算します。利息には源泉分離課税20.315%がかかります（NISA対象外）。</span></span>
+            </label><div class="af-in"><input type="number" id="s-cash" placeholder="例: 300" oninput="saveAndCalc()"><span class="u">万円</span></div></div>
+            <div class="af"><label>預金金利(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">楽天銀行×楽天証券のマネーブリッジ設定で、普通預金残高1,000万円以下は年0.38%（税引前）の優遇金利が適用されます。</span></span>
+            </label><div class="af-in"><input type="number" id="s-cash-r" value="0.38" step="0.01" min="0" oninput="saveAndCalc()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:6px">※ 金利はマネーブリッジ優遇金利（年0.38%・残高1,000万円以下）が初期値。利息は税引後で毎年複利</p>
         </div>
       </div>
 
@@ -1169,7 +1187,7 @@ footer {
     <div class="col col-right">
 
       <div class="hero green" id="s-hero">
-        <p class="hero-label">総資産（積立 + 高配当株 + 配当）</p>
+        <p class="hero-label">総資産（積立 + 高配当株 + 配当 + 預金）</p>
         <div class="hero-amount" id="s-final">0円</div>
         <div class="hero-sub">
           <div>
@@ -1186,6 +1204,10 @@ footer {
           <span class="badge" id="s-div-badge" style="display:none">
             <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
             <span class="badge-highlight" id="s-div-info">+0円</span>
+          </span>
+          <span class="badge" id="s-cash-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> 普通預金</span>
+            <span class="badge-highlight" id="s-cash-info">+0円</span>
           </span>
           <span class="badge" id="s-cost-badge" style="display:none">
             <span><span class="ico"><svg><use href="#i-card"/></svg></span> コスト合計</span>
@@ -1353,7 +1375,7 @@ footer {
       <div class="card card-dividend">
         <div class="card-head card-head-dividend">
           <div class="step-badge step-badge-dividend">3</div>
-          <span class="card-title">既に保有している資産（任意）</span>
+          <span class="card-title">高配当株（任意）</span>
         </div>
         <div class="card-body">
           <p style="margin: 0 0 10px; font-size: .68rem; color: var(--soft); line-height: 1.55;">日本の高配当株などすでに持っている資産。保有額を入れると配当金の目安がすぐに表示されます。</p>
@@ -1384,11 +1406,29 @@ footer {
           <p class="field-hint" style="margin-top:8px">※ 配当からの積立分は選択した銘柄の積立に毎月上乗せされ、複利で総資産に反映されます。残りの配当は現金として累計されます</p>
         </div>
       </div>
+      <div class="card">
+        <div class="card-head">
+          <div class="step-badge opt"><span class="ico"><svg><use href="#i-bank"/></svg></span></div>
+          <span class="card-title" style="color:var(--soft)">普通預金（任意）</span>
+        </div>
+        <div class="card-body">
+          <p style="margin:0 0 10px;font-size:.68rem;color:var(--soft);line-height:1.55;">投資とは別軸の安全資産として計算します。元本保証のまま設定金利で毎年複利され、総資産と資産診断に加算されます。</p>
+          <div class="asset-row">
+            <div class="af"><label>普通預金の残高
+              <span class="tip" tabindex="0">?<span class="tip-box">預金残高は元本保証のまま、設定した金利で毎年複利計算します。利息には源泉分離課税20.315%がかかります（NISA対象外）。</span></span>
+            </label><div class="af-in"><input type="number" id="d-cash" placeholder="例: 300" oninput="saveAndCalcD()"><span class="u">万円</span></div></div>
+            <div class="af"><label>預金金利(年率)
+              <span class="tip" tabindex="0">?<span class="tip-box">楽天銀行×楽天証券のマネーブリッジ設定で、普通預金残高1,000万円以下は年0.38%（税引前）の優遇金利が適用されます。</span></span>
+            </label><div class="af-in"><input type="number" id="d-cash-r" value="0.38" step="0.01" min="0" oninput="saveAndCalcD()" onfocus="this.select()"><span class="u">%</span></div></div>
+          </div>
+          <p class="field-hint" style="margin-top:6px">※ 金利はマネーブリッジ優遇金利（年0.38%・残高1,000万円以下）が初期値。利息は税引後で毎年複利</p>
+        </div>
+      </div>
     </div>
 
     <div class="col col-right">
       <div class="hero dark">
-        <p class="hero-label">総資産（積立 + 高配当株 + 配当）</p>
+        <p class="hero-label">総資産（積立 + 高配当株 + 配当 + 預金）</p>
         <div class="hero-amount" id="d-final">0円</div>
         <div class="hero-sub">
           <div>
@@ -1405,6 +1445,10 @@ footer {
           <span class="badge" id="d-div-badge" style="display:none">
             <span><span class="ico"><svg><use href="#i-yen"/></svg></span> 高配当株</span>
             <span class="badge-highlight" id="d-div-info">+0円</span>
+          </span>
+          <span class="badge" id="d-cash-badge" style="display:none">
+            <span><span class="ico"><svg><use href="#i-bank"/></svg></span> 普通預金</span>
+            <span class="badge-highlight" id="d-cash-info">+0円</span>
           </span>
           <span class="badge" id="d-cost-badge" style="display:none">
             <span><span class="ico"><svg><use href="#i-card"/></svg></span> コスト合計</span>
@@ -1603,7 +1647,7 @@ footer {
     </div>
     <div class="guide-card">
       <div class="guide-head"><span class="guide-icon-wrap"><svg><use href="#i-yen"/></svg></span><span class="guide-title">既に保有している資産</span></div>
-      <p class="guide-body">日本の高配当株などすでに保有している資産は「STEP 3 既に保有している資産」カードに保有額と配当利回り（初期値4%）を入力してください。値上がり益は計算せず、保有額をそのまま総資産に加算します。毎年の配当金は「配当の再投資(年額)」で指定した分をオルカン/S&amp;P500の積立に毎月上乗せして複利運用し、残りは現金受取として累計されます（NISAがOFFの場合は配当から20.315%を控除）。再投資分は元本には含めず運用益として扱います。</p>
+      <p class="guide-body">普通預金や日本の高配当株などすでに保有している資産は「STEP 3 既に保有している資産」カードに入力してください。普通預金は元本保証のまま設定金利（初期値は楽天銀行マネーブリッジの優遇金利 年0.38%・残高1,000万円以下）で毎年複利計算し、利息は源泉分離課税20.315%の税引後で総資産に加算します。高配当株は保有額と配当利回り（初期値4%）を入力してください。値上がり益は計算せず、保有額をそのまま総資産に加算します。毎年の配当金は「配当の再投資(年額)」で指定した分をオルカン/S&amp;P500の積立に毎月上乗せして複利運用し、残りは現金受取として累計されます（NISAがOFFの場合は配当から20.315%を控除）。再投資分は元本には含めず運用益として扱います。</p>
     </div>
     <div class="cta-box" style="grid-column:1/-1;margin-top:4px">
       <div class="cta-title"><span class="ico"><svg><use href="#i-sprout"/></svg></span>投資初心者へのワンポイント</div>
@@ -1805,6 +1849,14 @@ function calcSingle() {
   const yr      = parseInt(document.getElementById('s-yr').value)     || 20;
   const rPct    = parseFloat(document.getElementById('s-rate').value) || 0;
   const wdPct   = parseFloat(document.getElementById('s-wd').value)   || 0;
+  const cashMan = parseFloat(document.getElementById('s-cash').value) || 0;
+  const cashYen = cashMan * 1e4;
+  const cashRate = parseFloat(document.getElementById('s-cash-r').value) || 0;
+  const cashNetR = cashRate / 100 * (1 - TAX_RATE); // 利息は源泉分離課税後で複利
+  const cashSeries = Array.from({length: yr + 1}, (_, i) => cashYen * Math.pow(1 + cashNetR, i));
+  const cashFinal = cashSeries[yr];
+  const cashInterest = cashFinal - cashYen;
+
   const divMan  = parseFloat(document.getElementById('s-div').value)  || 0;
   const divYen  = divMan * 1e4;
   const divRate = parseFloat(document.getElementById('s-div-rate').value) || 0;
@@ -1854,7 +1906,15 @@ function calcSingle() {
   let tax = 0, dispFinalIdx = finalAsset;
   if (!nisaS && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = finalAsset - tax; grossProfit -= tax; }
 
-  const dispFinal = dispFinalIdx + divYen + cumDivCash;
+  const dispFinal = dispFinalIdx + divYen + cumDivCash + cashFinal;
+
+  const cashBadge = document.getElementById('s-cash-badge');
+  if (cashYen > 0) {
+    cashBadge.style.display = '';
+    document.getElementById('s-cash-info').textContent = fmt(cashFinal) + '（利息 +' + fmt(cashInterest) + '）';
+  } else {
+    cashBadge.style.display = 'none';
+  }
 
   const costBadge = document.getElementById('s-cost-badge');
   const costCard  = document.getElementById('s-cost-card');
@@ -1923,7 +1983,7 @@ function calcSingle() {
     divdCard.style.display = 'none';
   }
 
-  const totalAssetBase = totalInvested + divYen;
+  const totalAssetBase = totalInvested + divYen + cashYen;
   const invM = Math.round(totalAssetBase / 1e4);
   const gainM = Math.round(grossProfit / 1e4);
   const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
@@ -1944,11 +2004,11 @@ function calcSingle() {
     </tr>`;
   }).join('');
 
-  const dAssetTotal = dAsset.map((v, i) => v + reSim.dAsset[i] + divYen + cashDivAnnual * i);
-  const dPrinTotal  = dPrin.map(v => v + divYen);
+  const dAssetTotal = dAsset.map((v, i) => v + reSim.dAsset[i] + divYen + cashDivAnnual * i + cashSeries[i]);
+  const dPrinTotal  = dPrin.map(v => v + divYen + cashYen);
   drawSingleChart(labels, dAssetTotal, dPrinTotal);
 
-  lastResult = { initial: (initMan + divMan) * 1e4, final: finalAsset + divYen + cumDivCash, profit: grossProfit + cumDivCash, inputs: { rate: rPct, monthly: moMan * 1e4 + extraMo, years: yr, initial: (initMan + divMan) * 1e4 } };
+  lastResult = { initial: (initMan + divMan + cashMan) * 1e4, final: finalAsset + divYen + cumDivCash + cashFinal, profit: grossProfit + cumDivCash + cashInterest, inputs: { rate: rPct, monthly: moMan * 1e4 + extraMo, years: yr, initial: (initMan + divMan + cashMan) * 1e4 } };
 }
 
 function calcDual() {
@@ -1960,6 +2020,14 @@ function calcDual() {
   const alR = parseFloat(document.getElementById('d-al-r').value) || 0;
   const yr  = parseInt(document.getElementById('d-yr').value)     || 20;
   const wdPct = parseFloat(document.getElementById('d-wd').value) || 0;
+  const cashMan = parseFloat(document.getElementById('d-cash').value) || 0;
+  const cashYen = cashMan * 1e4;
+  const cashRate = parseFloat(document.getElementById('d-cash-r').value) || 0;
+  const cashNetR = cashRate / 100 * (1 - TAX_RATE);
+  const cashSeries = Array.from({length: yr + 1}, (_, i) => cashYen * Math.pow(1 + cashNetR, i));
+  const cashFinal = cashSeries[yr];
+  const cashInterest = cashFinal - cashYen;
+
   const divMan = parseFloat(document.getElementById('d-div').value) || 0;
   const divYen = divMan * 1e4;
   const divRate = parseFloat(document.getElementById('d-div-rate').value) || 0;
@@ -1990,8 +2058,8 @@ function calcDual() {
   const al = simulate(alI, alM, alR, yr, wdPct, feeBuy, alTr, alEx);
 
   const labels = sp.labels;
-  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i] + divYen + cashDivAnnual * i);
-  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i] + divYen);
+  const dTotal  = sp.dAsset.map((v, i) => v + al.dAsset[i] + divYen + cashDivAnnual * i + cashSeries[i]);
+  const dPrin   = sp.dPrin.map((v, i) => v + al.dPrin[i] + divYen + cashYen);
 
   const rawTotalF = sp.finalAsset + al.finalAsset;
   const sellFee = Math.max(0, rawTotalF) * Math.max(0, feeSell) / 100;
@@ -2009,7 +2077,15 @@ function calcDual() {
   let tax = 0, dispFinalIdx = totalF;
   if (!nisaD && grossProfit > 0) { tax = grossProfit * TAX_RATE; dispFinalIdx = totalF - tax; grossProfit -= tax; }
 
-  const dispFinal = dispFinalIdx + divYen + cumDivCash;
+  const dispFinal = dispFinalIdx + divYen + cumDivCash + cashFinal;
+
+  const cashBadge = document.getElementById('d-cash-badge');
+  if (cashYen > 0) {
+    cashBadge.style.display = '';
+    document.getElementById('d-cash-info').textContent = fmt(cashFinal) + '（利息 +' + fmt(cashInterest) + '）';
+  } else {
+    cashBadge.style.display = 'none';
+  }
 
   const costBadge = document.getElementById('d-cost-badge');
   const costCard  = document.getElementById('d-cost-card');
@@ -2077,14 +2153,14 @@ function calcDual() {
 
   document.getElementById('t-d-sp').textContent   = Math.round(sp.finalAsset/1e4).toLocaleString() + '万円';
   document.getElementById('t-d-al').textContent   = Math.round(al.finalAsset/1e4).toLocaleString() + '万円';
-  const totalAssetBase = totalI + divYen;
+  const totalAssetBase = totalI + divYen + cashYen;
   const mult = totalAssetBase > 0 ? (dispFinal / totalAssetBase).toFixed(2) : '-';
   document.getElementById('t-d-mult').textContent = mult + '倍';
 
   document.getElementById('d-tbody').innerHTML = sp.rows.map((row, i) => {
     const aRow = al.rows[i];
-    const t = row.asset + aRow.asset + divYen + cashDivAnnual * row.y;
-    const pTotal = row.principal + aRow.principal + divYen;
+    const t = row.asset + aRow.asset + divYen + cashDivAnnual * row.y + cashSeries[row.y];
+    const pTotal = row.principal + aRow.principal + divYen + cashYen;
     return `<tr>
       <td>${row.y}年</td>
       <td>${fmtShort(pTotal)}円</td>
@@ -2098,7 +2174,7 @@ function calcDual() {
 
   const totM = spM + alM;
   const wR = totM > 0 ? (spR * spM + alR * alM) / totM : spR;
-  lastResult = { initial: (spI+alI+divMan)*1e4, final: totalF + divYen + cumDivCash, profit: grossProfit + cumDivCash, inputs: { rate: wR, monthly: (spM+alM)*1e4 + extraMo, years: yr, initial: (spI+alI+divMan)*1e4 } };
+  lastResult = { initial: (spI+alI+divMan+cashMan)*1e4, final: totalF + divYen + cumDivCash + cashFinal, profit: grossProfit + cumDivCash + cashInterest, inputs: { rate: wR, monthly: (spM+alM)*1e4 + extraMo, years: yr, initial: (spI+alI+divMan+cashMan)*1e4 } };
 }
 
 function chartOpts() {
@@ -2241,6 +2317,8 @@ function saveData() {
     s: {
       rate: document.getElementById('s-rate').value,
       init: document.getElementById('s-init').value,
+      cash: document.getElementById('s-cash').value,
+      cashR: document.getElementById('s-cash-r').value,
       div: document.getElementById('s-div').value,
       divRate: document.getElementById('s-div-rate').value,
       divRe: document.getElementById('s-div-re').value,
@@ -2262,6 +2340,8 @@ function saveData() {
       alI: document.getElementById('d-al-i').value,
       alM: document.getElementById('d-al-m').value,
       alTr: document.getElementById('d-al-tr').value,
+      cash: document.getElementById('d-cash').value,
+      cashR: document.getElementById('d-cash-r').value,
       div: document.getElementById('d-div').value,
       divRate: document.getElementById('d-div-rate').value,
       divRe: document.getElementById('d-div-re').value,
@@ -2292,6 +2372,8 @@ function loadData() {
     const s = data.s || {};
     if (s.rate !== undefined) document.getElementById('s-rate').value = s.rate;
     if (s.init !== undefined) document.getElementById('s-init').value = s.init;
+    if (s.cash !== undefined) document.getElementById('s-cash').value = s.cash;
+    if (s.cashR !== undefined) document.getElementById('s-cash-r').value = s.cashR;
     if (s.div  !== undefined) document.getElementById('s-div').value  = s.div;
     if (s.divRate !== undefined) document.getElementById('s-div-rate').value = s.divRate;
     if (s.divRe !== undefined) document.getElementById('s-div-re').value = s.divRe;
@@ -2319,6 +2401,8 @@ function loadData() {
     else if (d.feeTr !== undefined) document.getElementById('d-sp-tr').value = d.feeTr;
     if (d.alTr !== undefined) document.getElementById('d-al-tr').value = d.alTr;
     else if (d.feeTr !== undefined) document.getElementById('d-al-tr').value = d.feeTr;
+    if (d.cash !== undefined) document.getElementById('d-cash').value = d.cash;
+    if (d.cashR !== undefined) document.getElementById('d-cash-r').value = d.cashR;
     if (d.div !== undefined) document.getElementById('d-div').value  = d.div;
     if (d.divRate !== undefined) document.getElementById('d-div-rate').value = d.divRate;
     if (d.divRe !== undefined) document.getElementById('d-div-re').value = d.divRe;
